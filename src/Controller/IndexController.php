@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Entity\User;
+use App\Entity\Staff;
+use App\Entity\Order;
+use App\Entity\Log;
+
+class IndexController extends AbstractController
+{
+    /**
+     * @Route("/", name="index")
+     */
+    public function index(EntityManagerInterface $entityManager): Response
+    {
+        $userRepo = $entityManager->getRepository(User::class);
+        $user=$userRepo->findOneBy(['id' => '1']);
+        $repo = $entityManager->getRepository(Order::class);
+        $orders = $repo->getActive()
+            ->andWhere('o.staff = '.$user->getStaff()->getId())
+            ->setMaxResults(100)
+            ->orderBy('o.deadline', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+        
+
+        $tmp= new Order();
+
+        return $this->render('index/index.html.twig', [
+            'user' => $user,
+            'orders' => $orders,
+            'colToDisplay' => $user->getPreferences()['indexColumns'],
+            'allColumns' => $tmp->getAllColumns()
+        ]);
+    }
+
+    /**
+     * @Route("/zlecenie/{id}")
+     */
+    public function order($id, EntityManagerInterface $entityManager){
+        $orderRepo = $entityManager->getRepository(Order::class);
+        $order = $orderRepo->findOneBy(['id' => $id]);
+
+        $logRepo = $entityManager->getRepository(Log::class);
+        $logs = $logRepo->findBy(['order' => $order]);
+
+        $userRepo = $entityManager->getRepository(User::class);
+        $user = $userRepo->findOneBy(['id' => '1']);
+        
+        if(!$order){
+            throw $this->createNotFoundException('Nie znaleziono zlecenia');
+        }
+        $log = new Log($user,['asd'],$order);
+        $logs = [$log];
+        //dd($log);
+        //foreach($order as $c)  TODO implement toString methods in entities
+            //if(is_object($c)) $c=$c->toString();
+        
+            return $this->render('index/order.html.twig',[
+                'order' => $order,
+                'logs' => $logs,
+            ]);
+    }
+
+    /**
+     * @Route("/fix", name="fix")
+     */
+    public function fix(EntityManagerInterface $entityManager){
+
+        $userRepo = $entityManager->getRepository(User::class);
+        $user = $userRepo->findOneBy(['id' => '1']);
+
+        $user->setPreferences([
+            'indexColumns' => ['id','topic','state']
+        ]);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new Response('<h3>Done</h3>');
+    }
+}

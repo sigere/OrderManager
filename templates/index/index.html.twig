@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Menedżer Zleceń{% endblock %}
+
+{% block body %}
+<style>
+    body{
+        font-size: 20px;
+        color: white;
+        background-color: rgb(20,20,20);
+    }
+</style>
+    <table>
+    <thead>
+        {% for c in allColumns %}
+            <td>{{ c }}</td>
+        {% endfor %}
+    </thead>
+    <tbody>
+    {% for o in orders %}
+    <tr>
+        {% for c in allColumns %}
+            <td>{{ attribute(o, c)|default('nie') }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    <tbody>
+    </table>
+{% endblock %}

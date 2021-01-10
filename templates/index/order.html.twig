@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Menedżer Zleceń{% endblock %}
+
+{% block body %}
+<style>
+    body{
+        font-size: 20px;
+        color: white;
+        background-color: rgb(20,20,20);
+    }
+</style>
+    <table>
+    <tbody>
+    <tr>
+        {{ order.netto }}
+    {# {% for o in order %}
+        <td>{{ o }}</td>
+    {% endfor %} #}
+    </tr>
+    <tbody>
+    </table>
+    {% for l in logs %}
+        {{ l.time }}
+        {{ l.order }}
+    {% endfor %}
+{% endblock %}
