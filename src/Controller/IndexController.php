@@ -48,25 +48,21 @@ class IndexController extends AbstractController
         $orderRepo = $entityManager->getRepository(Order::class);
         $order = $orderRepo->findOneBy(['id' => $id]);
 
+        if(!$order){
+            throw $this->createNotFoundException('Nie znaleziono zlecenia');
+        }
+
         $logRepo = $entityManager->getRepository(Log::class);
         $logs = $logRepo->findBy(['order' => $order]);
 
         $userRepo = $entityManager->getRepository(User::class);
         $user = $userRepo->findOneBy(['id' => '1']);
         
-        if(!$order){
-            throw $this->createNotFoundException('Nie znaleziono zlecenia');
-        }
-        $log = new Log($user,['asd'],$order);
-        $logs = [$log];
-        //dd($log);
-        //foreach($order as $c)  TODO implement toString methods in entities
-            //if(is_object($c)) $c=$c->toString();
-        
-            return $this->render('index/order.html.twig',[
-                'order' => $order,
-                'logs' => $logs,
-            ]);
+        return $this->render('index/order.html.twig',[
+            'order' => $order,
+            'logs' => $logs,
+            'user' => $this->getUser()
+        ]);
     }
 
     /**
@@ -75,13 +71,17 @@ class IndexController extends AbstractController
     public function fix(EntityManagerInterface $entityManager){
 
         $userRepo = $entityManager->getRepository(User::class);
+        $orderRepo = $entityManager->getRepository(Order::class);
+        $order = $orderRepo->findOneBy(['id' => 1]);
         $user = $userRepo->findOneBy(['id' => '1']);
 
         $user->setPreferences([
             'indexColumns' => ['id','topic','state']
         ]);
 
-        $entityManager->persist($user);
+        $log = new Log($user, ['add'],$order);
+
+        $entityManager->persist($log);
         $entityManager->flush();
 
         return new Response('<h3>Done</h3>');

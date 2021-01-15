@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Menedżer Zleceń - Logowanie{% endblock %}
+
+{% block body %}
+<div class="text-center" style="width: 500px; margin-left: auto; margin-right: auto; margin-top: 100px; background-color: rgb(33,37,41); padding: 20px; padding-left:80px;padding-right:80px;color:white;">
+<form class="form-signin" method="post" autocomplete="off">
+    <img class="mb-4" src="{{ asset('img/icon.png') }}" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Zaloguj się</h1>
+
+    {% if error %}<div class="alert alert-danger">{{ error.messageKey | trans(error.messageData, 'security') }}</div>{% endif %}
+    
+    <input name="username" type="text" class="form-control" placeholder="login" required autofocus>
+    <br/>
+    <input name="password" type="password" class="form-control" placeholder="hasło" required>
+    <br/>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj</button>
+    <p class="mt-5 mb-3 text-muted">© Order Manager 2020-2021</p>
+</form>
+</div>
+{% endblock %}

@@ -1,29 +1,69 @@
 {% extends 'base.html.twig' %}
+{% set user = 'Krzysztof Marczak' %}
 
-{% block title %}Menedżer Zleceń{% endblock %}
+{% block title %}
+    Zlecenia
+{% endblock %}
 
-{% block body %}
-<style>
-    body{
-        font-size: 20px;
-        color: white;
-        background-color: rgb(20,20,20);
-    }
-</style>
-    <table>
-    <thead>
-        {% for c in allColumns %}
-            <td>{{ c }}</td>
+{% block content %}
+    {# <h4>Filtruj:</h4> #}
+    <form mhetod="post"><div class="input-group mb-3">
+        <span class="input-group-text dark">Klient</span>
+        <select class="form-select form-select-sm bg-dark" name="client">
+            <option selected></option>
+            <option>mTłumaczenia</option>
+        </select>
+        <span class="input-group-text dark">Pracownik</span>
+        <select class="form-select form-select-sm bg-dark" name="staff" style="margin-right: 50px;">
+            <option selected></option>
+            <option>Darcia</option>
+        </select>
+        <input class="form-check-input" type="checkbox" name="settled" checked>
+        <label class="form-check-label" for="flexCheckDefault" style="margin-right: 50px; margin-left: 5px;">Tylko nierozliczone</label>
+        <button class="btn btn-primary" type="button">Wykonaj</button>
+    </div></form>
+    {# <h4>Wykonaj kwerende:</h4> #}
+    <form mhetod="post"><div class="input-group mb-3">
+        <span class="input-group-text dark">Kwerenda</span>
+        <select class="form-select form-select-sm bg-dark" name="query" style="margin-right: 256px;">
+            <option selected>kwerenda3</option>
+            <option>kwerenda1</option>
+        </select>
+        <button class="btn btn-primary" type="button">Wykonaj</button>
+    </div></form>
+
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+            {% for col in columns|keys %}
+                {% if col in app.user.columns %}<th scope="col">{{ attribute(columns, col) }}</th>{% endif %}
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+            {% for col in columns|keys %}
+                {% if col in app.user.columns %}
+                    <td>
+                        {% if attribute(order, col).timestamp is defined %} {{ attribute(order, col) | date('Y-m-d H:i') }}
+                        {% else %} {{ attribute(order, col) }}
+                        {% endif %}
+                    </td>
+                {% endif %}
+            {% endfor %}
+            </tr>
         {% endfor %}
-    </thead>
-    <tbody>
-    {% for o in orders %}
-    <tr>
-        {% for c in allColumns %}
-            <td>{{ attribute(o, c)|default('nie') }}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    <tbody>
+        </tbody>
     </table>
+
+    <style>
+        .dark{
+            background-color: #40484f;
+            color: white;
+        }
+        .bg-dark{
+            color:white;
+        }
+    </style>
 {% endblock %}

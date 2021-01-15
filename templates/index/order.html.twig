@@ -13,7 +13,7 @@
     <table>
     <tbody>
     <tr>
-        {{ order.netto }}
+        
     {# {% for o in order %}
         <td>{{ o }}</td>
     {% endfor %} #}
@@ -24,4 +24,15 @@
         {{ l.time }}
         {{ l.order }}
     {% endfor %}
+    <br/>
+    <h3>Logi:</h3>
+    <table>
+        {% for l in logs %}
+            <td>{{ l.id }}</td>
+            <td>{{ l.user }}</td>
+            <td>{{ l.time }}</td>
+            <td>{{ l.action[0] }}</td>
+            <td>{{ l.order }}</td>
+        {% endfor %}
+    </table>
 {% endblock %}
