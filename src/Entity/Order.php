@@ -94,6 +94,11 @@ class Order
      */
     private $deadline;
 
+    public function __construct(){
+        $this->deleted = false;
+        $this->state = 'przyjęte';
+    }
+
     public function getId(): ?int
     {
         return $this->id;
