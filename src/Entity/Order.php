@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Order
 {
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -94,7 +93,8 @@ class Order
      */
     private $deadline;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->deleted = false;
         $this->state = 'przyjęte';
     }
@@ -272,8 +272,9 @@ class Order
         return $this;
     }
 
-    public function nextState(): ?string{
-        switch($this->state){
+    public function nextState(): ?string
+    {
+        switch ($this->state) {
             case 'przyjęte':
                 return 'wykonane';
             case 'wykonane':
@@ -285,33 +286,38 @@ class Order
         }
     }
 
-    public function getNetto(){
-        if($this->price && $this->pages)
+    public function getNetto()
+    {
+        if ($this->price && $this->pages) {
             return round($this->price * $this->pages, 2);
+        }
+
         return null;
     }
 
-    public function __toString(): String{
+    public function __toString(): string
+    {
         return $this->getId();
     }
 
-    public function getAllColumns(){
+    public function getAllColumns()
+    {
         return [
-            "client",
-            "author",
-            "staff",
-            "baseLang",
-            "targetLang",
-            "deleted",
-            "certified",
-            "pages",
-            "price",
-            "netto",
-            "topic",
-            "state",
-            "info",
-            "adoption",
-            "deadline",
+            'client',
+            'author',
+            'staff',
+            'baseLang',
+            'targetLang',
+            'deleted',
+            'certified',
+            'pages',
+            'price',
+            'netto',
+            'topic',
+            'state',
+            'info',
+            'adoption',
+            'deadline',
         ];
     }
 }

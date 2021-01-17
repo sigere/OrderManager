@@ -10,13 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Log
 {
-    function __construct($user, $action, $order){
+    public function __construct($user, $action, $order)
+    {
         $this->user = $user;
         $this->action = $action;
         $this->order = $order;
 
         $this->time = new \DateTime(date('Y-m-d H:i:s'));
     }
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

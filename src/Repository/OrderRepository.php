@@ -15,6 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class OrderRepository extends ServiceEntityRepository
 {
     private $limit = 100;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Order::class);
@@ -33,7 +34,8 @@ class OrderRepository extends ServiceEntityRepository
     /**
      * @Return Order[]
      */
-    function getByStaff(Staff $staff){
+    public function getByStaff(Staff $staff)
+    {
         return $this->createQueryBuilder('o')
             ->andWhere('o.user = :staff')
             ->setParameter('staff', $staff)

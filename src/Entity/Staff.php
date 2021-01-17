@@ -56,7 +56,8 @@ class Staff
         return $this;
     }
 
-    public function __toString(): String{
-        return $this->getFirstName()." ".$this->getLastName();
+    public function __toString(): string
+    {
+        return $this->getFirstName().' '.$this->getLastName();
     }
 }
