@@ -25,19 +25,23 @@
 {% endblock %}
 
 {% block content %}
+<div class="overlay{% if not addOrderForm.vars.valid %} active{% endif %}" id="overlay"></div>
 <div id="home-top">
     <div id="home-top-user">
         <i class="icon-user" style="float:left; font-size: 70px;color: rgb(2,127,255);"></i>
         <div style="float: left;">{{ app.user.firstName | default("niezalogowano") }}<br/>{{ app.user.lastName | default("niezalogowano") }}</div>
         <div style="clear:both;"></div>
     </div>
-<div id="home-top-add">
-    <a href="#" class="link" onclick="togglePopup('popup-add')"><i class="icon-plus" style="font-size: 30px;"></i>Dodaj zlecenie</a>
-</div>
+
+<a href="#" class="link" onclick="togglePopup('popup-add')">
+  <div id="home-top-add">
+    <i class="icon-plus" style="font-size: 30px;"></i>Dodaj zlecenie  
+  </div>
+</a>
 <div style="clear:both;"></div>
 <div id="home-bot">
   <div id="home-bot-container">
-    <p style="font-size: 25px; margin-left: 20px; float: left;">Moje zlecenia</p>
+    <p style="font-size: 25px; margin-left: 20px; float: left;"><i class="icon-doc" style="font-size: 30px; margin-right: 10px; color: rgb(2,127,255);"></i>Moje zlecenia</p>
     <div style="float:right;padding:10px; font-size: 20px; cursor: pointer;"><a onclick="togglePopup('popup-settings')"><i class="icon-cog"></i></a></div>
     <table class="table table-dark table-hover table-orders">
       <thead>
@@ -72,17 +76,40 @@
 {% endblock %}
 
 {% block popups %}
-<div class="popup popup-add" id="popup-add">
+<div class="popup popup-add{% if not addOrderForm.vars.valid %} active{% endif %}" id="popup-add">
   <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-add')">
   <div style="overflow-y: scroll; height: 100%;padding:5px;">
     <h3 style="margin-bottom: 30px;">Dodaj zlecenie:</h3>
+    <style>
+      .form-errors{
+        float:left;
+        text-align: right;
+        border-radius: 20px;
+        background-color: rgb(176,65,62);
+      }
+      .form-errors ul{
+        list-style-type:none;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        margin-bottom: 0;
+        
+      }
+      .popup-add-value{
+        float:right;
+      }
+    </style>
       {{ form_start(addOrderForm, {'attr':{'autocomplete': 'off'}}) }}
+        {{ form_errors(addOrderForm) }}
         {% for row in addOrderForm %}{% if not loop.last %}
           <div class="popup-add-property">
-            {{ form_label(row) }}
+            <div style="float:left; margin-right: 10px;">{{ form_label(row) }}</div>
+            <div class="form-errors">{{ form_errors(row) }}</div>
             <div class="popup-add-value">
               {{ form_widget(row,{'attr': {'class': 'popup-add-input'}}) }}
             </div>
+            <div style="clear: both;"></div>
           </div>
         {% endif %}{% endfor %}
         <button type="submit" class="btn btn-primary">Dodaj zlecenie</button>

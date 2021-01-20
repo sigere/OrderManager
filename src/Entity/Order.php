@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\OrderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=OrderRepository::class)
@@ -90,7 +91,8 @@ class Order
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Temat nie może być pusty")
      */
     private $topic;
 

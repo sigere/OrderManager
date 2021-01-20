@@ -14,9 +14,6 @@
     height: 100%;
     font-size: 18px;
   }
-  .link{
-    text-decoration: none;
-  } 
   
   #title{
     padding: 10px;
@@ -38,14 +35,32 @@
     float: left;
     /* border: solid 2px; */
   }
+  .link{
+    text-decoration: none;
+    transition: color 0.2s ease-out;
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+  }
   #home-top-add{
     height: 50px;
     margin-top: 90px;
     margin-right: 80px;
-  
+    padding-bottom: 10px;
+    padding-right: 10px;
+    border-radius: 10px;;
     font-size: 20px;
     float: right;
-  
+    color: rgb(2,127,255);
+    background-color: rgb(29,32,35);
+  }
+  #home-top-add:hover{
+    color: rgb(29,32,35);
+    background-color:  rgb(2,127,255);
+    transition: background-color 0.2s ease-out;
+    -webkit-transition: background-color 0.2s ease-out;
+    -moz-transition: background-color 0.2s ease-out;
+    -o-transition: background-color 0.2s ease-out;
   }
   #home-bot{
     margin-left: 10px;
@@ -56,13 +71,6 @@
     border-radius: 20px;
   
     box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
-  }
-  
-  .link {
-    transition: color 0.2s ease-out;
-    -webkit-transition: color 0.2s ease-out;
-    -moz-transition: color 0.2s ease-out;
-    -o-transition: color 0.2s ease-out;
   }
   #sideBarMenu{
     box-shadow: 0 0 20px rgba(0,0,0,0.3);
@@ -173,6 +181,7 @@
   }
   .table-orders th{
     color: rgb(2,127,255);
+    color: white;
   }
   .table-logs th{
     color: rgb(172,6,172);
