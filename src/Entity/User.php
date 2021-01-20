@@ -54,7 +54,29 @@ class User implements UserInterface
      */
     private $staff;
 
-    public function getId(): ?int
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
+    public function __construct(){
+        $this->createdAt = new \DateTime;
+        $this->deletedAt = null;
+        $tmp = new \ReflectionClass('App\Entity\Order');
+        foreach($tmp->getConstant('ALLCOLUMNS') as $value)
+        {
+            $this->preferences['orders_table'][$value] = true;
+        }
+        $this->preferences['orders_table']['langs']=true;
+            
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
@@ -178,5 +200,36 @@ class User implements UserInterface
     public function __toString(): string
     {
         return $this->getFirstName().' '.$this->getLastName();
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function isColumnVisible(string $column): bool
+    {
+        $this->preferences['orders_table']['langs']=true;
+        return $this->getPreferences()['orders_table'][$column]==true;
+        //co jesli nie istenieje taki index $column w tablicy? powineinem sprawdzić isset(...)?
     }
 }

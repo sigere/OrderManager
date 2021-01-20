@@ -1,69 +1,121 @@
 {% extends 'base.html.twig' %}
-{% set user = 'Krzysztof Marczak' %}
 
 {% block title %}
-    Zlecenia
+    Moje zlecenia
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(function(){$(".table").tablesorter({});});
+    jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {window.location = $(this).data("href");});});
+    function togglePopup(popup){
+        document.getElementById("overlay").classList.toggle("active");
+        document.getElementById(popup).classList.toggle("active");
+    }
+    function toggleInfo(){
+        $( "#popup-ok" ).fadeIn(1);
+        // document.getElementById('popup-ok').classList.toggle("active");
+        setTimeout(function(){
+            $( "#popup-ok" ).fadeOut(1200);
+            },
+        2000);
+    }
+</script>
 {% endblock %}
 
 {% block content %}
-    {# <h4>Filtruj:</h4> #}
-    <form mhetod="post"><div class="input-group mb-3">
-        <span class="input-group-text dark">Klient</span>
-        <select class="form-select form-select-sm bg-dark" name="client">
-            <option selected></option>
-            <option>mTłumaczenia</option>
-        </select>
-        <span class="input-group-text dark">Pracownik</span>
-        <select class="form-select form-select-sm bg-dark" name="staff" style="margin-right: 50px;">
-            <option selected></option>
-            <option>Darcia</option>
-        </select>
-        <input class="form-check-input" type="checkbox" name="settled" checked>
-        <label class="form-check-label" for="flexCheckDefault" style="margin-right: 50px; margin-left: 5px;">Tylko nierozliczone</label>
-        <button class="btn btn-primary" type="button">Wykonaj</button>
-    </div></form>
-    {# <h4>Wykonaj kwerende:</h4> #}
-    <form mhetod="post"><div class="input-group mb-3">
-        <span class="input-group-text dark">Kwerenda</span>
-        <select class="form-select form-select-sm bg-dark" name="query" style="margin-right: 256px;">
-            <option selected>kwerenda3</option>
-            <option>kwerenda1</option>
-        </select>
-        <button class="btn btn-primary" type="button">Wykonaj</button>
-    </div></form>
-
-    <table class="table table-dark table-hover">
-        <thead>
-            <tr>
-            {% for col in columns|keys %}
-                {% if col in app.user.columns %}<th scope="col">{{ attribute(columns, col) }}</th>{% endif %}
-            {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
+<div id="home-top">
+    <div id="home-top-user">
+        <i class="icon-user" style="float:left; font-size: 70px;color: rgb(2,127,255);"></i>
+        <div style="float: left;">{{ app.user.firstName | default("niezalogowano") }}<br/>{{ app.user.lastName | default("niezalogowano") }}</div>
+        <div style="clear:both;"></div>
+    </div>
+<div id="home-top-add">
+    <a href="#" class="link" onclick="togglePopup('popup-add')"><i class="icon-plus" style="font-size: 30px;"></i>Dodaj zlecenie</a>
+</div>
+<div style="clear:both;"></div>
+<div id="home-bot">
+  <div id="home-bot-container">
+    <p style="font-size: 25px; margin-left: 20px; float: left;">Moje zlecenia</p>
+    <div style="float:right;padding:10px; font-size: 20px; cursor: pointer;"><a onclick="togglePopup('popup-settings')"><i class="icon-cog"></i></a></div>
+    <table class="table table-dark table-hover table-orders">
+      <thead>
+        <tr>
+          <th>id</th>
+          {% if app.user.isColumnVisible('client') %} <th>Klient</th> {% endif %}
+          {% if app.user.isColumnVisible('topic') %} <th>Temat</th> {% endif %}
+          {% if app.user.isColumnVisible('adoption') %} <th>Wprowadzono</th> {% endif %}
+          {% if app.user.isColumnVisible('langs') %} <th>Język</th> {% endif %}
+          {% if app.user.isColumnVisible('deadline') %} <th>Termin</th> {% endif %}
+          <th>Zmien status</th>
+          <th>Usuń</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for order in orders %}
-            <tr>
-            {% for col in columns|keys %}
-                {% if col in app.user.columns %}
-                    <td>
-                        {% if attribute(order, col).timestamp is defined %} {{ attribute(order, col) | date('Y-m-d H:i') }}
-                        {% else %} {{ attribute(order, col) }}
-                        {% endif %}
-                    </td>
-                {% endif %}
-            {% endfor %}
-            </tr>
+          <tr class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>
+            <td>{{ order.id }}</td>
+            {% if app.user.isColumnVisible('client') %} <td>{{ order.client.alias }}</td> {% endif %}
+            {% if app.user.isColumnVisible('topic') %} <td>{{ order.topic }}</td> {% endif %}
+            {% if app.user.isColumnVisible('adoption') %} <td>{{ order.adoption | date('Y-m-d') }}</td> {% endif %}
+            {% if app.user.isColumnVisible('langs') %} <td>{{ order.baseLang.short }} <i class="icon-right" style="font-size: 14px;"></i> {{ order.targetLang.short }}</td> {% endif %}
+            {% if app.user.isColumnVisible('deadline') %} <td>{{ order.deadline | date('Y-m-d H:i') }}</td> {% endif %}
+            <td><button class="actionButton">{{ order.nextState }}</button></td>
+            <td><a href="#" class="trash"><i class="icon-trash"></i></a></td>
+          </tr>  
         {% endfor %}
-        </tbody>
+      </tbody>
     </table>
+    </div>
+</div>
+{% endblock %}
 
-    <style>
-        .dark{
-            background-color: #40484f;
-            color: white;
-        }
-        .bg-dark{
-            color:white;
-        }
-    </style>
+{% block popups %}
+<div class="popup popup-add" id="popup-add">
+  <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-add')">
+  <div style="overflow-y: scroll; height: 100%;padding:5px;">
+    <h3 style="margin-bottom: 30px;">Dodaj zlecenie:</h3>
+      {{ form_start(addOrderForm, {'attr':{'autocomplete': 'off'}}) }}
+        {% for row in addOrderForm %}{% if not loop.last %}
+          <div class="popup-add-property">
+            {{ form_label(row) }}
+            <div class="popup-add-value">
+              {{ form_widget(row,{'attr': {'class': 'popup-add-input'}}) }}
+            </div>
+          </div>
+        {% endif %}{% endfor %}
+        <button type="submit" class="btn btn-primary">Dodaj zlecenie</button>
+      {{ form_end(addOrderForm) }}
+  </div>
+</div>
+
+<div class="popup popup-settings" id="popup-settings">
+  <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-settings')">
+  <div style="float:left; width: 230px;">
+    <h3 style="">Pokaż kolumny</h3>
+    <form class="">
+      <label class="popup-checkbox"><input type="checkbox">id</label>
+      <label class="popup-checkbox"><input type="checkbox">Klient</label>
+      <label class="popup-checkbox"><input type="checkbox">Temat</label>
+      <label class="popup-checkbox"><input type="checkbox">Wprowadzono</label>
+      <label class="popup-checkbox"><input type="checkbox">Termin</label>
+    </form>
+  </div>
+  <div style="float:left; width: 230px;">
+    <h3 style="">Filtruj</h3>
+    <form class="">
+      <label class="popup-checkbox"><input type="checkbox">Przyjęte</label>
+      <label class="popup-checkbox"><input type="checkbox">Wykonane</label>
+      <label class="popup-checkbox"><input type="checkbox">Wysłane</label>
+      <label class="popup-checkbox"><input type="checkbox">Rozliczone</label>
+      <label class="popup-checkbox"><input type="checkbox">Usunięte</label>
+    </form>
+    <div style="clear: both;"></div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div style="clear: both;"></div>
+  <input type="button" class="form-control" value="ok" onclick="togglePopup('popup-settings');">
+</div>
 {% endblock %}

@@ -1,3 +1,180 @@
-html, body{
+ html, body {
     height: 100%;
-}
+    background-color: rgb(29,32,35);
+  }
+  .content{
+    color: white
+  }
+  a{
+    /* color: rgb(0,143,224); */
+    color: white;
+    text-decoration: none;
+  }
+  #sideBarMenu{
+    height: 100%;
+    font-size: 18px;
+  }
+  .link{
+    text-decoration: none;
+  } 
+  
+  #title{
+    padding: 10px;
+    font-size: 22px;
+    margin-left: 25px;
+  }
+  #home-top{
+    height: 200px;
+  
+  
+    /* border: solid 1px yellow; */
+  }
+  #home-top-user{
+    height: 120px;
+    margin: 40px;
+  
+    font-size: 30px;
+  
+    float: left;
+    /* border: solid 2px; */
+  }
+  #home-top-add{
+    height: 50px;
+    margin-top: 90px;
+    margin-right: 80px;
+  
+    font-size: 20px;
+    float: right;
+  
+  }
+  #home-bot{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  #home-bot-container{
+    padding: 10px;
+    border-radius: 20px;
+  
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
+  }
+  
+  .link {
+    transition: color 0.2s ease-out;
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+  }
+  #sideBarMenu{
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    /* border: solid 3px red; */
+  }
+  .trash{
+    transition: color 0.2s ease-out;
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+  }
+  .trash:hover{
+    color: red;
+  }
+  .actionButton{
+    color: white;
+    padding: 0 10px;
+    border-radius: 15px;
+    text-decoration:none;
+    background-color:#222222;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  #order-top{
+    height: 200px;
+  
+    /* border: solid 2px white; */
+  }
+  #order-top-title{
+    height: 120px;
+    margin: 40px;
+  
+    font-size: 30px;
+  
+    float: left;
+    /* border: solid 2px red; */
+  }
+  #order-top-status{
+    height: 40px;
+    margin-top: 90px;
+    margin-right: 30px;
+  
+    font-size: 20px;
+    float:right;
+    /* border: solid 2px yellow; */
+  }
+  #order-mid{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 40px;
+  
+    /* border: solid 2px red; */
+  }
+  #order-mid-left{
+    border-radius: 20px;
+    background-color: rgb(33,36,39);
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+    margin-right: 8px;
+    padding: 10px;
+  
+    /* border: solid 2px white; */
+  }
+  #order-mid-right{
+    border-radius: 20px;
+    background-color: rgb(33,36,39);
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+    margin-left: 8px;
+    padding: 10px;
+  
+  }
+  .order-mid-property{
+    margin-top: 5px;
+    /* border: solid 1px white; */
+  
+    padding: 10px;
+    font-size: 17px;
+    /* color: rgb(186, 191, 197); */
+    color: rgb(133, 133, 133);
+  }
+  .order-mid-value{
+    float:right;
+    background-color: rgb(56,63,69);
+    border-radius: 20px;
+    padding: 6px 20px;
+    color: white;
+  
+  }
+  .order-mid-value:hover{
+    cursor: pointer;
+    color: rgb(2,127,255);
+    transition: color 0.3s ease-out;
+    -webkit-transition: color 0.3s ease-out;
+    -moz-transition: color 0.3s ease-out;
+    -o-transition: color 0.3s ease-out;
+    /* background-color: rgb(50,53,57);  */
+  }
+  #order-bot{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  }
+  #order-bot-container{
+    padding: 10px;
+    border-radius: 20px;
+  
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
+  }
+  .table-orders th{
+    color: rgb(2,127,255);
+  }
+  .table-logs th{
+    color: rgb(172,6,172);
+  }
+  [data-href] { cursor: pointer; }

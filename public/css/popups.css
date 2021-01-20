@@ -1,0 +1,67 @@
+.overlay{
+  position:fixed;
+  top:0px;
+  left:0px;
+  width:100vw;
+  height:100vh;
+  background:rgba(0,0,0,0.7);
+  z-index:1;
+  display:none;
+}
+.popup{
+  display: none;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  background:rgb(29,32,35);
+  z-index:1;
+  text-align:center;
+  padding:20px;
+  box-sizing:border-box;
+  border-radius: 20px;
+  color:white;
+}
+.popup-add{
+  width: 700px;
+  /* height: 600px; */
+  height: 80%;
+}
+
+.popup-settings{
+  width:500px;
+  height:250px;
+}
+
+.popup.active{
+  display: block;
+}
+.overlay.active{
+  display: block;
+}
+.popup-checkbox{
+  padding: 5px;
+}
+.popup-add-property{
+  background-color: rgb(45,50,55);
+  text-align: left;
+  padding: 15px;
+  padding-left: 20px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.7);
+  height: 60px;
+  font-size: 16px;
+}
+.popup-add-value{
+  float: right;
+}
+.popup-add-input{
+  border-radius: 15px;
+  padding: 3px;
+  ;
+}
+.popup-add-value textarea{
+  height: 30px;
+}

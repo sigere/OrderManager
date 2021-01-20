@@ -15,8 +15,7 @@ class Log
         $this->user = $user;
         $this->action = $action;
         $this->order = $order;
-
-        $this->time = new \DateTime(date('Y-m-d H:i:s'));
+        $this->createdAt = new \DateTime();
     }
 
     /**
@@ -29,7 +28,7 @@ class Log
     /**
      * @ORM\Column(type="datetime")
      */
-    private $time;
+    private $createdAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
@@ -38,9 +37,9 @@ class Log
     private $user;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string", length=100)
      */
-    private $action = [];
+    private $action = "";
 
     /**
      * @ORM\ManyToOne(targetEntity=Order::class)
@@ -53,9 +52,9 @@ class Log
         return $this->id;
     }
 
-    public function getTime()
+    public function getCreatedAt()
     {
-        return $this->time->format('Y-m-d H:i:s');
+        return $this->createdAt;
     }
 
     public function getUser(): ?User
@@ -70,12 +69,12 @@ class Log
         return $this;
     }
 
-    public function getAction(): ?array
+    public function getAction(): string
     {
         return $this->action;
     }
 
-    public function setAction(array $action): self
+    public function setAction(string $action): self
     {
         $this->action = $action;
 

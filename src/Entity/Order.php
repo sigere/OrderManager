@@ -11,6 +11,27 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Order
 {
+    public const ALLCOLUMNS = [
+        'client',
+        'author',
+        'staff',
+        'baseLang',
+        'targetLang',
+        'deleted',
+        'certified',
+        'pages',
+        'price',
+        'netto',
+        'topic',
+        'state',
+        'info',
+        'adoption',
+        'deadline',
+    ];
+    public const PRZYJETE = 'przyjęte';
+    public const WYKONANE = 'wykonane';
+    public const WYSLANE = 'wysłane';
+    public const ROZLICZONE = 'rozliczone';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -49,9 +70,9 @@ class Order
     private $targetLang;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private $deleted;
+    private $deletedAt;
 
     /**
      * @ORM\Column(type="boolean")
@@ -95,7 +116,7 @@ class Order
 
     public function __construct()
     {
-        $this->deleted = false;
+        $this->deletedAt = null;
         $this->state = 'przyjęte';
     }
 
@@ -109,7 +130,7 @@ class Order
         return $this->client;
     }
 
-    public function setClient(?Client $client): self
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
@@ -121,7 +142,7 @@ class Order
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(User $author): self
     {
         $this->author = $author;
 
@@ -133,7 +154,7 @@ class Order
         return $this->staff;
     }
 
-    public function setStaff(?Staff $staff): self
+    public function setStaff(Staff $staff): self
     {
         $this->staff = $staff;
 
@@ -145,7 +166,7 @@ class Order
         return $this->baseLang;
     }
 
-    public function setBaseLang(?Lang $baseLang): self
+    public function setBaseLang(Lang $baseLang): self
     {
         $this->baseLang = $baseLang;
 
@@ -157,21 +178,21 @@ class Order
         return $this->targetLang;
     }
 
-    public function setTargetLang(?Lang $targetLang): self
+    public function setTargetLang(Lang $targetLang): self
     {
         $this->targetLang = $targetLang;
 
         return $this;
     }
 
-    public function getDeleted(): ?bool
+    public function getDeletedAt(): ?Datetime
     {
-        return $this->deleted;
+        return $this->deletedAt;
     }
 
-    public function setDeleted(bool $deleted): self
+    public function setDeletedAt(bool $deletedAt): self
     {
-        $this->deleted = $deleted;
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }
@@ -250,7 +271,7 @@ class Order
 
     public function getAdoption()
     {
-        return $this->adoption->format('Y-m-d H:i');
+        return $this->adoption;
     }
 
     public function setAdoption(\DateTimeInterface $adoption): self
@@ -262,7 +283,7 @@ class Order
 
     public function getDeadline()
     {
-        return $this->deadline->format('Y-m-d H:i');
+        return $this->deadline;
     }
 
     public function setDeadline(\DateTimeInterface $deadline): self
@@ -272,52 +293,30 @@ class Order
         return $this;
     }
 
-    public function nextState(): ?string
+    public function nextState(): string
     {
         switch ($this->state) {
-            case 'przyjęte':
-                return 'wykonane';
-            case 'wykonane':
-                return 'wysłane';
-            case 'wysłane':
-                return 'rozliczone';
+            case self::PRZYJETE:
+                return self::WYKONANE;
+            case self::WYKONANE:
+                return self::WYSLANE;
+            case self::WYSLANE:
+                return self::ROZLICZONE;
             default:
-                return null;
+                return '';
         }
     }
 
-    public function getNetto()
+    public function getNetto() : float
     {
         if ($this->price && $this->pages) {
             return round($this->price * $this->pages, 2);
         }
-
-        return null;
+        return 0.00;
     }
 
     public function __toString(): string
     {
         return $this->getId();
-    }
-
-    public function getAllColumns()
-    {
-        return [
-            'client',
-            'author',
-            'staff',
-            'baseLang',
-            'targetLang',
-            'deleted',
-            'certified',
-            'pages',
-            'price',
-            'netto',
-            'topic',
-            'state',
-            'info',
-            'adoption',
-            'deadline',
-        ];
     }
 }

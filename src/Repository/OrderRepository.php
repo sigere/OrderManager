@@ -27,14 +27,14 @@ class OrderRepository extends ServiceEntityRepository
     public function getActive()
     {
         return $this->createQueryBuilder('o')
-            ->andWhere('o.deleted <> 1')
+            ->andWhere('o.deletedAt IS NULL')
         ;
     }
 
     /**
      * @Return Order[]
      */
-    public function getByStaff(Staff $staff)
+    public function getByStaff(Staff $staff) : array
     {
         return $this->createQueryBuilder('o')
             ->andWhere('o.user = :staff')

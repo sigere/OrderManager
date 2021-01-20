@@ -1,0 +1,193 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    ZLecenie #{{ order.id }}
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(function(){$(".table").tablesorter({});});
+    jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {window.location = $(this).data("href");});});
+    function togglePopup(popup){
+        document.getElementById("overlay").classList.toggle("active");
+        document.getElementById(popup).classList.toggle("active");
+    }
+    function toggleInfo(){
+        $( "#popup-ok" ).fadeIn(1);
+        // document.getElementById('popup-ok').classList.toggle("active");
+        setTimeout(function(){
+            $( "#popup-ok" ).fadeOut(1200);
+            },
+        2000);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="order-top">
+    <div id="order-top-title">
+      <div style="float:left;"><i class="icon-doc" style="font-size: 60px;color: rgb(2,127,255);"></i></div>
+      <div style="float:left; padding-top: 5px;">
+        #{{ order.id }}: {{ order.topic }}<br/>
+        <p style="font-size: 20px;">Dodane przez: <i class="icon-user"></i>{{ order.author.firstName }}</p>
+      </div>
+      <div style="clear:both;"></div>
+    </div>
+</div>
+<div class="row" id="order-mid">
+    <div class="col-6" style="padding: 0;"><div id="order-mid-left">
+      <div class="order-mid-property">Klient<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.client.alias }}</div></div>
+      <div class="order-mid-property">Status<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.state }}</div></div>
+      <div class="order-mid-property">Liczba stron<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.pages }}</div></div>
+      <div class="order-mid-property">Cena za stronę<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.price }} PLN</div></div>
+      <div class="order-mid-property">Netto<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.getNetto }} PLN</div></div>
+    </div></div>
+    <div class="col-6" style="padding: 0;"><div id="order-mid-right">
+      <div class="order-mid-property">Język<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.baseLang.short }} <i class="icon-right"></i> {{ order.targetLang.short }}</div></div>
+      <div class="order-mid-property">Uwierzytelnione<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.certified ? "tak" : "nie" }}</div></div>
+      <div class="order-mid-property">Wprowadzono<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.adoption|date('d.m.Y') }}</div></div>
+      <div class="order-mid-property">Termin<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.deadline|date('d.m.Y H:i') }}</div></div>
+      <div class="order-mid-property">Notatki<div class="order-mid-value" onclick="togglePopup('popup-edit')" >{{ order.info }}
+      </div>
+      </div>
+    </div></div>
+  </div>
+  <div id="order-bot">
+    <div id="order-bot-container"><p style="font-size: 25px; margin-left: 20px;">Historia zmian</p>
+      <table class="table table-dark table-hover table-logs">
+        <thead>
+          <th>data</th>
+          <th>użytkownik</th>
+          <th>akcja</th>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log.createdAt | date('Y-m-d H:i:j') }}</td>
+              <td>{{ log.user.username }}</td>
+              <td>{{ log.action }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block popups %}
+<div class="popup popup-add" id="popup-add">
+  <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-add')">
+  <div style="overflow-y: scroll; height: 100%;padding:5px;">
+    <h3 style="margin-bottom: 30px;">Dodaj zlecenie:</h3>
+    <form class=""></form>
+      <div class="popup-add-property">
+        Temat
+        <div class="popup-add-value"><input class="popup-add-input" type="text" /></div>
+      </div>
+      <div class="popup-add-property">
+        Notatki
+        <div class="popup-add-value"><input class="popup-add-input" type="text" /></div>
+      </div>
+      <div class="popup-add-property">
+        Strony
+        <div class="popup-add-value"><input class="popup-add-input" type="number" step="0.01" /></div>
+      </div>
+      <div class="popup-add-property">
+        Cena za stronę
+        <div class="popup-add-value"><input class="popup-add-input" type="number" step="0.01"/></div>
+      </div>
+      <div class="popup-add-property">
+        Uwierzytelniane
+        <div class="popup-add-value"><input class="popup-add-input"  type="checkbox" /></div>
+      </div>
+      <div class="popup-add-property">
+        Klient
+        <div class="popup-add-value">
+          <select class="popup-add-input">
+            <option></option>
+            <option>Wrocałw</option>
+            <option>Kadamaxo</option>
+          </select>
+        </div>
+      </div>
+      <div class="popup-add-property">
+        Klient
+        <div class="popup-add-value">
+          <select class="popup-add-input">
+            <option></option>
+            <option>Wrocałw</option>
+            <option>Kadamaxo</option>
+          </select>
+        </div>
+      </div>
+      <div class="popup-add-property">
+        Język z
+        <div class="popup-add-value">
+          <select class="popup-add-input">
+            <option></option>
+            <option>PL</option>
+            <option>UA</option>
+            <option>RU</option>
+          </select>
+        </div>
+      </div>
+      <div class="popup-add-property">
+        Język na
+        <div class="popup-add-value">
+          <select class="popup-add-input">
+            <option></option>
+            <option>PL</option>
+            <option>UA</option>
+            <option>RU</option>
+          </select>
+        </div>
+      </div>
+      <div class="popup-add-property">
+        Data wprowadzenia
+        <div class="popup-add-value"><input class="popup-add-input" type="date"/></div>
+      </div>
+      <div class="popup-add-property">
+        Termin
+        <div class="popup-add-value"><input class="popup-add-input" type="date"/></div>
+      </div>
+      <div class="popup-add-property">
+        Termin
+        <div class="popup-add-value"><input class="popup-add-input" type="time"/></div>
+      </div>
+      <br/>
+      <input type="button" class="btn btn-primary" value="Dodaj">
+      <br/><br/>
+    </form>
+  </div>
+</div>
+
+<div class="popup popup-settings" id="popup-settings">
+  <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-settings')">
+  <div style="float:left; width: 230px;">
+    <h3 style="">Pokaż kolumny</h3>
+    <form class="">
+      <label class="popup-checkbox"><input type="checkbox">id</label>
+      <label class="popup-checkbox"><input type="checkbox">Klient</label>
+      <label class="popup-checkbox"><input type="checkbox">Temat</label>
+      <label class="popup-checkbox"><input type="checkbox">Wprowadzono</label>
+      <label class="popup-checkbox"><input type="checkbox">Termin</label>
+    </form>
+  </div>
+  <div style="float:left; width: 230px;">
+    <h3 style="">Filtruj</h3>
+    <form class="">
+      <label class="popup-checkbox"><input type="checkbox">Przyjęte</label>
+      <label class="popup-checkbox"><input type="checkbox">Wykonane</label>
+      <label class="popup-checkbox"><input type="checkbox">Wysłane</label>
+      <label class="popup-checkbox"><input type="checkbox">Rozliczone</label>
+      <label class="popup-checkbox"><input type="checkbox">Usunięte</label>
+    </form>
+    <div style="clear: both;"></div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div style="clear: both;"></div>
+  <input type="button" class="form-control" value="ok" onclick="togglePopup('popup-settings');">
+</div>
+{% endblock %}

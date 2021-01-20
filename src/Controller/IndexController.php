@@ -5,81 +5,98 @@ namespace App\Controller;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\User;
+use App\Entity\Staff;
+use App\Form\AddOrderForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class IndexController extends AbstractController
 {
     /**
      * @Route("/", name="index")
      */
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, Request $request, UrlGeneratorInterface $urlGenerator): Response
     {
-        $userRepo = $entityManager->getRepository(User::class);
-        $user = $userRepo->findOneBy(['id' => '1']);
+        $user = $this->getUser();
         $repo = $entityManager->getRepository(Order::class);
         $orders = $repo->getActive()
-            ->andWhere('o.staff = '.$user->getStaff()->getId())
+            ->andWhere('o.staff = :staff')
+            ->setParameter('staff', $user->getStaff())
             ->setMaxResults(100)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult()
         ;
 
-        $tmp = new Order();
-
+        $form = $this->createForm(AddOrderForm::class);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $order = $form->getData();
+            $order->setAuthor($this->getUser());
+            $log = new Log($user,"Dodano zlecenie",$order);
+            $entityManager->persist($order);
+            $entityManager->persist($log);
+            $entityManager->flush();
+            return new RedirectResponse($urlGenerator->generate('order',['id' => $order->getId()]));
+        }
+        
         return $this->render('index/index.html.twig', [
-            'user' => $user,
             'orders' => $orders,
-            'colToDisplay' => $user->getPreferences()['indexColumns'],
-            'allColumns' => $tmp->getAllColumns(),
+            'addOrderForm'=> $form->createView(),
         ]);
     }
+//-----------------------Development-bajzel-DO-NOT-READ-------------------
 
     /**
-     * @Route("/zlecenie/{id}")
+     * @Route("/addOrder", name="addOrder")
      */
-    public function order($id, EntityManagerInterface $entityManager)
-    {
-        $orderRepo = $entityManager->getRepository(Order::class);
-        $order = $orderRepo->findOneBy(['id' => $id]);
+    public function addOrder(Request $request){
+        $form = $this->createForm(AddOrderForm::class);
 
-        if (!$order) {
-            throw $this->createNotFoundException('Nie znaleziono zlecenia');
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $data = $form->getData();
+            dd($data);
+            $order = new Order();
+            $order->setTopic($data['topic']);
         }
 
-        $logRepo = $entityManager->getRepository(Log::class);
-        $logs = $logRepo->findBy(['order' => $order]);
-
-        $userRepo = $entityManager->getRepository(User::class);
-        $user = $userRepo->findOneBy(['id' => '1']);
-
-        return $this->render('index/order.html.twig', [
-            'order' => $order,
-            'logs' => $logs,
-            'user' => $this->getUser(),
+        return $this->render('index/addOrder.html.twig', [
+            'addOrderForm'=> $form->createView(),
         ]);
     }
 
     /**
      * @Route("/fix", name="fix")
      */
-    public function fix(EntityManagerInterface $entityManager)
+    public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
     {
-        $userRepo = $entityManager->getRepository(User::class);
-        $orderRepo = $entityManager->getRepository(Order::class);
-        $order = $orderRepo->findOneBy(['id' => 1]);
-        $user = $userRepo->findOneBy(['id' => '1']);
+        $staffRepo = $entityManager->getRepository(Staff::class);
+        // $orderRepo = $entityManager->getRepository(Order::class);
+        // $order = $orderRepo->findOneBy(['id' => 1]);
+        $staff = $staffRepo->findOneBy(['id' => '1']);
 
-        $user->setPreferences([
-            'indexColumns' => ['id', 'topic', 'state'],
-        ]);
+        // $user->setPreferences([
+        //     'indexColumns' => ['id', 'topic', 'state'],
+        // ]);
 
-        $log = new Log($user, ['add'], $order);
+        // $log = new Log($user, ['add'], $order);
 
-        $entityManager->persist($log);
+        $user = new User();
+        $user->setFirstName("siger");
+        $user->setLastName("siger");
+        $user->setUsername("siger");
+        $user->setRoles(['ROLE_USER', "ROLE_ADMIN"]);
+        $user->setPassword($passwordEncoder->encodePassword($user, "admin123"));
+        $user->setStaff($staff);
+        dd($user);
+        $entityManager->persist($user);
         $entityManager->flush();
 
         return new Response('<h3>Done</h3>');

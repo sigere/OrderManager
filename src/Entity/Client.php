@@ -52,6 +52,21 @@ class Client
      */
     private $country;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
+    public function __construct(){
+        $this->getCreatedAt = new \DateTime;
+        $this->deletedAd = null;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -144,5 +159,22 @@ class Client
     public function __toString(): string
     {
         return $this->getAlias();
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
     }
 }
