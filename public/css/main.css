@@ -2,6 +2,15 @@
     height: 100%;
     background-color: rgb(29,32,35);
   }
+  .navbar{
+    background-color: rgb(2,172,255);
+  }
+  .nav-link-active{
+    color: rgb(2,127,255);
+  }
+  .flex-column{
+    margin-left: 10px;
+  }
   .content{
     color: white
   }
@@ -94,6 +103,9 @@
     text-align: center;
     transition: all 0.2s;
   }
+  .actionButton:hover{
+    color: rgb(2,127,255);
+  }
   #order-top{
     height: 200px;
   
@@ -174,16 +186,26 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   }
   #order-bot-container{
-    padding: 10px;
-    border-radius: 20px;
-  
+    padding: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(33,37,41);
     box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
+  }
+  .order-bot-header{
+    background-color: rgb(2,127,255);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 3px;
+    padding-left: 10px;
+  }
+  .inside-table{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
   }
   .table-orders th{
     color: rgb(2,127,255);
     color: white;
-  }
-  .table-logs th{
-    color: rgb(172,6,172);
   }
   [data-href] { cursor: pointer; }

@@ -22,11 +22,11 @@
         {% block javascripts %}
         {% endblock %}
         {% block header %}
-            <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow" style="height: 55px;">
+            <header class="navbar sticky-top flex-md-nowrap p-0 shadow" style="height: 55px;">
                 <a class="navbar-brand col-3" id="title" href="{{ path('index') }}">Menedżer Zleceń</a>
                 <ul class="navbar-nav px-3">
                     <li class="nav-item text-nowrap">
-                    <a class="nav-link" href="{{ path('logout') }}"><i class="icon-user"></i>{{ app.user.username | default("niezalogowano") }} - wyloguj <i class="icon-logout"></i></a>
+                    <a class="nav-link" href="{{ path('logout') }}"><i class="icon-user"></i>{{ app.user.firstName | default("niezalogowano") }} {{ app.user.lastName | default("niezalogowano") }}  |  wyloguj <i class="icon-logout"></i></a>
                     </li>
                 </ul>
             </header>
@@ -35,27 +35,27 @@
         <div class="container-fluid" style="height: calc(100% - 55px);">
             <div class="row" style="height: 100%;">
                 <nav class="col-2 bg-dark sidebar" id="sideBarMenu">
-                <div class="position-sticky pt-3" style="height: 100%;">
+                    <div class="position-sticky pt-3" style="height: 100%;">
                         <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link"  href="{{ path('index') }}">
+                            <a class="nav-link{% if app.request.attributes.get( '_route' ) starts with 'index' %} nav-link-active{% endif %}"  href="{{ path('index') }}">
                             <i class="icon-home"></i>
                             Moje zlecenia
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item{% if app.request.attributes.get( '_route' ) starts with 'queries' %} nav-link-active{% endif %}">
                             <a class="nav-link" href="{{ path('queries') }}">
                             <i class="icon-th-list"></i>
                             Kwerendy
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item{% if app.request.attributes.get( '_route' ) starts with 'clients' %} nav-link-active{% endif %}">
                             <a class="nav-link" href="{{ path('clients') }}">
                             <i class="icon-users"></i>
                             Klienci
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item{% if app.request.attributes.get( '_route' ) starts with 'invoices' %} nav-link-active{% endif %}">
                             <a class="nav-link" href="{{ path('invoices') }}">
                             <i class="icon-doc"></i>
                             Faktury

@@ -28,7 +28,7 @@
 <div class="overlay{% if not addOrderForm.vars.valid %} active{% endif %}" id="overlay"></div>
 <div id="home-top">
     <div id="home-top-user">
-        <i class="icon-user" style="float:left; font-size: 70px;color: rgb(2,127,255);"></i>
+        <i class="icon-user" style="float:left; font-size: 70px;"></i>
         <div style="float: left;">{{ app.user.firstName | default("niezalogowano") }}<br/>{{ app.user.lastName | default("niezalogowano") }}</div>
         <div style="clear:both;"></div>
     </div>
@@ -41,7 +41,7 @@
 <div style="clear:both;"></div>
 <div id="home-bot">
   <div id="home-bot-container">
-    <p style="font-size: 25px; margin-left: 20px; float: left;"><i class="icon-doc" style="font-size: 30px; margin-right: 10px; color: rgb(2,127,255);"></i>Moje zlecenia</p>
+    <p style="font-size: 25px; margin-left: 20px; float: left;"><i class="icon-doc" style="font-size: 30px; margin-right: 10px;"></i>Moje zlecenia</p>
     <div style="float:right;padding:10px; font-size: 20px; cursor: pointer;"><a onclick="togglePopup('popup-settings')"><i class="icon-cog"></i></a></div>
     <table class="table table-dark table-hover table-orders">
       <thead>
@@ -65,7 +65,7 @@
             {% if app.user.isColumnVisible('adoption') %} <td>{{ order.adoption | date('Y-m-d') }}</td> {% endif %}
             {% if app.user.isColumnVisible('langs') %} <td>{{ order.baseLang.short }} <i class="icon-right" style="font-size: 14px;"></i> {{ order.targetLang.short }}</td> {% endif %}
             {% if app.user.isColumnVisible('deadline') %} <td>{{ order.deadline | date('Y-m-d H:i') }}</td> {% endif %}
-            <td><button class="actionButton">{{ order.nextState }}</button></td>
+            <td><button class="btn actionButton"><i class="icon-ok"></i>{{ order.nextState }}</button></td>
             <td><a href="#" class="trash"><i class="icon-trash"></i></a></td>
           </tr>  
         {% endfor %}
