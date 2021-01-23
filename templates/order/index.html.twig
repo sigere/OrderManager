@@ -30,7 +30,7 @@
       <div style="float:left;"><i class="icon-doc" style="font-size: 60px;color: rgb(2,127,255);"></i></div>
       <div style="float:left; padding-top: 5px;">
         #{{ order.id }}: {{ order.topic }}<br/>
-        <p style="font-size: 20px;">Dodane przez: <i class="icon-user"></i>{{ order.author.firstName }}</p>
+        <p style="font-size: 20px;">Dodane przez: <i class="icon-user"></i>{{ order.author.firstName }} {{ order.author.lastName }}</p>
       </div>
       <div style="clear:both;"></div>
     </div>
@@ -54,14 +54,14 @@
     </div></div>
   </div>
   <div id="order-bot">
-    <div id="order-bot-container" class="">
+    <div id="order-bot-container">
       <div class="order-bot-header">
         <p style="font-size: 20px; margin-left: 8px; margin-bottom: 2px; margin-top: 0;">
           Historia zmian
         </p>
       </div>
       <div class="inside-table">
-      <table class="table table-dark table-hover table-logs">
+      <table class="table table-dark table-hover inside-table">
         <thead>
           <th>data</th>
           <th>użytkownik</th>

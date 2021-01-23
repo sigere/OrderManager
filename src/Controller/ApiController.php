@@ -12,6 +12,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiController extends AbstractController
 {
     /**
+     * @Route("/api/changeState", methods={"POST"})
+     */
+    public function changeState(Request $request){
+        //todo
+        return new Response('zmieniasz status na '.$request->request->get('state').'!');
+    }
+
+    /**
+     * @Route("/api/deleteOrder", methods={"POST"})
+     */
+    public function deleteOrder(){
+        //todo
+        return new Response('usuwasz zlecenie!');
+    }
+
+    /**
      * @Route("/api/addOrder", methods={"POST"})
      */
     public function addOrder(Request $request, EntityManagerInterface $entityManager): Response

@@ -1,22 +1,50 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Menedżer Zleceń{% endblock %}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset("img/icon.png") }}" />
+    <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+    {% block stylesheets %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ asset('css/main.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/popups.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/fontello.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/animation.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/fontello-codes.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/fontello-embedded.css') }}"/>
+    {% endblock %}
+</head>
+<body>
+    <div class="text-center" >
+    <form class="form-signin" method="post" autocomplete="off">
+        <img class="mb-4" src="{{ asset('img/icon.png') }}" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Zaloguj się</h1>
 
-{% block title %}Menedżer Zleceń - Logowanie{% endblock %}
-
-{% block body %}
-<div class="text-center" style="width: 500px; margin-left: auto; margin-right: auto; margin-top: 100px; background-color: rgb(33,37,41); padding: 20px; padding-left:80px;padding-right:80px;color:white;">
-<form class="form-signin" method="post" autocomplete="off">
-    <img class="mb-4" src="{{ asset('img/icon.png') }}" alt="" width="72" height="72">
-    <h1 class="h3 mb-3 font-weight-normal">Zaloguj się</h1>
-
-    {% if error %}<div class="alert alert-danger">{{ error.messageKey | trans(error.messageData, 'security') }}</div>{% endif %}
-    
-    <input name="username" type="text" class="form-control" placeholder="login" required autofocus>
-    <br/>
-    <input name="password" type="password" class="form-control" placeholder="hasło" required>
-    <br/>
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj</button>
-    <p class="mt-5 mb-3 text-muted">© Order Manager 2020-2021</p>
-</form>
-</div>
-{% endblock %}
+        {% if error %}<div class="alert alert-danger">{{ error.messageKey | trans(error.messageData, 'security') }}</div>{% endif %}
+        
+        <input name="username" type="text" class="form-control" placeholder="login" required autofocus>
+        <br/>
+        <input name="password" type="password" class="form-control" placeholder="hasło" required>
+        <br/>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj</button>
+        <p class="mt-5 mb-3 text-muted">© Order Manager 2020-2021</p>
+    </form>
+    </div>
+    <style>
+        .text-center{
+            width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 100px;
+            background-color: rgb(33,37,41);
+            padding: 20px;
+            padding-left: 80px;
+            padding-right: 80px;
+            color: white;
+        }
+    </style>
+</body>

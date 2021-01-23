@@ -21,6 +21,43 @@
             },
         2000);
     }
+
+    function deleteOrder(id){
+      var http = new XMLHttpRequest();
+      var url = '/api/deleteOrder';
+      var params = 'id='+id;
+      http.open('POST', url, true);
+      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      http.onreadystatechange = function() {
+          if(http.readyState == 4){
+            alert(http.responseText); 
+          }
+      }
+      http.send(params);
+    } 
+
+    function changeState(select,id,state){
+      var http = new XMLHttpRequest();
+      var url = '/api/changeState';
+      var params = 'state='+state;
+      http.open('POST', url, true);
+
+      //Send the proper header information along with the request
+      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+      http.onreadystatechange = function() {//Call a function when the state changes.
+          if(http.readyState == 4){
+            alert(http.responseText);
+              if(http.status == 200){
+                select.setAttribute('state',state);
+              }
+              else{
+                //todo
+              } 
+          }
+      }
+      http.send(params);
+    }
 </script>
 {% endblock %}
 
@@ -35,15 +72,24 @@
 
 <a href="#" class="link" onclick="togglePopup('popup-add')">
   <div id="home-top-add">
-    <i class="icon-plus" style="font-size: 30px;"></i>Dodaj zlecenie  
+    <div class="home-top-add-icon">
+      <i class="icon-plus" style="font-size: 30px;"></i>
+    </div>
+    Dodaj zlecenie <!-- TODO-->
   </div>
 </a>
 <div style="clear:both;"></div>
 <div id="home-bot">
   <div id="home-bot-container">
-    <p style="font-size: 25px; margin-left: 20px; float: left;"><i class="icon-doc" style="font-size: 30px; margin-right: 10px;"></i>Moje zlecenia</p>
-    <div style="float:right;padding:10px; font-size: 20px; cursor: pointer;"><a onclick="togglePopup('popup-settings')"><i class="icon-cog"></i></a></div>
-    <table class="table table-dark table-hover table-orders">
+    <div class="home-bot-header">
+      <p style="float: left;font-size: 20px; margin-left: 8px; margin-bottom: 2px; margin-top: 0;width: fit-content;">
+        Moje zlecenia
+      </p>
+      <div class="icon-settings" style="float:right;padding:0px;margin-right: 10px; font-size: 25px; cursor: pointer;"><a onclick="togglePopup('popup-settings')"><i class="icon-cog"></i></a></div>
+      <div style="clear:both;"></div>
+    </div>
+    <div class="inside-table">
+    <table class="table table-dark table-hover">
       <thead>
         <tr>
           <th>id</th>
@@ -53,24 +99,32 @@
           {% if app.user.isColumnVisible('langs') %} <th>Język</th> {% endif %}
           {% if app.user.isColumnVisible('deadline') %} <th>Termin</th> {% endif %}
           <th>Zmien status</th>
-          <th>Usuń</th>
+          <th style="text-align: center;">Usuń</th>
         </tr>
       </thead>
       <tbody>
         {% for order in orders %}
-          <tr class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>
-            <td>{{ order.id }}</td>
-            {% if app.user.isColumnVisible('client') %} <td>{{ order.client.alias }}</td> {% endif %}
-            {% if app.user.isColumnVisible('topic') %} <td>{{ order.topic }}</td> {% endif %}
-            {% if app.user.isColumnVisible('adoption') %} <td>{{ order.adoption | date('Y-m-d') }}</td> {% endif %}
-            {% if app.user.isColumnVisible('langs') %} <td>{{ order.baseLang.short }} <i class="icon-right" style="font-size: 14px;"></i> {{ order.targetLang.short }}</td> {% endif %}
-            {% if app.user.isColumnVisible('deadline') %} <td>{{ order.deadline | date('Y-m-d H:i') }}</td> {% endif %}
-            <td><button class="btn actionButton"><i class="icon-ok"></i>{{ order.nextState }}</button></td>
-            <td><a href="#" class="trash"><i class="icon-trash"></i></a></td>
+          <tr>
+            <td class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>{{ order.id }}</td>
+            {% if app.user.isColumnVisible('client') %} <td class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>{{ order.client.alias }}</td> {% endif %}
+            {% if app.user.isColumnVisible('topic') %} <td class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>{{ order.topic }}</td> {% endif %}
+            {% if app.user.isColumnVisible('adoption') %} <td class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>{{ order.adoption | date('Y-m-d') }}</td> {% endif %}
+            {% if app.user.isColumnVisible('langs') %} <td class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>{{ order.baseLang.short }} <i class="icon-right" style="font-size: 14px;"></i> {{ order.targetLang.short }}</td> {% endif %}
+            {% if app.user.isColumnVisible('deadline') %} <td class='clickable-row' data-href='{{ "/zlecenie/" ~ order.id }}'>{{ order.deadline | date('Y-m-d H:i') }}</td> {% endif %}
+            <td> <!--  -->
+              <select class="form-select state-select" onchange="changeState(this,{{ order.id }},this.value)" state="{{ order.state }}">
+                <option class="state-select-option">przyjęte</option>
+                <option class="state-select-option">wykonane</option>
+                <option class="state-select-option">wysłane</option>
+                <option class="state-select-option">rozliczone</option>
+              </select>
+            </td>
+            <td style="text-align: center;"><i class="icon-trash trash" data-href onclick="deleteOrder({{ order.id }});"></i></td>
           </tr>  
         {% endfor %}
       </tbody>
     </table>
+    </div>
     </div>
 </div>
 {% endblock %}
@@ -80,6 +134,7 @@
   <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-add')">
   <div style="overflow-y: scroll; height: 100%;padding:5px;">
     <h3 style="margin-bottom: 30px;">Dodaj zlecenie:</h3>
+    <!-- styles here just for development -->
     <style>
       .form-errors{
         float:left;

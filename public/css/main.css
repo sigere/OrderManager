@@ -1,9 +1,11 @@
  html, body {
     height: 100%;
     background-color: rgb(29,32,35);
+    font-family: 'Rubik', sans-serif;
   }
   .navbar{
-    background-color: rgb(2,172,255);
+    background: rgb(35,105,252);
+    background: linear-gradient(90deg, rgba(35,105,252,1) 0%, rgba(35,105,252,1) 45%, rgba(239,83,96,1) 75%, rgba(239,83,96,1) 100%);
   }
   .nav-link-active{
     color: rgb(2,127,255);
@@ -60,12 +62,12 @@
     border-radius: 10px;;
     font-size: 20px;
     float: right;
-    color: rgb(2,127,255);
+    color: rgb(35,105,252);
     background-color: rgb(29,32,35);
   }
   #home-top-add:hover{
     color: rgb(29,32,35);
-    background-color:  rgb(2,127,255);
+    background-color:  rgb(35,105,252);
     transition: background-color 0.2s ease-out;
     -webkit-transition: background-color 0.2s ease-out;
     -moz-transition: background-color 0.2s ease-out;
@@ -76,11 +78,21 @@
     margin-right: 10px;
   }
   #home-bot-container{
-    padding: 10px;
-    border-radius: 20px;
-  
+    padding: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: rgb(33,37,41);
     box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
   }
+  .home-bot-header{
+    background-color: rgb(35,105,252);
+
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 3px;
+    padding-left: 10px;
+  }
+  
   #sideBarMenu{
     box-shadow: 0 0 20px rgba(0,0,0,0.3);
     /* border: solid 3px red; */
@@ -92,7 +104,7 @@
     -o-transition: color 0.2s ease-out;
   }
   .trash:hover{
-    color: red;
+    color: rgb(251,36,80);
   }
   .actionButton{
     color: white;
@@ -104,7 +116,7 @@
     transition: all 0.2s;
   }
   .actionButton:hover{
-    color: rgb(2,127,255);
+    color: rgb(35,105,252);
   }
   #order-top{
     height: 200px;
@@ -172,7 +184,7 @@
   }
   .order-mid-value:hover{
     cursor: pointer;
-    color: rgb(2,127,255);
+    color: rgb(35,105,252);
     transition: color 0.3s ease-out;
     -webkit-transition: color 0.3s ease-out;
     -moz-transition: color 0.3s ease-out;
@@ -193,19 +205,53 @@
     box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
   }
   .order-bot-header{
-    background-color: rgb(2,127,255);
+    background-color: rgb(35,105,252);
+
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     padding: 3px;
     padding-left: 10px;
   }
   .inside-table{
+    padding-top: 5px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
+  }
+  .inside-table th{
+    color: rgb(90, 90, 90);
+    border-bottom: 2px solid #303030 !important;
   }
   .table-orders th{
     color: rgb(2,127,255);
     color: white;
   }
+  .state-select
+  {
+    padding:0;
+    padding-left: 12px;
+    padding-right: 20px;
+    padding-bottom: 2px;
+    border-radius: 15px;
+    color: white;
+    border: none;
+    width: fit-content;
+  }
+  .state-select-option{
+    background-color: rgb(114, 114, 114);
+  }
+
+  .icon-settings:hover{
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 2s linear infinite;
+  }
+  @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+  @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+  @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+  [state="przyjęte"] {background-color: rgb(254,161,57);}
+  [state="wykonane"] {background-color: rgb(35,105,252);}
+  [state="wysłane"] {background-color: rgb(7,192,107);}
+  [state="rozliczone"] {background-color: rgb(58,58,58);}
   [data-href] { cursor: pointer; }
