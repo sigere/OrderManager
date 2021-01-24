@@ -54,24 +54,38 @@
     -o-transition: color 0.2s ease-out;
   }
   #home-top-add{
-    height: 50px;
-    margin-top: 90px;
+    width: fit-content;
+    height: fit-content;
+    margin-top: 55px;
     margin-right: 80px;
     padding-bottom: 10px;
     padding-right: 10px;
-    border-radius: 10px;;
     font-size: 20px;
     float: right;
     color: rgb(35,105,252);
     background-color: rgb(29,32,35);
+    
   }
-  #home-top-add:hover{
+  /*#home-top-add:hover{
     color: rgb(29,32,35);
     background-color:  rgb(35,105,252);
     transition: background-color 0.2s ease-out;
     -webkit-transition: background-color 0.2s ease-out;
     -moz-transition: background-color 0.2s ease-out;
     -o-transition: background-color 0.2s ease-out;
+  }*/
+  .home-top-add-icon{
+    float:left;
+    color: white;
+    padding: 10px;
+    background-color: rgb(2,127,255);
+    border-radius: 20px;
+  }
+  .home-top-add-text{
+    float: left;
+    color: white;
+    margin-top: 17px;
+    margin-left: 15px;
   }
   #home-bot{
     margin-left: 10px;
@@ -250,8 +264,11 @@
   @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
   @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
+
   [state="przyjęte"] {background-color: rgb(254,161,57);}
   [state="wykonane"] {background-color: rgb(35,105,252);}
   [state="wysłane"] {background-color: rgb(7,192,107);}
   [state="rozliczone"] {background-color: rgb(58,58,58);}
+  [state="usunięte"] {background-color: rgb(251,36,80);}
+  [active="false"] {opacity: 0.3;}
   [data-href] { cursor: pointer; }

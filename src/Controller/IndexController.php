@@ -77,10 +77,10 @@ class IndexController extends AbstractController
      */
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
     {
-        $staffRepo = $entityManager->getRepository(Staff::class);
+        //$staffRepo = $entityManager->getRepository(Staff::class);
         // $orderRepo = $entityManager->getRepository(Order::class);
         // $order = $orderRepo->findOneBy(['id' => 1]);
-        $staff = $staffRepo->findOneBy(['id' => '1']);
+        //$staff = $staffRepo->findOneBy(['id' => '1']);
 
         // $user->setPreferences([
         //     'indexColumns' => ['id', 'topic', 'state'],
@@ -88,17 +88,18 @@ class IndexController extends AbstractController
 
         // $log = new Log($user, ['add'], $order);
 
-        $user = new User();
-        $user->setFirstName("siger");
-        $user->setLastName("siger");
-        $user->setUsername("siger");
-        $user->setRoles(['ROLE_USER', "ROLE_ADMIN"]);
-        $user->setPassword($passwordEncoder->encodePassword($user, "admin123"));
-        $user->setStaff($staff);
-        dd($user);
-        $entityManager->persist($user);
-        $entityManager->flush();
+        // $user = new User();
+        // $user->setFirstName("siger");
+        // $user->setLastName("siger");
+        // $user->setUsername("siger");
+        // $user->setRoles(['ROLE_USER', "ROLE_ADMIN"]);
+        // $user->setPassword($passwordEncoder->encodePassword($user, "admin123"));
+        // $user->setStaff($staff);
+        // dd($user);
+        // $entityManager->persist($user);
+        // $entityManager->flush();
 
-        return new Response('<h3>Done</h3>');
+        //return new Response('<h3>Done</h3>');
+        return $this->render('settingsPopup.html.twig');
     }
 }

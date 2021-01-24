@@ -75,14 +75,15 @@
     <div class="home-top-add-icon">
       <i class="icon-plus" style="font-size: 30px;"></i>
     </div>
-    Dodaj zlecenie <!-- TODO-->
+    <div class="home-top-add-text">Dodaj zlecenie <!-- TODO--></div>
+    <div style="clear: both;"></div>
   </div>
 </a>
 <div style="clear:both;"></div>
 <div id="home-bot">
   <div id="home-bot-container">
     <div class="home-bot-header">
-      <p style="float: left;font-size: 20px; margin-left: 8px; margin-bottom: 2px; margin-top: 0;width: fit-content;">
+      <p style="float: left;font-size: 20px; margin-left: 8px; margin-bottom: 2px; margin-top: 2px;width: fit-content;">
         Moje zlecenia
       </p>
       <div class="icon-settings" style="float:right;padding:0px;margin-right: 10px; font-size: 25px; cursor: pointer;"><a onclick="togglePopup('popup-settings')"><i class="icon-cog"></i></a></div>
@@ -130,8 +131,9 @@
 {% endblock %}
 
 {% block popups %}
+{% include 'settingsPopup.html.twig' %}
 <div class="popup popup-add{% if not addOrderForm.vars.valid %} active{% endif %}" id="popup-add">
-  <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-add')">
+  <input type="button" class="close-popup" value="X" onclick="togglePopup('popup-add')">
   <div style="overflow-y: scroll; height: 100%;padding:5px;">
     <h3 style="margin-bottom: 30px;">Dodaj zlecenie:</h3>
     <!-- styles here just for development -->
@@ -170,34 +172,5 @@
         <button type="submit" class="btn btn-primary">Dodaj zlecenie</button>
       {{ form_end(addOrderForm) }}
   </div>
-</div>
-
-<div class="popup popup-settings" id="popup-settings">
-  <input type="button" style="border-radius: 50%; float:right; position:absolute; right: 20px;color: white; background-color: black;" value="X" onclick="togglePopup('popup-settings')">
-  <div style="float:left; width: 230px;">
-    <h3 style="">Pokaż kolumny</h3>
-    <form class="">
-      <label class="popup-checkbox"><input type="checkbox">id</label>
-      <label class="popup-checkbox"><input type="checkbox">Klient</label>
-      <label class="popup-checkbox"><input type="checkbox">Temat</label>
-      <label class="popup-checkbox"><input type="checkbox">Wprowadzono</label>
-      <label class="popup-checkbox"><input type="checkbox">Termin</label>
-    </form>
-  </div>
-  <div style="float:left; width: 230px;">
-    <h3 style="">Filtruj</h3>
-    <form class="">
-      <label class="popup-checkbox"><input type="checkbox">Przyjęte</label>
-      <label class="popup-checkbox"><input type="checkbox">Wykonane</label>
-      <label class="popup-checkbox"><input type="checkbox">Wysłane</label>
-      <label class="popup-checkbox"><input type="checkbox">Rozliczone</label>
-      <label class="popup-checkbox"><input type="checkbox">Usunięte</label>
-    </form>
-    <div style="clear: both;"></div>
-  </div>
-  <div style="clear: both;"></div>
-
-  <div style="clear: both;"></div>
-  <input type="button" class="form-control" value="ok" onclick="togglePopup('popup-settings');">
 </div>
 {% endblock %}
