@@ -1,0 +1,61 @@
+<table class="table table-dark table-hover">
+	<thead>
+		<tr>
+			<th>id</th>
+			{% if app.user.preferences['index']['adoption'] == true %}
+				<th>Wprowadzono</th>
+			{% endif %}
+			{% if app.user.preferences['index']['client'] == true %}
+				<th>Klient</th>
+			{% endif %}
+			{% if app.user.preferences['index']['topic'] == true %}
+				<th>Temat</th>
+			{% endif %}
+			{% if app.user.preferences['index']['lang'] == true %}
+				<th>Język</th>
+			{% endif %}
+			{% if app.user.preferences['index']['deadline'] == true %}
+				<th>Termin</th>
+			{% endif %}
+			{% if app.user.preferences['index']['staff'] == true %}
+				<th>Wykonawca</th>
+			{% endif %}
+			<th>Zmien status</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for order in orders %}
+			<tr>
+				<td class="clickable-row" style="white-space: nowrap;">{% include 'icons/warning.html'  %}{{ order.id }}</td>
+				{% if app.user.preferences['index']['adoption'] == true %}
+					<td>{{ order.adoption | date('Y-m-d H:i') }}</td>
+				{% endif %}
+				{% if app.user.preferences['index']['client'] == true %}
+					<td>{{ order.client }}</td>
+				{% endif %}
+				{% if app.user.preferences['index']['topic'] == true %}
+					<td>{{ order.topic }}</td>
+				{% endif %}
+				{% if app.user.preferences['index']['lang'] == true %}
+					<td>{{ order.baseLang }}
+						->
+						{{ order.targetLang }}</td>
+				{% endif %}
+				{% if app.user.preferences['index']['deadline'] == true %}
+					<td>{{ order.deadline | date('Y-m-d H:i')}}</td>
+				{% endif %}
+				{% if app.user.preferences['index']['staff'] == true %}
+					<td>{{ order.staff }}</td>
+				{% endif %}
+				<td>
+					<select class="form-select" state="{{ order.state }}">
+						<option>Przyjęte</option>
+						<option>Wykonane</option>
+						<option>Wysłane</option>
+						<option>Rozliczone</option>
+					</select>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

@@ -100,6 +100,7 @@ class IndexFiltersForm extends AbstractType
                 'attr' => ['class' => 'form-select filter-client first'],
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
+                'placeholder' => 'Wszyscy klienci',
             ])
             ;
     }

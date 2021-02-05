@@ -122,6 +122,38 @@ class Order
         $this->state = 'przyjęte';
     }
 
+    public function __toString(): string
+    {
+        return $this->getId();
+    }
+
+    public function getWarnings() : array
+    {
+        return ['Minął termin zlecenia, a zlecenie nie zostało onaczone jako wysłane.'];
+    }
+
+    public function nextState(): string
+    {
+        switch ($this->state) {
+            case self::PRZYJETE:
+                return self::WYKONANE;
+            case self::WYKONANE:
+                return self::WYSLANE;
+            case self::WYSLANE:
+                return self::ROZLICZONE;
+            default:
+                return '';
+        }
+    }
+
+    public function getNetto(): float
+    {
+        if ($this->price && $this->pages) {
+            return round($this->price * $this->pages, 2);
+        }
+        return 0.00;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -187,7 +219,7 @@ class Order
         return $this;
     }
 
-    public function getDeletedAt(): ?Datetime
+    public function getDeletedAt(): ?\Datetime
     {
         return $this->deletedAt;
     }
@@ -293,32 +325,5 @@ class Order
         $this->deadline = $deadline;
 
         return $this;
-    }
-
-    public function nextState(): string
-    {
-        switch ($this->state) {
-            case self::PRZYJETE:
-                return self::WYKONANE;
-            case self::WYKONANE:
-                return self::WYSLANE;
-            case self::WYSLANE:
-                return self::ROZLICZONE;
-            default:
-                return '';
-        }
-    }
-
-    public function getNetto() : float
-    {
-        if ($this->price && $this->pages) {
-            return round($this->price * $this->pages, 2);
-        }
-        return 0.00;
-    }
-
-    public function __toString(): string
-    {
-        return $this->getId();
     }
 }

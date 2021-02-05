@@ -47,6 +47,7 @@ class IndexController extends AbstractController
      */
     public function indexApiFilters(EntityManagerInterface $entityManager, Request $request): Response
     {
+        // sleep(0.8);
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($request);
         $user = $this->getUser();
@@ -54,7 +55,7 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['index'] = $form->getData();
-            $preferences['index']['select-client'] = $preferences['index']['select-client']->getId();
+            $preferences['index']['select-client'] = $preferences['index']['select-client'] ? $preferences['index']['select-client']->getId(): null;
             $user->setPreferences($preferences);
             $entityManager->persist($user);
             $entityManager->flush();
@@ -62,6 +63,19 @@ class IndexController extends AbstractController
         
         return new Response(' return reached ');
     }
+
+
+    /**
+     * @Route("/index/api/reloadTable", name="index_reload_table")
+     */
+    public function reloadTable() : Response
+    {
+        $orders = $this->loadUserOrdersTable();
+        return $this->render('index/orders_table.twig', [
+            'orders' => $orders
+        ]);
+    }
+
 
     private function loadUserOrdersTable()
     {

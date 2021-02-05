@@ -61,6 +61,10 @@
 .filter input[type="checkbox"] {
   display: none;
 }
+.filter button{
+  margin-top: 30px;
+  margin-left: 28px;
+}
 
 /* --filter-columns-- */
 .filter-columns-label {
@@ -180,7 +184,14 @@
 .mid-col .table-container {
   height: 100%;
   overflow-y: scroll;
+  opacity: 1;
+  transition: all 0.3s;
   /* border: 1px solid red; */
+}
+
+.mid-col .table-container.hidden{
+  opacity: 0;
+  transition: all 0.2s;
 }
 
 .mid-col .table-container::-webkit-scrollbar {
