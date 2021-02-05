@@ -1,80 +1,106 @@
-<!DOCTYPE html>
 <html lang="pl">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Menedżer Zleceń{% endblock %}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset("img/icon.png") }}" />
-        <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
-        <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
-        {% block stylesheets %}
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-            <link rel="preconnect" href="https://fonts.gstatic.com">
-            <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet"> 
-            <link rel="stylesheet" href="{{ asset('css/main.css') }}"/>
-            <link rel="stylesheet" href="{{ asset('css/popups.css') }}"/>
-            <link rel="stylesheet" href="{{ asset('css/fontello.css') }}"/>
-            <link rel="stylesheet" href="{{ asset('css/animation.css') }}"/>
-            <link rel="stylesheet" href="{{ asset('css/fontello-codes.css') }}"/>
-            <link rel="stylesheet" href="{{ asset('css/fontello-embedded.css') }}"/>
-        {% endblock %}
-    </head>
-    {% block body %}
-    <body style="height: 100%;">
-        {% block javascripts %}
-        {% endblock %}
-        {% block header %}
-            <header class="navbar sticky-top flex-md-nowrap p-0 shadow" style="height: 55px;">
-                <a class="navbar-brand col-3" id="title" href="{{ path('index') }}">Menedżer Zleceń</a>
-                <ul class="navbar-nav px-3">
-                    <li class="nav-item text-nowrap">
-                    <a class="nav-link" href="{{ path('logout') }}"><i class="icon-user"></i>{{ app.user.firstName | default("niezalogowano") }} {{ app.user.lastName | default("niezalogowano") }}  |  wyloguj <i class="icon-logout"></i></a>
-                    </li>
-                </ul>
-            </header>
-        {% endblock %}
-        {% block nav %}
-        <div class="container-fluid" style="height: calc(100% - 55px);">
-            <div class="row" style="height: 100%;">
-                <nav class="col-2 bg-dark sidebar" id="sideBarMenu">
-                    <div class="position-sticky pt-3" style="height: 100%;">
-                        <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link{% if app.request.attributes.get( '_route' ) starts with 'index' %} nav-link-active{% endif %}"  href="{{ path('index') }}">
-                            <i class="icon-home"></i>
-                            Moje zlecenia
-                            </a>
-                        </li>
-                        <li class="nav-item{% if app.request.attributes.get( '_route' ) starts with 'queries' %} nav-link-active{% endif %}">
-                            <a class="nav-link" href="{{ path('queries') }}">
-                            <i class="icon-th-list"></i>
-                            Kwerendy
-                            </a>
-                        </li>
-                        <li class="nav-item{% if app.request.attributes.get( '_route' ) starts with 'clients' %} nav-link-active{% endif %}">
-                            <a class="nav-link" href="{{ path('clients') }}">
-                            <i class="icon-users"></i>
-                            Klienci
-                            </a>
-                        </li>
-                        <li class="nav-item{% if app.request.attributes.get( '_route' ) starts with 'invoices' %} nav-link-active{% endif %}">
-                            <a class="nav-link" href="{{ path('invoices') }}">
-                            <i class="icon-doc"></i>
-                            Faktury
-                            </a>
-                        </li>
-                        </ul>
-                    </div>
-                </nav>
-                <div class="col-10 content" style="padding: 15px; overflow-y: scroll; height: 100%;">
-                {% block content %}
-                {% endblock %}
-                </div>
-            </div>
-        </div>        
-        {% endblock %}
-        {% block popups %}
-        {% endblock %}
-    </body>
-    {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>
+			{% block title %}Menedżer Zleceń
+			{% endblock %}
+		</title>
+		<link rel="shortcut icon" type="image/x-icon" href="{{ asset("img/icon.png") }}"/>
+		{% block stylesheets %}
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+			<link rel="preconnect" href="https://fonts.gstatic.com">
+			<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet">
+			<link rel="stylesheet" href="{{ asset("css/base.css") }}"/>
+		{% endblock %}
+	</head>
+	{% block body %}
+		<body style="overflow-x: hidden;">
+		<div id="debug"></div>
+			{% block header %}
+				<header class="navbar sticky-top flex-md-nowrap p-0 shadow" style="height: 55px">
+					<a onclick="openForm();" class="navbar-brand col-3" id="title" href="#">& Menedżer Zleceń</a>
+					<ul class="navbar-nav px-3">
+						<li class="nav-item text-nowrap">
+							<a class="nav-link" href="#">
+								<i class="icon-user"></i>
+								& Kadamaxo | niezalogowano | wyloguj
+								<i class="icon-logout"></i>
+							</a>
+						</li>
+					</ul>
+				</header>
+			{% endblock %}
+			<div class="wrapper">
+				<div onclick="closeAll();" id="overlay"></div>
+				{% block nav %}
+					<nav id="sidebar" class="active">
+						<ul class="list-unstyled components">
+							<li class="">
+								<div class="item-container">
+									<a href="#">
+										<svg width="22" height="24" viewbox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M8.5625 22.5625V16.8669C8.5625 16.4687 8.96875 16.0625 9.375 16.0625H12.625C13.0313 16.0625 13.4375 16.4687 13.4375 16.875V22.5625C13.4375 22.778 13.5231 22.9846 13.6755 23.137C13.8279 23.2894 14.0345 23.375 14.25 23.375H20.75C20.9655 23.375 21.1722 23.2894 21.3245 23.137C21.4769 22.9846 21.5625 22.778 21.5625 22.5625V11.1875C21.5627 11.0807 21.5418 10.975 21.5011 10.8762C21.4604 10.7775 21.4007 10.6878 21.3253 10.6122L19.125 8.41361V3.06249C19.125 2.847 19.0394 2.64034 18.887 2.48796C18.7347 2.33559 18.528 2.24999 18.3125 2.24999H16.6875C16.472 2.24999 16.2654 2.33559 16.113 2.48796C15.9606 2.64034 15.875 2.847 15.875 3.06249V5.16361L11.5753 0.862238C11.4998 0.786572 11.4101 0.72654 11.3114 0.68558C11.2127 0.644619 11.1069 0.623535 11 0.623535C10.8931 0.623535 10.7873 0.644619 10.6886 0.68558C10.5899 0.72654 10.5002 0.786572 10.4248 0.862238L0.674751 10.6122C0.599348 10.6878 0.539584 10.7775 0.498875 10.8762C0.458166 10.975 0.437311 11.0807 0.437501 11.1875V22.5625C0.437501 22.778 0.523104 22.9846 0.675477 23.137C0.82785 23.2894 1.03451 23.375 1.25 23.375H7.75C7.96549 23.375 8.17215 23.2894 8.32453 23.137C8.4769 22.9846 8.5625 22.778 8.5625 22.5625Z" fill="white"/>
+										</svg>
+										<h6>Mój Panel</h6>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="item-container">
+									<a href="#">
+										<svg width="23" height="22" viewbox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M14.8242 6.44531C13.9573 6.44531 13.252 5.77066 13.252 4.94141V0H5.21094C3.84859 0 2.74023 1.06017 2.74023 2.36328V19.6367C2.74023 20.9398 3.84859 22 5.21094 22H17.7891C19.1514 22 20.2598 20.9398 20.2598 19.6367V6.44531H14.8242ZM6.42383 15.4688H9.69055C10.0627 15.4688 10.3644 15.7573 10.3644 16.1133C10.3644 16.4692 10.0627 16.7578 9.69055 16.7578H6.42383C6.0517 16.7578 5.75 16.4692 5.75 16.1133C5.75 15.7573 6.0517 15.4688 6.42383 15.4688ZM5.75 12.6758C5.75 12.3198 6.0517 12.0312 6.42383 12.0312H16.3066C16.6788 12.0312 16.9805 12.3198 16.9805 12.6758C16.9805 13.0317 16.6788 13.3203 16.3066 13.3203H6.42383C6.0517 13.3203 5.75 13.0317 5.75 12.6758ZM16.3066 8.59375C16.6788 8.59375 16.9805 8.88233 16.9805 9.23828C16.9805 9.59423 16.6788 9.88281 16.3066 9.88281H6.42383C6.0517 9.88281 5.75 9.59423 5.75 9.23828C5.75 8.88233 6.0517 8.59375 6.42383 8.59375H16.3066Z" fill="white"/>
+											<path d="M14.5996 4.94143C14.5996 5.0599 14.7004 5.15628 14.8242 5.15628H19.9594C19.8362 4.9386 19.6776 4.73866 19.4871 4.56623L15.1556 0.646533C14.9875 0.494424 14.8002 0.367537 14.5997 0.267334V4.94143H14.5996Z" fill="white"/>
+										</svg>
+										<h6>Zlecenia</h6>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="item-container">
+									<a href="#">
+										<svg width="21" height="21" viewbox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<g clip-path="url(#clip0)">
+												<path d="M10.5 8.4751C12.4708 8.4751 14.0684 6.87749 14.0684 4.90674C14.0684 2.93599 12.4708 1.33838 10.5 1.33838C8.52925 1.33838 6.93164 2.93599 6.93164 4.90674C6.93164 6.87749 8.52925 8.4751 10.5 8.4751Z" fill="white"/>
+												<path d="M17.7188 8.4751C18.9646 8.4751 19.9746 7.46512 19.9746 6.21924C19.9746 4.97336 18.9646 3.96338 17.7188 3.96338C16.4729 3.96338 15.4629 4.97336 15.4629 6.21924C15.4629 7.46512 16.4729 8.4751 17.7188 8.4751Z" fill="white"/>
+												<path d="M3.28125 8.4751C4.52713 8.4751 5.53711 7.46512 5.53711 6.21924C5.53711 4.97336 4.52713 3.96338 3.28125 3.96338C2.03537 3.96338 1.02539 4.97336 1.02539 6.21924C1.02539 7.46512 2.03537 8.4751 3.28125 8.4751Z" fill="white"/>
+												<path d="M5.50389 10.5008C4.6159 9.77327 3.81171 9.86958 2.78496 9.86958C1.24934 9.86958 0 11.1115 0 12.6377V17.117C0 17.7799 0.540996 18.3188 1.20627 18.3188C4.07843 18.3188 3.73242 18.3708 3.73242 18.1949C3.73242 15.0209 3.35647 12.6932 5.50389 10.5008Z" fill="white"/>
+												<path d="M11.4766 9.88604C9.68321 9.73646 8.12441 9.88777 6.77988 10.9976C4.52989 12.7998 4.96289 15.2264 4.96289 18.195C4.96289 18.9804 5.60191 19.6314 6.39926 19.6314C15.0569 19.6314 15.4015 19.9106 15.9149 18.7737C16.0833 18.3892 16.0371 18.5114 16.0371 14.8333C16.0371 11.912 13.5076 9.88604 11.4766 9.88604Z" fill="white"/>
+												<path d="M18.215 9.8696C17.1827 9.8696 16.3829 9.77428 15.4961 10.5008C17.6275 12.677 17.2676 14.8458 17.2676 18.1949C17.2676 18.3719 16.9803 18.3188 19.7506 18.3188C20.4397 18.3188 21 17.7606 21 17.0744V12.6377C21 11.1115 19.7506 9.8696 18.215 9.8696Z" fill="white"/>
+											</g>
+											<defs>
+												<clipPath id="clip0">
+													<rect width="21" height="21" fill="white"/>
+												</clipPath>
+											</defs>
+										</svg>
+										<h6>Klienci</h6>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="item-container">
+									<a href="#">
+										<svg width="21" height="23" viewbox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M16.555 3.85116H5.7232C5.38765 3.85116 5.11563 3.55324 5.11563 3.18573V2.85277C5.11563 2.47808 4.83829 2.17432 4.49617 2.17432H1.23892C0.554695 2.17432 0 2.78179 0 3.53123V14.9487L1.58964 6.47837C1.64772 6.16895 1.89636 5.9469 2.18478 5.9469H17.7939V5.20807C17.7939 4.45864 17.2392 3.85116 16.555 3.85116Z" fill="white"/>
+											<path d="M19.7609 7.27783H2.68016L0.289487 20.0162C0.211065 20.4341 0.502522 20.8257 0.89213 20.8257H18.6665C19.2981 20.8257 19.8285 20.3054 19.898 19.618L20.9923 8.78397C21.0735 7.98037 20.4991 7.27783 19.7609 7.27783Z" fill="white"/>
+										</svg>
+										<h6>Faktury</h6>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</nav>
+				{% endblock %}
+				{% block content %}{% endblock %}
+				{% block popups %}{% endblock %}
+			</div>
+		</body>
+	{% endblock %}
+	{% block javascript %}
+		<script type="text/javascript" src="{{ asset("js/jquery-3.5.1.min.js") }}"></script>
+		<script type="text/javascript" src="{{ asset("js/jquery.tablesorter.js") }}"></script>
+		<script type="text/javascript" src="{{ asset("js/base.js") }}"></script>
+	{% endblock %}
 </html>

@@ -63,8 +63,8 @@ class Client
     private $deletedAt;
 
     public function __construct(){
-        $this->getCreatedAt = new \DateTime;
-        $this->deletedAd = null;
+        $this->createdAt = new \DateTime;
+        $this->deletedAt = null;
     }
 
     public function getId(): ?int
@@ -110,12 +110,12 @@ class Client
 
     public function getPostCode(): ?string
     {
-        return $this->post_code;
+        return $this->postCode;
     }
 
-    public function setPostCode(string $post_code): self
+    public function setPostCode(string $postCode): self
     {
-        $this->post_code = $post_code;
+        $this->postCode = $postCode;
 
         return $this;
     }

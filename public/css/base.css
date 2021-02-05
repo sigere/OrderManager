@@ -1,0 +1,143 @@
+body {
+  height: 100%;
+  background-color: rgb(28, 31, 34);
+  font-family: "Rubik", sans-serif;
+  color: white;
+}
+
+/* -----top-nav------- */
+
+.navbar {
+  background: rgb(35, 105, 252);
+  background: linear-gradient(
+    90deg,
+    rgba(35, 105, 252, 1) 0%,
+    rgba(35, 105, 252, 1) 45%,
+    rgba(239, 83, 96, 1) 75%,
+    rgba(239, 83, 96, 1) 100%
+  );
+}
+.nav-link{
+  word-spacing: 12px;
+}
+
+.nav-link:hover{
+  color: white;
+}
+
+a {
+  /* color: rgb(0,143,224); */
+  color: white;
+  text-decoration: none;
+}
+
+#title {
+  padding: 10px;
+  font-size: 22px;
+  margin-left: 25px;
+}
+#title:hover {
+  color: white;
+}
+
+/* -----side-nav------- */
+
+.wrapper {
+  display: flex;
+  align-items: stretch;
+  height: calc(100% - 55px);
+}
+
+#sidebar {
+  min-width: 200px;
+  max-width: 200px;
+  background: rgb(45, 50, 55);
+  color: rgb(255, 255, 255);
+  transition: all 0.5s;
+  height: 100%;
+  text-align: center;
+}
+
+#sidebar.active {
+  min-width: 80px;
+  max-width: 80px;
+  text-align: center;
+}
+
+#sidebar.active h6 {
+  display: none;
+}
+.item-container {
+  width: fit-content;
+  white-space: nowrap;
+
+}
+
+.item-container a:hover h6{
+  color: rgb(35, 105, 252);
+}
+
+.item-container a:hover svg path{
+  fill: rgb(35, 105, 252);
+}
+
+#sidebar h6 {
+  display: block;
+  float: right;
+  margin-right: 20px;
+  transition: all 0.3s;
+  /* position: absolute; */
+}
+
+#sidebar ul li a {
+  padding: 20px 15px;
+  text-align: left;
+  margin-left: 20px;
+  font-size: 1.1em;
+}
+
+#sidebar.active ul ul a {
+  padding: 10px !important;
+}
+
+#sidebar ul.components {
+  padding: 20px 0;
+}
+
+#sidebar ul li a {
+  padding: 10px;
+  font-size: 1.1em;
+  display: block;
+}
+
+#sidebar ul li a:hover {
+  color: #002de0;
+}
+
+#sidebar ul li a i {
+  margin-right: 10px;
+}
+
+.dropdown-toggle::after {
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+[state="przyjęte"] {
+  background-color: rgba(254, 161, 57);
+}
+[state="wykonane"] {
+  background-color: rgb(35, 105, 252);
+}
+[state="wysłane"] {
+  background-color: rgb(7, 192, 107);
+}
+[state="rozliczone"] {
+  background-color: rgb(58, 58, 58);
+}
+[state="usunięte"] {
+  background-color: rgb(251, 36, 80);
+}

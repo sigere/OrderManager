@@ -67,15 +67,22 @@ class User implements UserInterface
     public function __construct(){
         $this->createdAt = new \DateTime;
         $this->deletedAt = null;
-        $tmp = new \ReflectionClass('App\Entity\Order');
-        foreach($tmp->getConstant('ALLCOLUMNS') as $value)
-        {
-            $this->preferences['orders_table'][$value] = true;
-        }
-        $this->preferences['orders_table']['langs']=true;
+        $this->preferences['index']=[
+            'adoption' => false,
+            'client' => true,
+            'topic' => true,
+            'lang' => false,
+            'deadline' => true,
+            'staff' => true,
+            'przyjete' => true,
+            'wykonane' => true,
+            'wyslane' => true,
+            'rozliczone' => false,
+            'usuniete' => false,
+            'select-client' => null,
+        ];
             
     }
-
     public function getId(): int
     {
         return $this->id;

@@ -37,6 +37,12 @@ class Staff
      */
     private $deletedAt;
 
+    public function __construct()
+    {
+        $this->deletedAt = null;
+        $this->createdAt = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -47,9 +53,9 @@ class Staff
         return $this->firstName;
     }
 
-    public function setFistName(string $fistName): self
+    public function setFirstName(string $firstName): self
     {
-        $this->fistName = $fistName;
+        $this->firstName = $firstName;
 
         return $this;
     }

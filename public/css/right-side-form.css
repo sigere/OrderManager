@@ -1,0 +1,64 @@
+#overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  display: none;
+}
+
+#right-form {
+  padding: 10px;
+  font-size: 15px;
+  text-align: center;
+
+  background-color: rgb(30, 30, 30);
+  height: calc(100% - 55px);
+  transition: all 0.3s;
+  position: absolute;
+  top: 55px;
+  right: calc(-24%);
+  overflow: hidden;
+  width: 24%;
+  z-index: 2;
+  /* border: 1px solid red; */
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+#right-form::-webkit-scrollbar {
+  display: none; /* chrome, safari, opera*/
+}
+
+
+#right-form h4{
+  margin-top: 20px;
+}
+
+#right-form.active {
+  right: 0px;
+  width: 24%;
+}
+
+#center-popup {
+  display: block;
+  background-color: rgb(49, 49, 49);
+  position: fixed;
+  opacity: 0;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 10px;
+  transition: all 0.4s;
+  overflow: hidden;
+  z-index: -1;
+}
+
+#center-popup.active{
+  z-index: 2;
+  opacity: 1;
+}
