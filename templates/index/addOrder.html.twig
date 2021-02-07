@@ -1,4 +1,12 @@
 {{ form_start(addOrderForm, {'attr':{'name': 'add_order_form', 'id': 'add-order-form'}})}}
-{{ form_widget(addOrderForm) }}
+{% for row in addOrderForm %}
+	{% if not loop.last %}
+		<div>
+			<span style="color: red;">{{ form_errors(row) }}</span>
+			{{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
+			{{ form_widget(row,{'attr': {}}) }}
+		</div>
+	{% endif %}
+{% endfor %}
 <button type="submit" class="btn btn-primary">Create.</button>
 {{ form_end(addOrderForm) }}

@@ -17,11 +17,17 @@ body {
     rgba(239, 83, 96, 1) 100%
   );
 }
-.nav-link{
+.nav-link {
   word-spacing: 12px;
 }
 
-.nav-link:hover{
+.nav-link a:hover {
+  /* color: rgb(173, 173, 173); */
+  text-shadow: 0px 0px 15px white;
+  transition: all 0.5s;
+}
+
+.nav-link:hover {
   color: white;
 }
 
@@ -70,14 +76,13 @@ a {
 .item-container {
   width: fit-content;
   white-space: nowrap;
-
 }
 
-.item-container a:hover h6{
+.item-container a:hover h6 {
   color: rgb(35, 105, 252);
 }
 
-.item-container a:hover svg path{
+.item-container a:hover svg path {
   fill: rgb(35, 105, 252);
 }
 

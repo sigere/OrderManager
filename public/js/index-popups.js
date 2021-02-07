@@ -9,14 +9,13 @@ function openPopup(callback) {
     centerPopup.classList.add("active");
   }
 
-  centerPopup.innerHTML =
+  centerPopupContent.innerHTML =
     'Czy na pewno usunąć zlecenie? <button class="btn btn-danger" onclick="' +
     callback +
     ' closeAll();">Usuń</button>';
 }
 
 function closePopup() {
-  var centerPopup = document.getElementById("center-popup");
   if (centerPopup.classList.contains("active")) {
     centerPopup.classList.remove("active");
   }

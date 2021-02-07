@@ -1,4 +1,5 @@
 var centerPopup = document.getElementById("center-popup");
+var centerPopupContent = document.getElementById("center-popup-content");
 var form = document.forms.namedItem("index_filters_form");
 var debug = document.getElementById("debug");
 var deleteButton = document.getElementById("delete-button");
@@ -82,8 +83,14 @@ function reloadDetails(id) {
   request.send();
 }
 
-function updateState(option, id, state) {
-  option.parentElement.parentElement.innerHTML =
+function updateState(option, id) {
+  state = option.value;
+  option.removeAttribute("selected");
+  let cell = option.parentElement.parentElement;
+  let select = option.parentElement;
+  select.setAttribute("state", state);
+  let tmp = cell.innerHTML;
+  cell.innerHTML =
     '<svg class="icon-loading" style="margin-left: 25px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">' +
     '<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>' +
     '<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>' +
@@ -98,8 +105,9 @@ function updateState(option, id, state) {
       if (request.status == 200) {
       } else {
       }
-      tableContainer.classList.toggle("hidden");
       reloadDetails(id);
+      cell.innerHTML = tmp;
+      cell.getElementsByClassName("form-select")[0].value = state;
     },
     400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
   );
@@ -136,7 +144,7 @@ function executeDeletion(id) {
 
 function addOrder() {
   openFormAddOrder();
-  centerPopup.innerHTML =
+  centerPopupContent.innerHTML =
     '<svg class="icon-loading" style="margin-left: 25px;" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">' +
     '<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>' +
     '<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>' +
@@ -146,26 +154,36 @@ function addOrder() {
   request.open("POST", "/index/api/addOrder", true);
   request.onload = setTimeout(
     function (oEvent) {
-      centerPopup.innerHTML = request.responseText;
-      let addOrderForm = document.forms.namedItem("add_order_form");
-      console.log("ustawiam listenera");
-      addOrderForm.addEventListener("submit", executeAddition, false);
+      if (request.status == 200) {
+        centerPopupContent.innerHTML = request.responseText;
+        let addOrderForm = document.forms.namedItem("add_order_form");
+        addOrderForm.addEventListener("submit", executeAddition, false);
+      } else {
+        //TODO
+        centerPopupContent.innerHTML = request.responseText;
+      }
     },
     400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
   );
   request.send();
 }
 
-function executeAddition(e){
+function executeAddition(e) {
   e.preventDefault();
-//TODO
-  $.ajax({
-    url: "index/api/addOrder",
-    method: "POST",
-    data: $("#add-order-form").serialize(),
-    success: function (data) {
-      centerPopup.innerHTML = data;
-      console.log("sucess");
-    },
-  });
+  let formData = new FormData(document.getElementById("add-order-form"));
+
+  let request = new XMLHttpRequest();
+  request.open("POST","index/api/addOrder", true);
+  request.onload = function (oEvent) {
+    if (request.status == 201) {
+      centerPopupContent.innerHTML = request.responseText;
+    } else if (request.status == 200) {
+      centerPopupContent.innerHTML = request.responseText;
+      let addOrderForm = document.forms.namedItem("add_order_form");
+      addOrderForm.addEventListener("submit", executeAddition, false);
+    } else {
+      centerPopupContent.innerHTML = request.responseText;
+    }
+  };
+  request.send(formData);
 }

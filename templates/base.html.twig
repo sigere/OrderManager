@@ -16,16 +16,18 @@
 	</head>
 	{% block body %}
 		<body style="overflow-x: hidden;">
-		<div id="debug"></div>
+			<div id="debug"></div>
 			{% block header %}
 				<header class="navbar sticky-top flex-md-nowrap p-0 shadow" style="height: 55px">
-					<a onclick="openForm();" class="navbar-brand col-3" id="title" href="#">& Menedżer Zleceń</a>
+					<a onclick="openForm();" class="navbar-brand col-3" id="title" href="#">
+						<embed src="{{ asset('img/logo.svg') }}" height="50px">
+					</a>
 					<ul class="navbar-nav px-3">
-						<li class="nav-item text-nowrap">
-							<a class="nav-link" href="#">
-								<i class="icon-user"></i>
-								& Kadamaxo | niezalogowano | wyloguj
-								<i class="icon-logout"></i>
+						<li class="nav-item text-nowrap nav-link">
+							<image src="{{ asset('img/kadamaxo.png') }}" height="25px"/>
+							<span style="display: inline-block;">Kadamaxo | {{ app.user.firstName }} {{ app.user.lastName }} |</span>
+							<a style="display: inline-block;" class="nav-link" href="/logout">
+								wyloguj
 							</a>
 						</li>
 					</ul>

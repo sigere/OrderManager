@@ -63,9 +63,9 @@
 						</select>
 					{% else %}
 						<select class="form-select" state="{{ order.state }}">
-							<option onclick='updateState(this,{{ order.id }},"przyjete");' {% if order.state == "przyjete" %} selected {% endif %}>Przyjęte</option>
-							<option onclick='updateState(this,{{ order.id }},"wykonane");' {% if order.state == "wykonane" %} selected {% endif %}>Wykonane</option>
-							<option onclick='updateState(this,{{ order.id }},"wyslane");' {% if order.state == "wyslane" %} selected {% endif %}>Wysłane</option>
+							<option onclick='updateState(this,{{ order.id }});' value="przyjete" {% if order.state == "przyjete" %} selected {% endif %}>Przyjęte</option>
+							<option onclick='updateState(this,{{ order.id }});' value="wykonane" {% if order.state == "wykonane" %} selected {% endif %}>Wykonane</option>
+							<option onclick='updateState(this,{{ order.id }});' value="wyslane" {% if order.state == "wyslane" %} selected {% endif %}>Wysłane</option>
 						</select>
 					{% endif %}
 				</td>

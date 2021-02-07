@@ -139,18 +139,20 @@ class IndexController extends AbstractController
     /**
      * @Route("/index/api/addOrder", name="index_add_order")
      */
-    public function addOrder(Request $request): Response
+    public function addOrder(Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(AddOrderForm::class);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            $data = $form->getData();
-            dump($data);
-            // $order = new Order();
-            // $order->setTopic($data['topic']);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+            $order->setAuthor($this->getUser());
+            
+            $em->persist($order);
+            $em->persist(new Log($this->getUser(), "Dodano zlecenie", $order));
+            $em->flush();
+            return new Response("Dodano zlecenie", 201);
         }
-        else dump("Not submitted");
 
         return $this->render('index/addOrder.html.twig', [
             'addOrderForm' => $form->createView(),

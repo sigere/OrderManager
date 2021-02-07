@@ -121,7 +121,7 @@ class Order
     public function __construct()
     {
         $this->deletedAt = null;
-        $this->state = 'przyjęte';
+        $this->state = self::PRZYJETE;
     }
 
     public function __toString(): string
