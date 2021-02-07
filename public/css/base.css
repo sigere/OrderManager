@@ -126,18 +126,18 @@ a {
   transform: translateY(-50%);
 }
 
-[state="przyjęte"] {
+[state="przyjete"] {
   background-color: rgba(254, 161, 57);
 }
 [state="wykonane"] {
   background-color: rgb(35, 105, 252);
 }
-[state="wysłane"] {
+[state="wyslane"] {
   background-color: rgb(7, 192, 107);
 }
 [state="rozliczone"] {
   background-color: rgb(58, 58, 58);
 }
-[state="usunięte"] {
+[state="usuniete"] {
   background-color: rgb(251, 36, 80);
 }

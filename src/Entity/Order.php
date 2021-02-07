@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,9 +31,9 @@ class Order
         'adoption',
         'deadline',
     ];
-    public const PRZYJETE = 'przyjęte';
+    public const PRZYJETE = 'przyjete';
     public const WYKONANE = 'wykonane';
-    public const WYSLANE = 'wysłane';
+    public const WYSLANE = 'wyslane';
     public const ROZLICZONE = 'rozliczone';
     /**
      * @ORM\Id
@@ -127,9 +129,33 @@ class Order
         return $this->getId();
     }
 
-    public function getWarnings() : array
+    public function getWarnings(): array
     {
-        return ['Minął termin zlecenia, a zlecenie nie zostało onaczone jako wysłane.'];
+        $warnings = [];
+        $now = new \DateTime;
+        $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
+
+        if ($this->price == 0)
+            $warnings[] = "Cena za stronę jest równa 0.";
+
+        switch ($this->state) {
+            case self::PRZYJETE:
+                if ($timeToDeadline < 0)
+                    $warnings[] = "Minął termin zlecenia, a jego status jest ustawiony na przyjęte";
+                else if ($timeToDeadline < 86400)
+                    $warnings[] = "Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte";
+                break;
+            case self::WYKONANE:
+                if ($timeToDeadline < 0)
+                    $warnings[] = "Minął termin zlecenia, a jego status jest ustawiony na wykonane";
+                if ($this->pages == 0)
+                    $warnings[] = "Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.";
+                break;
+            case self::WYSLANE:
+                if ($this->pages == 0) $warnings[] = "Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.";
+                break;
+        }
+        return $warnings;
     }
 
     public function nextState(): string
@@ -224,9 +250,9 @@ class Order
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(bool $deletedAt): self
+    public function setDeletedAt(DateTime $dateTime): self
     {
-        $this->deletedAt = $deletedAt;
+        $this->deletedAt = $dateTime;
 
         return $this;
     }

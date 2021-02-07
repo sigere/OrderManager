@@ -13,7 +13,7 @@
 
 {% block javascript %}
 	{{ parent() }}
-	<script type="text/javascript" src="{{ asset("js/right-side-form.js") }}"></script>
+	<script type="text/javascript" src="{{ asset("js/index-popups.js") }}"></script>
 	<script type="text/javascript" src="{{ asset("js/index.js") }}"></script>
 {% endblock %}
 
@@ -27,8 +27,6 @@
 					</header>
 					<div class="col-content" id="filters-content">
 						<h6>Pokaż</h6>
-
-
 						{{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}})}}
 						{% for row in filtersForm %}
 							{% if not loop.last %}
@@ -38,7 +36,7 @@
 
 							{% endif %}
 						{% endfor %}
-						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="submit" class="btn btn-primary">Wykonaj</button>
 						{{ form_end(filtersForm) }}
 					</div>
 				</div>
@@ -48,7 +46,7 @@
 					<header>
 						Moje zlecenia
 						<div class="buttons">
-							<a onclick="openFormAddOrder();">
+							<a onclick="addOrder();">
 								<svg width="33" height="33" viewbox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<g filter="url(#filter0_d)">
 										<rect x="4" width="25" height="25" rx="12.5" fill="white"/>
@@ -67,7 +65,6 @@
 									</defs>
 								</svg>
 							</a>
-
 						</div>
 					</header>
 					<div class="col-content" style="width: auto">
@@ -81,9 +78,9 @@
 				<div class="column right-col">
 					<header>
 						Szczegóły zlecenia
-						<i>232</i>
-						<div class="buttons">
-							<a onclick="openPopup()">
+						<i id="details-header-id"></i>
+						<div id="delete-button" class="buttons">
+							<a onclick="deleteOrder();">
 								<svg width="35" height="35" viewbox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<g filter="url(#filter0_d)">
 										<rect x="4" width="27" height="27" rx="13.5" fill="#FF2055"/>
@@ -107,19 +104,18 @@
 									</defs>
 								</svg>
 							</a>
-
 						</div>
 					</header>
-					<div class="col-content">
-						{% include 'index/details.twig' with {'order': orders[0], 'logs': [] }%}
+					<div class="col-content" id="details-content">
+						<div class="alert alert-primary">Wybierz zlecenie, aby wyświetlić jego szczegóły</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div id="right-form">
+		{# <div id="right-form">
 			<h4>Dodawanie zlecenia</h4>
 			<div style="height: 1000px; background-image: url(img/icon.png); background-size: 50px 50px;"></div>
-		</div>
+		</div> #}
 		<div id="center-popup">
 			<span>
 				Czy chcesz usunąć zlecenie 232?

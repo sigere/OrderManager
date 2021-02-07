@@ -6,8 +6,18 @@
 			{% endfor %}
 		</ul>
 	</div>
+{% elseif order.deletedAt is not null %}
+	<div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}. Aby je przywrócić skontaktuj sie z administratorem</div>
+{% elseif order.state == "rozliczone" %}
+	<div class="alert alert-success">Zlecenie zostało rozliczone.</div>
 {% endif %}
 
+
+<div class="property">
+	<div class="name">Status</div>
+	<div class="value" state="{{ order.state }}">{{ order.state }}</div>
+</div>
+<div style="clear:both;"></div>
 
 <div class="property">
 	<div class="name">Wprowadzono</div>
@@ -36,22 +46,48 @@
 <div style="clear:both;"></div>
 
 <div class="property">
+	<div class="name">Przysięgłe</div>
+	<div class="value">{{ order.certified ? "Tak" : "Nie" }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
 	<div class="name">Wykonawca</div>
 	<div class="value">{{ order.staff }}</div>
 </div>
 <div style="clear:both;"></div>
 
 <div class="property">
-	<div class="name">Status</div>
-	<div class="value">{{ order.state }}</div>
+	<div class="name">Notatki</div>
+	<div class="value">{{ order.info|default('brak notatek') }}</div>
 </div>
 <div style="clear:both;"></div>
 
+<div class="property">
+	<div class="name">Liczba stron</div>
+	<div class="value">{{ order.pages }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+	<div class="name">Cena za stronę</div>
+	<div class="value">{{ order.price }} PLN</div>
+</div>
+<div style="clear:both;"></div>
+
+
+<div class="property">
+	<div class="name">Netto</div>
+	<div class="value">{{ order.netto }} PLN</div>
+</div>
+<div style="clear:both;"></div>
+{% if order.deletedAt is null and order.state != "rozliczone" %}
 <a href="#">
 	<div class="invoice">
 		Faktura
 	</div>
 </a>
+{% endif %}
 
 <div class="logs">
 	<table class="table table-dark">
@@ -63,7 +99,7 @@
 		<tbody>
 			{% for l in logs %}
 				<tr>
-					<td style="width: min-content;">{{ l.createdAt | date('d=m-Y H:i:j') }}</td>
+					<td style="width: min-content;">{{ l.createdAt | date('d-m-Y H:i:s') }}</td>
 					<td style="width: min-content;">{{ l.user }}</td>
 					<td>{{ l.action }}</td>
 				</tr>

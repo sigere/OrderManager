@@ -61,7 +61,7 @@
 .filter input[type="checkbox"] {
   display: none;
 }
-.filter button{
+.filter button {
   margin-top: 30px;
   margin-left: 28px;
 }
@@ -82,11 +82,11 @@
     border: 1px solid red; */
 }
 
-.filter-columns-label.first{
+.filter-columns-label.first {
   margin-top: 35px;
 }
 
-.filter-client.first{
+.filter-client.first {
   margin-top: 35px;
 }
 
@@ -189,7 +189,7 @@
   /* border: 1px solid red; */
 }
 
-.mid-col .table-container.hidden{
+.mid-col .table-container.hidden {
   opacity: 0;
   transition: all 0.2s;
 }
@@ -203,6 +203,10 @@
   scrollbar-width: none; /* Firefox */
 }
 
+.mid-col .clickable-row {
+  cursor: pointer;
+}
+
 .mid-col table select {
   font-size: 12px;
   padding: 0;
@@ -213,6 +217,10 @@
   color: white;
   border: none;
   width: 110px;
+}
+
+.mid-col table select:disabled{
+  background-color: rgb(58, 58, 58);
 }
 
 /* -----------right-col-------------- */
@@ -248,7 +256,14 @@
 .right-col .col-content {
   overflow-y: scroll;
   width: 100%;
+  opacity: 1;
+  transition: all 0.3s;
   /* height: 100%; */
+}
+
+.right-col .col-content.hidden {
+  opacity: 0;
+  transition: all 0.3s;
 }
 
 .right-col .col-content::-webkit-scrollbar {
@@ -325,4 +340,26 @@
 
 .right-col .logs tbody {
   font-size: 12px;
+}
+
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.icon-loading {
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }

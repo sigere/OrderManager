@@ -26,34 +26,48 @@
 	<tbody>
 		{% for order in orders %}
 			<tr>
-				<td class="clickable-row" style="white-space: nowrap;">{% include 'icons/warning.html'  %}{{ order.id }}</td>
+				<td class="clickable-row" onclick="reloadDetails({{ order.id }})" style="white-space: nowrap;">
+					{% if order.getWarnings is not empty %}
+						{% include 'icons/warning.html'  %}
+					{% endif %}
+					{{ order.id }}
+				</td>
 				{% if app.user.preferences['index']['adoption'] == true %}
-					<td>{{ order.adoption | date('Y-m-d H:i') }}</td>
+					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.adoption | date('d-m-Y H:i') }}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['client'] == true %}
-					<td>{{ order.client }}</td>
+					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.client }}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['topic'] == true %}
-					<td>{{ order.topic }}</td>
+					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.topic }}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['lang'] == true %}
-					<td>{{ order.baseLang }}
+					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.baseLang }}
 						->
 						{{ order.targetLang }}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['deadline'] == true %}
-					<td>{{ order.deadline | date('Y-m-d H:i')}}</td>
+					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.deadline | date('d-m-Y H:i')}}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['staff'] == true %}
-					<td>{{ order.staff }}</td>
+					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.staff }}</td>
 				{% endif %}
 				<td>
-					<select class="form-select" state="{{ order.state }}">
-						<option>Przyjęte</option>
-						<option>Wykonane</option>
-						<option>Wysłane</option>
-						<option>Rozliczone</option>
-					</select>
+					{% if order.deletedAt is not null %}
+						<select class="form-select" state="usuniete" disabled style="background-color: #632435;">
+							<option>Usuniete</option>
+						</select>
+					{% elseif order.state == "rozliczone" %}
+						<select class="form-select" state="{{ order.state }}" disabled>
+							<option>Rozliczone</option>
+						</select>
+					{% else %}
+						<select class="form-select" state="{{ order.state }}">
+							<option onclick='updateState(this,{{ order.id }},"przyjete");' {% if order.state == "przyjete" %} selected {% endif %}>Przyjęte</option>
+							<option onclick='updateState(this,{{ order.id }},"wykonane");' {% if order.state == "wykonane" %} selected {% endif %}>Wykonane</option>
+							<option onclick='updateState(this,{{ order.id }},"wyslane");' {% if order.state == "wyslane" %} selected {% endif %}>Wysłane</option>
+						</select>
+					{% endif %}
 				</td>
 			</tr>
 		{% endfor %}

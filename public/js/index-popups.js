@@ -1,7 +1,6 @@
-function openPopup() {
+var centerPopup = document.getElementById("center-popup");
+function openPopup(callback) {
   document.getElementById("overlay").style.display = "block";
-
-  var centerPopup = document.getElementById("center-popup");
 
   // centerPopup.style.display = "block";
   // centerPopup.style.opacity = "0";
@@ -9,6 +8,11 @@ function openPopup() {
   if (!centerPopup.classList.contains("active")) {
     centerPopup.classList.add("active");
   }
+
+  centerPopup.innerHTML =
+    'Czy na pewno usunąć zlecenie? <button class="btn btn-danger" onclick="' +
+    callback +
+    ' closeAll();">Usuń</button>';
 }
 
 function closePopup() {
@@ -19,29 +23,14 @@ function closePopup() {
 }
 
 function openFormAddOrder() {
-  openForm();
-  // document.getElementById("right-form").innerHTML =
-  //   '<i style="font-size: 30px; color: red;">Dodaj zlecenie</i>';
-}
-
-function openForm() {
   document.getElementById("overlay").style.display = "block";
-  var rightForm = document.getElementById("right-form");
-  if (!rightForm.classList.contains("active")) {
-    rightForm.classList.add("active");
-  }
-}
-
-function closeForm() {
-  var rightForm = document.getElementById("right-form");
-  if (rightForm.classList.contains("active")) {
-    rightForm.classList.remove("active");
+  if (!centerPopup.classList.contains("active")) {
+    centerPopup.classList.add("active");
   }
 }
 
 function closeAll() {
   document.getElementById("overlay").style.display = "none";
-  closeForm();
   closePopup();
 }
 
