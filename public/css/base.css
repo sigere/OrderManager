@@ -86,12 +86,21 @@ a {
   fill: rgb(35, 105, 252);
 }
 
+@keyframes show-up-delayed {
+  0% {opacity: 0;}
+  30% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
 #sidebar h6 {
   display: block;
+  opacity: 1;
   float: right;
   margin-right: 20px;
   transition: all 0.3s;
-  /* position: absolute; */
+  animation-name: show-up-delayed;
+  animation-iteration-count: 1;
+  animation-duration: 0.7s;
 }
 
 #sidebar ul li a {
