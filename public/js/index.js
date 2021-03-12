@@ -33,6 +33,7 @@ function reloadTable() {
     function (oEvent) {
       if (request.status == 200) {
         tableContainer.innerHTML = request.responseText;
+
       } else {
         console.log("not200response");
         tableContainer.innerHTML =

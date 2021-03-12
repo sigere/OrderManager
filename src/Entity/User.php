@@ -81,6 +81,16 @@ class User implements UserInterface
             'usuniete' => false,
             'select-client' => null,
         ];
+        $this->preferences['archives']=[
+            'adoption' => false,
+            'client' => true,
+            'topic' => true,
+            'lang' => false,
+            'deadline' => true,
+            'staff' => true,
+            'usuniete' => false,
+            'select-client' => null,
+        ];
             
     }
     public function getId(): int
@@ -180,7 +190,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getPreferences(): ?array
+    public function getPreferences(): array
     {
         return $this->preferences;
     }

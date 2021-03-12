@@ -2,8 +2,8 @@ doctrine:
     dbal:
         host: 127.0.0.1
         port: 3306
-        user: order_manager
-        password: root
+        user: root
+        password:
         dbname: order_manager_dev
         driver: pdo_mysql
         charset: UTF8

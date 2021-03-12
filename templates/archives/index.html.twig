@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    - Moje zlecenia
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/index.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset("js/index-popups.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/archives.js") }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="content" style="height: 100%;">
+        <div class="row" style="height: 100%;">
+            <div class="col-lg-2" style=" height: 100%;">
+                <div class="column left-col">
+                    <header>
+                        Filtruj
+                    </header>
+                    <div class="col-content" id="filters-content">
+                        <h6>Pokaż</h6>
+                        {{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}})}}
+                        {% for row in filtersForm %}
+                            {% if not loop.last %}
+
+                                {{ form_widget(row,{'attr': {}}) }}
+                                {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
+
+                            {% endif %}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">Wykonaj</button>
+                        {{ form_end(filtersForm) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" style=" height: 100%;">
+                <div class="column mid-col">
+                    <header>
+                        Archiwum
+                    </header>
+                    <div class="col-content" style="width: auto">
+                        <div class="table-container">
+                            {% include 'archives/orders_table.twig' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3" style=" height: 100%;">
+                <div class="column right-col">
+                    <header>
+                        Szczegóły zlecenia
+                        <i id="details-header-id"></i>
+                    </header>
+                    <div class="col-content" id="details-content">
+                        <div class="alert alert-primary">Wybierz zlecenie, aby wyświetlić jego szczegóły</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="center-popup">
+            <div id="center-popup-content"></div>
+        </div>
+    </div>
+{% endblock %}

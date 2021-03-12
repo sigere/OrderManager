@@ -17,9 +17,8 @@
 			{% if app.user.preferences['index']['deadline'] == true %}
 				<th>Termin</th>
 			{% endif %}
-			{% if app.user.preferences['index']['staff'] == true %}
-				<th>Wykonawca</th>
-			{% endif %}
+
+			<th>Wykonawca</th>
 			<th>Zmien status</th>
 		</tr>
 	</thead>
@@ -49,9 +48,7 @@
 				{% if app.user.preferences['index']['deadline'] == true %}
 					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.deadline | date('d-m-Y H:i')}}</td>
 				{% endif %}
-				{% if app.user.preferences['index']['staff'] == true %}
-					<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.staff }}</td>
-				{% endif %}
+				<td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.staff }}</td>
 				<td>
 					{% if order.deletedAt is not null %}
 						<select class="form-select" state="usuniete" disabled style="background-color: #632435;">

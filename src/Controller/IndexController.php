@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\Staff;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
+use Datetime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
@@ -27,10 +28,14 @@ class IndexController extends AbstractController
 {
     /**
      * @Route("/", name="index")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param UrlGeneratorInterface $urlGenerator
+     * @return Response
      */
     public function index(EntityManagerInterface $entityManager, Request $request, UrlGeneratorInterface $urlGenerator): Response
     {
-        $orders = $this->loadUserOrdersTable();
+        $orders = $this->loadOrdersTable();
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($request);
 
@@ -43,10 +48,12 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/filters", name="index_api_filters")
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @return Response
      */
     public function indexApiFilters(EntityManagerInterface $entityManager, Request $request): Response
     {
-        // sleep(0.8);
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($request);
         $user = $this->getUser();
@@ -54,6 +61,7 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['index'] = $form->getData();
+            $preferences['index']['staff'] = $preferences['index']['staff'] ? $preferences['index']['staff']->getId() : null;
             $preferences['index']['select-client'] = $preferences['index']['select-client'] ? $preferences['index']['select-client']->getId() : null;
             $user->setPreferences($preferences);
             $entityManager->persist($user);
@@ -70,7 +78,7 @@ class IndexController extends AbstractController
     public function reloadTable(): Response
     {
 
-        $orders = $this->loadUserOrdersTable();
+        $orders = $this->loadOrdersTable();
         return $this->render('index/orders_table.twig', [
             'orders' => $orders
         ]);
@@ -78,6 +86,9 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/details/{id}", name="index_get_details")
+     * @param Order $order
+     * @param EntityManagerInterface $em
+     * @return Response
      */
     public function details(Order $order, EntityManagerInterface $em): Response
     {
@@ -94,6 +105,10 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/updateState/{id}/{state}", name="index_update_state")
+     * @param Order $order
+     * @param $state
+     * @param EntityManagerInterface $em
+     * @return Response
      */
     public function updateState(Order $order, $state, EntityManagerInterface $em): Response
     {
@@ -103,13 +118,9 @@ class IndexController extends AbstractController
 
         $currentState = $order->getState();
         switch ($state) {
-            case $order::PRZYJETE:
-                $order->setState($state);
-                break;
-            case $order::WYKONANE:
-                $order->setState($state);
-                break;
             case $order::WYSLANE:
+            case $order::WYKONANE:
+            case $order::PRZYJETE:
                 $order->setState($state);
                 break;
             default:
@@ -123,13 +134,13 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/deleteOrder/{id}", name="index_delete_order")
+     * @param Order $order
+     * @param EntityManagerInterface $em
+     * @return Response
      */
     public function deleteOrder(Order $order, EntityManagerInterface $em): Response
     {
-        if (!$order)
-            return new NotFoundHttpException("Nie znaleziono zlecenia");
-
-        $order->setDeletedAt(new \Datetime());
+        $order->setDeletedAt(new Datetime());
         $em->persist($order);
         $em->persist(new Log($this->getUser(), "Usunięto zlecenie", $order));
         $em->flush();
@@ -138,6 +149,9 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/addOrder", name="index_add_order")
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @return Response
      */
     public function addOrder(Request $request, EntityManagerInterface $em): Response
     {
@@ -147,7 +161,7 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $order->setAuthor($this->getUser());
-            
+
             $em->persist($order);
             $em->persist(new Log($this->getUser(), "Dodano zlecenie", $order));
             $em->flush();
@@ -160,20 +174,19 @@ class IndexController extends AbstractController
     }
 
 
-    private function loadUserOrdersTable()
+    private function loadOrdersTable()
     {
         $entityManager = $this->getDoctrine()->getManager();
         $repository = $entityManager->getRepository(Order::class);
         $user = $this->getUser();
         $preferences = $user->getPreferences();
-        // dd($preferences);
         $states = [];
         if ($preferences['index']['przyjete']) $states[] = 'przyjete';
         if ($preferences['index']['wykonane']) $states[] = 'wykonane';
         if ($preferences['index']['wyslane']) $states[] = 'wyslane';
         if ($preferences['index']['rozliczone']) $states[] = 'rozliczone';
 
-        if(!count($states)>0)
+        if (!count($states) > 0)
             return [];
 
         $statesString = 'o.state = ';
@@ -183,10 +196,15 @@ class IndexController extends AbstractController
         $statesString = substr($statesString, 0, -14);
 
         $repo = $entityManager->getRepository(Order::class);
+        $staff = $entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['index']['staff']]);
         $orders = $repo->createQueryBuilder('o')
-            ->andWhere('o.staff = :staff')
-            ->setParameter('staff', $user->getStaff())
             ->andWhere($statesString);
+
+        if ($preferences['index']['staff']) {
+            $orders = $orders
+                ->andWhere('o.staff = :staff')
+                ->setParameter('staff', $staff ? $staff : $this->getUser());
+        }
 
         foreach ($states as $s) {
             $orders = $orders->setParameter($s, $s);
@@ -207,7 +225,6 @@ class IndexController extends AbstractController
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();
-        // dd($orders);
         return $orders;
     }
 
@@ -215,8 +232,11 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/fix", name="fix")
+     * @param EntityManagerInterface $entityManager
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return Response
      */
-    public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         // $order = $entityManager->getRepository(Order::class)->findOneBy(['id' => 1]);
         // $log = new Log($this->getUser(),"crazy shit just happend", $order);
@@ -237,10 +257,14 @@ class IndexController extends AbstractController
         // $entityManager->flush();
         // dd($client);
 
-        // $user = $this->getUser();
-        // $this->getUser()->__construct();
-        // $entityManager->flush($user);
-        // dd($entityManager->getRepository(User::class)->findOneBy(['id' => "1"]));
+        $user = $this->getUser();
+        dd($user);
+        $user->__construct();
+        $entityManager->persist($user);
+        $entityManager->flush();
+        dd($user);
+
+//         $entityManager->getRepository(User::class)->findOneBy(['id' => "1"]));
 
 
         //$staffRepo = $entityManager->getRepository(Staff::class);
@@ -264,7 +288,7 @@ class IndexController extends AbstractController
         // $user->setPassword($passwordEncoder->encodePassword($user, "admin123"));
         // $user->setStaff($staff);
         // dd($user);
-        // $entityManager->persist($user);
+//        $entityManager->persist($user);
         // $entityManager->flush();
 
         //return new Response('<h3>Done</h3>');
