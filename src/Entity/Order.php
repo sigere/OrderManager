@@ -14,27 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Order
 {
-    public const ALLCOLUMNS = [
-        'client',
-        'author',
-        'staff',
-        'baseLang',
-        'targetLang',
-        'deleted',
-        'certified',
-        'pages',
-        'price',
-        'netto',
-        'topic',
-        'state',
-        'info',
-        'adoption',
-        'deadline',
-    ];
-    public const PRZYJETE = 'przyjete';
-    public const WYKONANE = 'wykonane';
-    public const WYSLANE = 'wyslane';
-    public const ROZLICZONE = 'rozliczone';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -118,10 +97,37 @@ class Order
      */
     private $deadline;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $settledAt;
+
+    public const ALLCOLUMNS = [
+        'client',
+        'author',
+        'staff',
+        'baseLang',
+        'targetLang',
+        'deleted',
+        'certified',
+        'pages',
+        'price',
+        'netto',
+        'topic',
+        'state',
+        'info',
+        'adoption',
+        'deadline',
+    ];
+    public const PRZYJETE = 'przyjete';
+    public const WYKONANE = 'wykonane';
+    public const WYSLANE = 'wyslane';
+
     public function __construct()
     {
         $this->deletedAt = null;
         $this->state = self::PRZYJETE;
+        $this->settledAt = null;
     }
 
     public function __toString(): string
@@ -165,8 +171,6 @@ class Order
                 return self::WYKONANE;
             case self::WYKONANE:
                 return self::WYSLANE;
-            case self::WYSLANE:
-                return self::ROZLICZONE;
             default:
                 return '';
         }
@@ -349,6 +353,18 @@ class Order
     public function setDeadline(\DateTimeInterface $deadline): self
     {
         $this->deadline = $deadline;
+
+        return $this;
+    }
+
+    public function getSettledAt(): ?\DateTimeInterface
+    {
+        return $this->settledAt;
+    }
+
+    public function setSettledAt(?\DateTimeInterface $settledAt): self
+    {
+        $this->settledAt = $settledAt;
 
         return $this;
     }

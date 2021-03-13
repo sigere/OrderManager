@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,6 +27,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class IndexController extends AbstractController
 {
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @Route("/", name="index")
      * @param EntityManagerInterface $entityManager
@@ -124,7 +131,7 @@ class IndexController extends AbstractController
                 $order->setState($state);
                 break;
             default:
-                return new NotFoundHttpException("given state not found");
+                return new Response("given state not found", 404);
         }
         $em->persist(new Log($this->getUser(), "Zmiana statusu: " . $currentState . " -> " . $state . ".", $order));
         $em->persist($order);
@@ -173,6 +180,22 @@ class IndexController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/index/api/settle/{id}", name="index_api_settle")
+     * @param Order $order
+     * @return Response
+     */
+    public function settle(Order $order): Response
+    {
+        if(count($order->getWarnings()))
+            return new Response("Zlecenie nie może zostać rozliczone",406);
+        if($order->getSettledAt())
+            return new Response("Zlecenie zostało już rozliczone.", 406);
+        $order->setSettledAt(new Datetime());
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        return new Response("Rozliczono zlecenie", 200);
+    }
 
     private function loadOrdersTable()
     {
@@ -184,7 +207,6 @@ class IndexController extends AbstractController
         if ($preferences['index']['przyjete']) $states[] = 'przyjete';
         if ($preferences['index']['wykonane']) $states[] = 'wykonane';
         if ($preferences['index']['wyslane']) $states[] = 'wyslane';
-        if ($preferences['index']['rozliczone']) $states[] = 'rozliczone';
 
         if (!count($states) > 0)
             return [];
@@ -221,6 +243,7 @@ class IndexController extends AbstractController
         //więc mapuje na id przy zapisie i na obiekt przy odczycie 
 
         $orders = $orders
+            ->andWhere('o.settledAt is null')
             ->setMaxResults(400)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()

@@ -77,7 +77,6 @@ class User implements UserInterface
             'przyjete' => true,
             'wykonane' => true,
             'wyslane' => true,
-            'rozliczone' => false,
             'usuniete' => false,
             'select-client' => null,
         ];

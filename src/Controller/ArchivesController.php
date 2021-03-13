@@ -15,6 +15,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ArchivesController extends AbstractController
 {
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
     /**
      * @Route("/archives", name="archives")
      * @param Request $request
@@ -84,6 +89,21 @@ class ArchivesController extends AbstractController
         return new Response(' return reached ');
     }
 
+    /**
+     * @Route("/archives/api/restore/{id}", name="archives_api_restore")
+     * @param Order $order
+     * @return Response
+     */
+    public function restore(Order $order): Response
+    {
+        if(!$order->getDeletedAt())
+            return new Response("Zlecenie nie jest usunięte", 406);
+        $order->setDeletedAt(null);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        return new Response("Zlecenie zostało przywrócone.", 200);
+    }
+
     private function loadOrdersTable(): array
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -97,13 +117,12 @@ class ArchivesController extends AbstractController
 
         if ($preferences['archives']['usuniete']) {
             $orders = $repository->createQueryBuilder('o')
-                ->andWhere('o.deletedAt is not null or o.state = :state');
+                ->andWhere('o.deletedAt is not null or o.settledAt is not null');
 
         } else {
             $orders = $repository->createQueryBuilder('o')
-                ->andWhere('o.state = :state');
+                ->andWhere('o.settledAt is not null');
         }
-        $orders->setParameter('state', "rozliczone");
 
         if ($preferences['archives']['staff']) {
             $orders = $orders
