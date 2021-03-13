@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\LogRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,49 +11,45 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Log
 {
-    public function __construct($user, $action, $order)
-    {
-        $this->user = $user;
-        $this->action = $action;
-        $this->order = $order;
-        $this->createdAt = new \DateTime();
-    }
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
-
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
-
     /**
      * @ORM\Column(type="string", length=100)
      */
     private $action = "";
-
     /**
      * @ORM\ManyToOne(targetEntity=Order::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $order;
 
+    public function __construct($user, $action, $order)
+    {
+        $this->user = $user;
+        $this->action = $action;
+        $this->order = $order;
+        $this->createdAt = new DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }

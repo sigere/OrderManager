@@ -1,0 +1,24 @@
+<table class="table table-dark table-hover">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Alias</th>
+        <th>Pełna nazwa</th>
+        <th>NIP</th>
+{#        <th>Adres e-mail</th>#}
+    </tr>
+    </thead>
+    <tbody>
+    {% for client in clients %}
+        <tr>
+            <td class="clickable-row" onclick="reloadDetails({{ client.id }})" style="white-space: nowrap;">
+                {{ client.id }}
+            </td>
+            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.alias }}</td>
+            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.name }}</td>
+            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.nip }}</td>
+{#            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.email }}#}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

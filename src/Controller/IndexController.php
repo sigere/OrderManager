@@ -20,6 +20,7 @@ class IndexController extends AbstractController
 {
     private $entityManager;
     private $request;
+
     public function __construct(EntityManagerInterface $entityManager, RequestStack $request)
     {
         $this->entityManager = $entityManager;
@@ -93,7 +94,7 @@ class IndexController extends AbstractController
         }
         if ($preferences['index']['date-to']) {
             $dateTo = new Datetime($preferences['index']['date-to']['date']);
-            $dateTo->setTime(23,59);
+            $dateTo->setTime(23, 59);
             $orders
                 ->andWhere('o.' . $dateType . ' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);
@@ -134,7 +135,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/index/api/reloadTable", name="index_reload_table")
+     * @Route("/index/api/reloadTable", name="index_api_reloadTable")
      */
     public function reloadTable(): Response
     {
@@ -145,7 +146,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/index/api/details/{id}", name="index_get_details")
+     * @Route("/index/api/details/{id}", name="index_api_details")
      * @param Order $order
      * @return Response
      */
@@ -163,7 +164,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/index/api/updateState/{id}/{state}", name="index_update_state")
+     * @Route("/index/api/updateState/{id}/{state}", name="index_updateState")
      * @param Order $order
      * @param $state
      * @return Response
@@ -194,13 +195,13 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/index/api/deleteOrder/{id}", name="index_delete_order")
+     * @Route("/index/api/deleteOrder/{id}", name="index_api_deleteOrder")
      * @param Order $order
      * @return Response
      */
     public function deleteOrder(Order $order): Response
     {
-        if($order->getDeletedAt())
+        if ($order->getDeletedAt())
             return new Response("Zlecenie zostało już usunięte", 406);
 
         $order->setDeletedAt(new Datetime());
@@ -211,7 +212,7 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/index/api/addOrder", name="index_add_order")
+     * @Route("/index/api/addOrder", name="index_api_addorder")
      * @param Request $request
      * @return Response
      */

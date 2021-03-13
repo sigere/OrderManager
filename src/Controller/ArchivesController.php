@@ -42,23 +42,19 @@ class ArchivesController extends AbstractController
 
     private function loadOrdersTable(): array
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $repository = $entityManager->getRepository(Order::class);
+        $repository = $this->entityManager->getRepository(Order::class);
         $user = $this->getUser();
         $preferences = $user->getPreferences();
-        $staff = $entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['archives']['staff']]);
+        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['archives']['staff']]);
         //doctrine nie zapisuje obiektów w user->preferences['archives']['select-client'],
         //więc mapuje na id przy zapisie i na obiekt przy odczycie
 
+        $orders = $repository->createQueryBuilder('o');
 
-        if ($preferences['archives']['usuniete']) {
-            $orders = $repository->createQueryBuilder('o')
-                ->andWhere('o.deletedAt is not null or o.settledAt is not null');
-
-        } else {
-            $orders = $repository->createQueryBuilder('o')
-                ->andWhere('o.settledAt is not null');
-        }
+        if ($preferences['archives']['usuniete'])
+            $orders->andWhere('o.deletedAt is not null or o.settledAt is not null');
+        else
+            $orders->andWhere('o.settledAt is not null');
 
         if ($preferences['archives']['staff']) {
             $orders = $orders
@@ -82,7 +78,7 @@ class ArchivesController extends AbstractController
         }
         if ($preferences['archives']['date-to']) {
             $dateTo = new Datetime($preferences['archives']['date-to']['date']);
-            $dateTo->setTime(23,59);
+            $dateTo->setTime(23, 59);
             $orders
                 ->andWhere('o.' . $dateType . ' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);

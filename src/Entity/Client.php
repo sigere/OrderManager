@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -62,8 +64,9 @@ class Client
      */
     private $deletedAt;
 
-    public function __construct(){
-        $this->createdAt = new \DateTime;
+    public function __construct()
+    {
+        $this->createdAt = new DateTime;
         $this->deletedAt = null;
     }
 
@@ -80,18 +83,6 @@ class Client
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    public function setAlias(string $alias): self
-    {
-        $this->alias = $alias;
 
         return $this;
     }
@@ -161,17 +152,29 @@ class Client
         return $this->getAlias();
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getAlias(): ?string
+    {
+        return $this->alias;
+    }
+
+    public function setAlias(string $alias): self
+    {
+        $this->alias = $alias;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function getDeletedAt(): ?\DateTimeInterface
+    public function getDeletedAt(): ?DateTimeInterface
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(\DateTimeInterface $deletedAt): self
+    public function setDeletedAt(DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 
