@@ -52,7 +52,7 @@ class Log
         return $this->id;
     }
 
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }

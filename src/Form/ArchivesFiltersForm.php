@@ -5,12 +5,14 @@ namespace App\Form;
 use App\Entity\Client;
 use App\Entity\Staff;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class ArchivesFiltersForm extends AbstractType
 {
@@ -97,7 +99,36 @@ class ArchivesFiltersForm extends AbstractType
                 'data' => $this->entityManager->
                 getRepository(Staff::class)->
                 findOneBy(['id' => $preferences['archives']['staff']]),
-            ]);
+            ])
+            // date
+            ->add('date-type', ChoiceType::class, [
+                'choices' => [
+                    'Data dodania' => 'adoption',
+                    'Termin' => 'deadline',
+                ],
+                'attr' => ['class' => 'form-control first'],
+                'expanded' => true,
+                'multiple' => false,
+                'label' => false,
+                'data' => $preferences['archives']['date-type'],
+            ])
+            ->add('date-from', DateType::class,[
+                'label' => 'Data od',
+                'widget' => 'single_text',
+                'required' => false,
+                'attr' => ['class' => 'form-control first'],
+                'data' => $preferences['archives']['date-from'] ?
+                    new \DateTime($preferences['archives']['date-from']['date']) : null,
+            ])
+            ->add('date-to', DateType::class,[
+                'label' => 'Data do',
+                'widget' => 'single_text',
+                'required' => false,
+                'attr' => ['class' => 'form-control first'],
+                'data' => $preferences['archives']['date-to'] ?
+                    new \DateTime($preferences['archives']['date-to']['date']) : null,
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -6,27 +6,29 @@ use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
 use App\Form\ArchivesFiltersForm;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ArchivesController extends AbstractController
 {
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager)
+    private $request;
+
+    public function __construct(EntityManagerInterface $entityManager, RequestStack $request)
     {
         $this->entityManager = $entityManager;
+        $this->request = $request->getCurrentRequest();
     }
+
     /**
      * @Route("/archives", name="archives")
-     * @param Request $request
-     * @param UrlGeneratorInterface $urlGenerator
      * @return Response
      */
-    public function index(Request $request, UrlGeneratorInterface $urlGenerator): Response
+    public function index(): Response
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(ArchivesFiltersForm::class);
@@ -36,72 +38,6 @@ class ArchivesController extends AbstractController
             "orders" => $orders,
             "filtersForm" => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route("/archives/api/reloadTable", name="archives_reload_table")
-     */
-    public function reloadTable(): Response
-    {
-        $orders = $this->loadOrdersTable();
-        return $this->render('archives/orders_table.twig', [
-            'orders' => $orders
-        ]);
-    }
-
-    /**
-     * @Route("/archives/api/details/{id}", name="archives_get_details")
-     * @param Order $order
-     * @param EntityManagerInterface $em
-     * @return Response
-     */
-    public function details(Order $order, EntityManagerInterface $em): Response
-    {
-        $logs = $em->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC']);
-        return $this->render('archives/details.twig', [
-            'order' => $order,
-            'logs' => $logs
-        ]);
-    }
-
-    /**
-     * @Route("/archives/api/filters", name="archives_api_filters")
-     * @param EntityManagerInterface $entityManager
-     * @param Request $request
-     * @return Response
-     */
-    public function indexApiFilters(EntityManagerInterface $entityManager, Request $request): Response
-    {
-        $form = $this->createForm(ArchivesFiltersForm::class);
-        $form->handleRequest($request);
-        $user = $this->getUser();
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $preferences = $user->getPreferences();
-            $preferences['archives'] = $form->getData();
-            $preferences['archives']['staff'] = $preferences['archives']['staff'] ? $preferences['archives']['staff']->getId() : null;
-            $preferences['archives']['select-client'] = $preferences['archives']['select-client'] ? $preferences['archives']['select-client']->getId() : null;
-            $user->setPreferences($preferences);
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
-
-        return new Response(' return reached ');
-    }
-
-    /**
-     * @Route("/archives/api/restore/{id}", name="archives_api_restore")
-     * @param Order $order
-     * @return Response
-     */
-    public function restore(Order $order): Response
-    {
-        if(!$order->getDeletedAt())
-            return new Response("Zlecenie nie jest usunięte", 406);
-        $order->setDeletedAt(null);
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
-        return new Response("Zlecenie zostało przywrócone.", 200);
     }
 
     private function loadOrdersTable(): array
@@ -137,6 +73,21 @@ class ArchivesController extends AbstractController
         //doctrine nie zapisuje obiektów w user->preferences['archives']['select-client'],
         //więc mapuje na id przy zapisie i na obiekt przy odczycie
 
+        $dateType = $preferences['archives']['date-type'];
+        if ($preferences['archives']['date-from']) {
+            $dateFrom = new Datetime($preferences['archives']['date-from']['date']);
+            $orders
+                ->andWhere('o.' . $dateType . ' >= :dateFrom')
+                ->setParameter('dateFrom', $dateFrom);
+        }
+        if ($preferences['archives']['date-to']) {
+            $dateTo = new Datetime($preferences['archives']['date-to']['date']);
+            $dateTo->setTime(23,59);
+            $orders
+                ->andWhere('o.' . $dateType . ' <= :dateTo')
+                ->setParameter('dateTo', $dateTo);
+        }
+
         $orders = $orders
             ->setMaxResults(400)
             ->orderBy('o.deadline', 'ASC')
@@ -144,5 +95,68 @@ class ArchivesController extends AbstractController
             ->getResult();
 
         return $orders;
+    }
+
+    /**
+     * @Route("/archives/api/reloadTable", name="archives_reload_table")
+     */
+    public function reloadTable(): Response
+    {
+        $orders = $this->loadOrdersTable();
+        return $this->render('archives/orders_table.twig', [
+            'orders' => $orders
+        ]);
+    }
+
+    /**
+     * @Route("/archives/api/details/{id}", name="archives_details")
+     * @param Order $order
+     * @return Response
+     */
+    public function details(Order $order): Response
+    {
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC']);
+        return $this->render('archives/details.twig', [
+            'order' => $order,
+            'logs' => $logs
+        ]);
+    }
+
+    /**
+     * @Route("/archives/api/filters", name="archives_api_filters")
+     * @return Response
+     */
+    public function filters(): Response
+    {
+        $form = $this->createForm(ArchivesFiltersForm::class);
+        $form->handleRequest($this->request);
+        $user = $this->getUser();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $preferences = $user->getPreferences();
+            $preferences['archives'] = $form->getData();
+            $preferences['archives']['staff'] = $preferences['archives']['staff'] ? $preferences['archives']['staff']->getId() : null;
+            $preferences['archives']['select-client'] = $preferences['archives']['select-client'] ? $preferences['archives']['select-client']->getId() : null;
+            $user->setPreferences($preferences);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+
+        return new Response('Zaktualizowano preferencje', 200);
+    }
+
+    /**
+     * @Route("/archives/api/restore/{id}", name="archives_api_restore")
+     * @param Order $order
+     * @return Response
+     */
+    public function restore(Order $order): Response
+    {
+        if (!$order->getDeletedAt())
+            return new Response("Zlecenie nie jest usunięte", 406);
+        $order->setDeletedAt(null);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        return new Response("Zlecenie zostało przywrócone.", 200);
     }
 }

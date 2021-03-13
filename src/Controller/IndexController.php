@@ -2,49 +2,39 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Entity\User;
 use App\Entity\Staff;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 
 class IndexController extends AbstractController
 {
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager)
+    private $request;
+    public function __construct(EntityManagerInterface $entityManager, RequestStack $request)
     {
         $this->entityManager = $entityManager;
+        $this->request = $request->getCurrentRequest();
     }
 
     /**
      * @Route("/", name="index")
-     * @param EntityManagerInterface $entityManager
-     * @param Request $request
-     * @param UrlGeneratorInterface $urlGenerator
      * @return Response
      */
-    public function index(EntityManagerInterface $entityManager, Request $request, UrlGeneratorInterface $urlGenerator): Response
+    public function index(): Response
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(IndexFiltersForm::class);
-        $form->handleRequest($request);
+        $form->handleRequest($this->request);
 
         return $this->render('index/index.html.twig', [
             'orders' => $orders,
@@ -52,155 +42,9 @@ class IndexController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/index/api/filters", name="index_api_filters")
-     * @param EntityManagerInterface $entityManager
-     * @param Request $request
-     * @return Response
-     */
-    public function indexApiFilters(EntityManagerInterface $entityManager, Request $request): Response
+    private function loadOrdersTable() //improvements required
     {
-        $form = $this->createForm(IndexFiltersForm::class);
-        $form->handleRequest($request);
-        $user = $this->getUser();
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $preferences = $user->getPreferences();
-            $preferences['index'] = $form->getData();
-            $preferences['index']['staff'] = $preferences['index']['staff'] ? $preferences['index']['staff']->getId() : null;
-            $preferences['index']['select-client'] = $preferences['index']['select-client'] ? $preferences['index']['select-client']->getId() : null;
-            $user->setPreferences($preferences);
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
-
-        return new Response(' return reached ');
-    }
-
-
-    /**
-     * @Route("/index/api/reloadTable", name="index_reload_table")
-     */
-    public function reloadTable(): Response
-    {
-
-        $orders = $this->loadOrdersTable();
-        return $this->render('index/orders_table.twig', [
-            'orders' => $orders
-        ]);
-    }
-
-    /**
-     * @Route("/index/api/details/{id}", name="index_get_details")
-     * @param Order $order
-     * @param EntityManagerInterface $em
-     * @return Response
-     */
-    public function details(Order $order, EntityManagerInterface $em): Response
-    {
-        if (!$order) {
-            throw $this->createNotFoundException('Nie znaleziono zlecenia');
-        }
-        $logs = $em->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC']);
-
-        return $this->render('index/details.twig', [
-            'order' => $order,
-            'logs' => $logs
-        ]);
-    }
-
-    /**
-     * @Route("/index/api/updateState/{id}/{state}", name="index_update_state")
-     * @param Order $order
-     * @param $state
-     * @param EntityManagerInterface $em
-     * @return Response
-     */
-    public function updateState(Order $order, $state, EntityManagerInterface $em): Response
-    {
-        //TODO autoryzacja?
-        if ($order->getState() == $state)
-            return new Response('state not changed');
-
-        $currentState = $order->getState();
-        switch ($state) {
-            case $order::WYSLANE:
-            case $order::WYKONANE:
-            case $order::PRZYJETE:
-                $order->setState($state);
-                break;
-            default:
-                return new Response("given state not found", 404);
-        }
-        $em->persist(new Log($this->getUser(), "Zmiana statusu: " . $currentState . " -> " . $state . ".", $order));
-        $em->persist($order);
-        $em->flush();
-        return new Response('state changed');
-    }
-
-    /**
-     * @Route("/index/api/deleteOrder/{id}", name="index_delete_order")
-     * @param Order $order
-     * @param EntityManagerInterface $em
-     * @return Response
-     */
-    public function deleteOrder(Order $order, EntityManagerInterface $em): Response
-    {
-        $order->setDeletedAt(new Datetime());
-        $em->persist($order);
-        $em->persist(new Log($this->getUser(), "Usunięto zlecenie", $order));
-        $em->flush();
-        return new Response("order deleted");
-    }
-
-    /**
-     * @Route("/index/api/addOrder", name="index_add_order")
-     * @param Request $request
-     * @param EntityManagerInterface $em
-     * @return Response
-     */
-    public function addOrder(Request $request, EntityManagerInterface $em): Response
-    {
-        $form = $this->createForm(AddOrderForm::class);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $order = $form->getData();
-            $order->setAuthor($this->getUser());
-
-            $em->persist($order);
-            $em->persist(new Log($this->getUser(), "Dodano zlecenie", $order));
-            $em->flush();
-            return new Response("Dodano zlecenie", 201);
-        }
-
-        return $this->render('index/addOrder.html.twig', [
-            'addOrderForm' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/index/api/settle/{id}", name="index_api_settle")
-     * @param Order $order
-     * @return Response
-     */
-    public function settle(Order $order): Response
-    {
-        if(count($order->getWarnings()))
-            return new Response("Zlecenie nie może zostać rozliczone",406);
-        if($order->getSettledAt())
-            return new Response("Zlecenie zostało już rozliczone.", 406);
-        $order->setSettledAt(new Datetime());
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
-        return new Response("Rozliczono zlecenie", 200);
-    }
-
-    private function loadOrdersTable()
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $repository = $entityManager->getRepository(Order::class);
+        $repository = $this->entityManager->getRepository(Order::class);
         $user = $this->getUser();
         $preferences = $user->getPreferences();
         $states = [];
@@ -217,8 +61,8 @@ class IndexController extends AbstractController
         }
         $statesString = substr($statesString, 0, -14);
 
-        $repo = $entityManager->getRepository(Order::class);
-        $staff = $entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['index']['staff']]);
+        $repo = $this->entityManager->getRepository(Order::class);
+        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['index']['staff']]);
         $orders = $repo->createQueryBuilder('o')
             ->andWhere($statesString);
 
@@ -232,18 +76,32 @@ class IndexController extends AbstractController
             $orders = $orders->setParameter($s, $s);
         }
 
-        if (!$preferences['index']['usuniete'])
-            $orders = $orders->andWhere('o.deletedAt is null');
 
         if ($preferences['index']['select-client'])
             $orders = $orders
                 ->andWhere('o.client = :client')
                 ->setParameter('client', $repository->findOneBy(['id' => $preferences['index']['select-client']]));
         //doctrine nie zapisuje obiektów w user->preferences['index']['select-client'],
-        //więc mapuje na id przy zapisie i na obiekt przy odczycie 
+        //więc mapuje na id przy zapisie i na obiekt przy odczycie
+
+        $dateType = $preferences['index']['date-type'];
+        if ($preferences['index']['date-from']) {
+            $dateFrom = new Datetime($preferences['index']['date-from']['date']);
+            $orders
+                ->andWhere('o.' . $dateType . ' >= :dateFrom')
+                ->setParameter('dateFrom', $dateFrom);
+        }
+        if ($preferences['index']['date-to']) {
+            $dateTo = new Datetime($preferences['index']['date-to']['date']);
+            $dateTo->setTime(23,59);
+            $orders
+                ->andWhere('o.' . $dateType . ' <= :dateTo')
+                ->setParameter('dateTo', $dateTo);
+        }
 
         $orders = $orders
             ->andWhere('o.settledAt is null')
+            ->andWhere('o.deletedAt is null')
             ->setMaxResults(400)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
@@ -251,7 +109,150 @@ class IndexController extends AbstractController
         return $orders;
     }
 
-    //-----------------------Development-bajzel-DO-NOT-READ-------------------
+    /**
+     * @Route("/index/api/filters", name="index_api_filters")
+     * @return Response
+     */
+    public function indexApiFilters(): Response
+    {
+        $form = $this->createForm(IndexFiltersForm::class);
+        $form->handleRequest($this->request);
+        $user = $this->getUser();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $preferences = $user->getPreferences();
+            $preferences['index'] = $form->getData();
+            $preferences['index']['staff'] = $preferences['index']['staff'] ? $preferences['index']['staff']->getId() : null;
+            $preferences['index']['select-client'] = $preferences['index']['select-client'] ? $preferences['index']['select-client']->getId() : null;
+            $user->setPreferences($preferences);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+        }
+
+        return new Response(' return reached ');
+    }
+
+    /**
+     * @Route("/index/api/reloadTable", name="index_reload_table")
+     */
+    public function reloadTable(): Response
+    {
+        $orders = $this->loadOrdersTable();
+        return $this->render('index/orders_table.twig', [
+            'orders' => $orders
+        ]);
+    }
+
+    /**
+     * @Route("/index/api/details/{id}", name="index_get_details")
+     * @param Order $order
+     * @return Response
+     */
+    public function details(Order $order): Response
+    {
+        if (!$order) {
+            throw $this->createNotFoundException('Nie znaleziono zlecenia');
+        }
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC']);
+
+        return $this->render('index/details.twig', [
+            'order' => $order,
+            'logs' => $logs
+        ]);
+    }
+
+    /**
+     * @Route("/index/api/updateState/{id}/{state}", name="index_update_state")
+     * @param Order $order
+     * @param $state
+     * @return Response
+     */
+    public function updateState(Order $order, $state): Response
+    {
+        //TODO autoryzacja?
+        if ($order->getState() == $state)
+            return new Response('state not changed');
+
+        $currentState = $order->getState();
+        switch ($state) {
+            case $order::WYSLANE:
+            case $order::WYKONANE:
+            case $order::PRZYJETE:
+                $order->setState($state);
+                break;
+            default:
+                return new Response("given state not found", 404);
+        }
+        $this->entityManager->persist(new Log(
+            $this->getUser(),
+            "Zmiana statusu: " . $currentState . " -> " . $state . ".", $order
+        ));
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        return new Response('Zmieniono status', 200);
+    }
+
+    /**
+     * @Route("/index/api/deleteOrder/{id}", name="index_delete_order")
+     * @param Order $order
+     * @return Response
+     */
+    public function deleteOrder(Order $order): Response
+    {
+        if($order->getDeletedAt())
+            return new Response("Zlecenie zostało już usunięte", 406);
+
+        $order->setDeletedAt(new Datetime());
+        $this->entityManager->persist($order);
+        $this->entityManager->persist(new Log($this->getUser(), "Usunięto zlecenie", $order));
+        $this->entityManager->flush();
+        return new Response("Zlecenie usunięte", 200);
+    }
+
+    /**
+     * @Route("/index/api/addOrder", name="index_add_order")
+     * @param Request $request
+     * @return Response
+     */
+    public function addOrder(Request $request): Response
+    {
+        $form = $this->createForm(AddOrderForm::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+            $order->setAuthor($this->getUser());
+
+            $this->entityManager->persist($order);
+            $this->entityManager->persist(new Log($this->getUser(), "Dodano zlecenie", $order));
+            $this->entityManager->flush();
+            return new Response("Dodano zlecenie", 201);
+        }
+
+        return $this->render('index/addOrder.html.twig', [
+            'addOrderForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/index/api/settle/{id}", name="index_api_settle")
+     * @param Order $order
+     * @return Response
+     */
+    public function settle(Order $order): Response
+    {
+        if (count($order->getWarnings()))
+            return new Response("Zlecenie nie może zostać rozliczone", 406);
+        if ($order->getSettledAt())
+            return new Response("Zlecenie zostało już rozliczone.", 406);
+        $order->setSettledAt(new Datetime());
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        return new Response("Rozliczono zlecenie", 200);
+    }
+
+    //-----------------------Development-Tools-------------------
 
     /**
      * @Route("/fix", name="fix")
@@ -281,7 +282,6 @@ class IndexController extends AbstractController
         // dd($client);
 
         $user = $this->getUser();
-        dd($user);
         $user->__construct();
         $entityManager->persist($user);
         $entityManager->flush();

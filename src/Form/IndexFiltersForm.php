@@ -6,6 +6,8 @@ use App\Entity\Client;
 use App\Entity\Staff;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -26,6 +28,7 @@ class IndexFiltersForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $preferences = $this->security->getUser()->getPreferences();
+        dump($preferences);
         $builder
             // states
             ->add('przyjete', CheckboxType::class, [
@@ -46,18 +49,18 @@ class IndexFiltersForm extends AbstractType
                 'label_attr' => ['class' => 'filter-state-label', 'state' => 'wysłane'],
                 'required' => false,
             ])
-            ->add('rozliczone', CheckboxType::class, [
-                'label' => 'Rozliczone',
-                'attr' => $preferences['index']['rozliczone'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-state-label', 'state' => 'rozliczone'],
-                'required' => false,
-            ])
-            ->add('usuniete', CheckboxType::class, [
-                'label' => 'Usunięte',
-                'attr' => $preferences['index']['usuniete'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-state-label', 'state' => 'usunięte'],
-                'required' => false,
-            ])
+//            ->add('rozliczone', CheckboxType::class, [
+//                'label' => 'Rozliczone',
+//                'attr' => $preferences['index']['rozliczone'] ? ['checked' => 'checked'] : [],
+//                'label_attr' => ['class' => 'filter-state-label', 'state' => 'rozliczone'],
+//                'required' => false,
+//            ])
+//            ->add('usuniete', CheckboxType::class, [
+//                'label' => 'Usunięte',
+//                'attr' => $preferences['index']['usuniete'] ? ['checked' => 'checked'] : [],
+//                'label_attr' => ['class' => 'filter-state-label', 'state' => 'usunięte'],
+//                'required' => false,
+//            ])
             
             // columns
             ->add('adoption', CheckboxType::class, [
@@ -109,6 +112,7 @@ class IndexFiltersForm extends AbstractType
                 getRepository(Client::class)->
                 findOneBy(['id' => $preferences['index']['select-client']]),
             ])
+            // staff
             ->add('staff', EntityType::class, [
                 'class' => Staff::class,
                 'label' => 'Wykonawca',
@@ -120,6 +124,34 @@ class IndexFiltersForm extends AbstractType
                 'data' => $this->entityManager->
                 getRepository(Staff::class)->
                 findOneBy(['id' => $preferences['index']['staff']]),
+            ])
+            // date
+            ->add('date-type', ChoiceType::class, [
+                'choices' => [
+                    'Data dodania' => 'adoption',
+                    'Termin' => 'deadline',
+                ],
+                'attr' => ['class' => 'form-control first'],
+                'expanded' => true,
+                'multiple' => false,
+                'label' => false,
+                'data' => $preferences['index']['date-type'],
+            ])
+            ->add('date-from', DateType::class,[
+                'label' => 'Data od',
+                'widget' => 'single_text',
+                'required' => false,
+                'attr' => ['class' => 'form-control first'],
+                'data' => $preferences['index']['date-from'] ?
+                    new \DateTime($preferences['index']['date-from']['date']) : null,
+            ])
+            ->add('date-to', DateType::class,[
+                'label' => 'Data do',
+                'widget' => 'single_text',
+                'required' => false,
+                'attr' => ['class' => 'form-control first'],
+                'data' => $preferences['index']['date-to'] ?
+                    new \DateTime($preferences['index']['date-to']['date']) : null,
             ])
             ;
     }

@@ -79,6 +79,9 @@ class User implements UserInterface
             'wyslane' => true,
             'usuniete' => false,
             'select-client' => null,
+            'date-type' => 'deadline',
+            'date-from' => null,
+            'date-to' => null,
         ];
         $this->preferences['archives']=[
             'adoption' => false,
@@ -89,6 +92,9 @@ class User implements UserInterface
             'staff' => true,
             'usuniete' => false,
             'select-client' => null,
+            'date-type' => 'deadline',
+            'date-from' => null,
+            'date-to' => null,
         ];
             
     }

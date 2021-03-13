@@ -51,7 +51,7 @@
                     <select class="form-select" state="usuniete" disabled style="background-color: #632435;">
                         <option>Usuniete</option>
                     </select>
-                {% elseif order.state == "rozliczone" %}
+                {% elseif order.settledAt is not null %}
                     <select class="form-select" state="{{ order.state }}" disabled>
                         <option>Rozliczone</option>
                     </select>
