@@ -119,7 +119,8 @@ class IndexController extends AbstractController
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($this->request);
         $user = $this->getUser();
-
+//        dump($form->isSubmitted());
+//        dump($form->isValid());
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['index'] = $form->getData();
@@ -128,10 +129,10 @@ class IndexController extends AbstractController
             $user->setPreferences($preferences);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-
+            return new Response("Zastosowano filtry.", 200);
         }
 
-        return new Response(' return reached ');
+        return new Response('Błędne dane.', 400);
     }
 
     /**
