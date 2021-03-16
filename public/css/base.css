@@ -64,6 +64,10 @@ a {
   text-align: center;
 }
 
+#sidebar li {
+  position: relative;
+}
+
 #sidebar.active {
   min-width: 80px;
   max-width: 80px;
@@ -94,9 +98,10 @@ a {
 
 #sidebar h6 {
   display: block;
+  position: absolute;
   opacity: 1;
-  float: right;
-  margin-right: 20px;
+  right: 30px;
+  top: 12px;
   transition: all 0.3s;
   animation-name: show-up-delayed;
   animation-iteration-count: 1;

@@ -119,8 +119,6 @@ class IndexController extends AbstractController
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($this->request);
         $user = $this->getUser();
-//        dump($form->isSubmitted());
-//        dump($form->isValid());
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['index'] = $form->getData();
@@ -229,7 +227,30 @@ class IndexController extends AbstractController
             $this->entityManager->persist($order);
             $this->entityManager->persist(new Log($this->getUser(), "Dodano zlecenie", $order));
             $this->entityManager->flush();
-            return new Response("Dodano zlecenie", 201);
+            return new Response("Dodano zlecenie", 201, ["orderId" => $order->getId()]);
+        }
+
+        return $this->render('index/addOrder.html.twig', [
+            'addOrderForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/index/api/updateOrder/{id}", name="index_api_updateOrder")
+     * @param Order $order
+     * @return Response
+     */
+    public function updateOrder(Order $order): Response
+    {
+        $form = $this->createForm(AddOrderForm::class, $order);
+
+        $form->handleRequest($this->request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+            $this->entityManager->persist($order);
+            $this->entityManager->persist(new Log($this->getUser(), "Zaktualizowano zlecenie", $order));
+            $this->entityManager->flush();
+            return new Response("Zaktualizowano zlecenie.", 202, ["orderId" => $order->getId()]);
         }
 
         return $this->render('index/addOrder.html.twig', [

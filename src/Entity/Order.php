@@ -63,11 +63,13 @@ class Order
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\PositiveOrZero
      */
     private $pages;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\PositiveOrZero
      */
     private $price;
 

@@ -21,6 +21,7 @@ class AddOrderForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $today = new \DateTime();
         $builder
             ->add('client', EntityType::class,[
                 'class' => Client::class,
@@ -79,14 +80,13 @@ class AddOrderForm extends AbstractType
                 'label' => 'Przyjęte',
                 'help' => 'Data przyjęcia zlecenia',
                 'widget' => 'single_text',
-                'data' => new \DateTime
+//                'empty_data' => "2021-01-01",  TODO
             ])
             ->add('deadline', DateTimeType::class, [
                 'label' => 'Termin',
                 'help' => 'Data i godzina ostatecznego terminu',
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'data' => (new \DateTime)->setTime(23,59)
             ])
             ->add('info', TextareaType::class, [
                 'label' => 'Notatki',
