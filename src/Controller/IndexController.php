@@ -248,6 +248,7 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $this->entityManager->persist($order);
+//            TODO sprawdzanie co się zmieniło i logowanie tego
             $this->entityManager->persist(new Log($this->getUser(), "Zaktualizowano zlecenie", $order));
             $this->entityManager->flush();
             return new Response("Zaktualizowano zlecenie.", 202, ["orderId" => $order->getId()]);

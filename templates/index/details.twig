@@ -81,13 +81,6 @@
 	<div class="value">{{ order.netto }} PLN</div>
 </div>
 <div style="clear:both;"></div>
-{% if order.deletedAt is null and order.state != "rozliczone" %}
-<a href="#">
-	<div class="invoice">
-		<button class="btn btn-primary">Faktura</button>
-	</div>
-</a>
-{% endif %}
 
 <div class="logs">
 	<table class="table table-dark">
