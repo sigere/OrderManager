@@ -73,7 +73,7 @@
 /* --filter-columns-- */
 .filter-columns-label {
     background-color: rgb(45, 50, 55);
-    margin-top: 15px;
+    margin-top: 12px;
     width: 150px;
     padding: 5px;
     padding-left: 10px;
@@ -83,11 +83,11 @@
 }
 
 .filter-columns-label.first {
-    margin-top: 35px;
+    margin-top: 25px;
 }
 
 .filter-client.first {
-    margin-top: 35px;
+    margin-top: 25px;
 }
 
 .filter-columns-label:hover {
@@ -173,9 +173,30 @@ input[type="checkbox"]:checked
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.filter-clietn option {
+.filter-client option {
     background-color: rgb(114, 114, 114);
 }
+
+.filter-date-type label
+{
+    margin-top: 20px;
+}
+.filter-date-type input{
+    /*display: block;*/
+}
+
+.filter-date-from, .filter-date-to
+{
+    margin-top: 15px;
+    width: 150px;
+    color: white;
+    background-color: rgb(39, 39, 39);
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 
 /* --------mid-column-------------- */
 .mid-col .buttons {
@@ -183,7 +204,7 @@ input[type="checkbox"]:checked
     right: 0;
     top: 0;
     background-color: rgb(73, 82, 91);
-    padding: 8px 15px;
+    padding: 10px 15px;
     width: 50px;
     height: 40px;
     border-top-right-radius: 10px;
@@ -244,7 +265,7 @@ input[type="checkbox"]:checked
 .active-row {
     /*  TODO*/
     background: rgb(255,255,255);
-    background: linear-gradient(90deg, rgba(32,209,25,0.20211834733893552) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(90deg, rgba(255,255,255,0.20211834733893552) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
 }
 
 .active-row td {

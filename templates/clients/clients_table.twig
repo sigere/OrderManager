@@ -10,14 +10,14 @@
     </thead>
     <tbody>
     {% for client in clients %}
-        <tr>
-            <td class="clickable-row" onclick="reloadDetails({{ client.id }})" style="white-space: nowrap;">
+        <tr client-id="{{ client.id }}">
+            <td class="clickable-row" style="white-space: nowrap;">
                 {{ client.id }}
             </td>
-            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.alias }}</td>
-            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.name }}</td>
-            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.nip }}</td>
-{#            <td class="clickable-row" onclick="reloadDetails({{ client.id }})">{{ client.email }}#}
+            <td class="clickable-row">{{ client.alias }}</td>
+            <td class="clickable-row">{{ client.name }}</td>
+            <td class="clickable-row">{{ client.nip }}</td>
+{#            <td class="clickable-row">{{ client.email }}#}
         </tr>
     {% endfor %}
     </tbody>

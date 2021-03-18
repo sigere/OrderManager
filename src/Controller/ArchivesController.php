@@ -85,7 +85,7 @@ class ArchivesController extends AbstractController
         }
 
         $orders = $orders
-            ->setMaxResults(400)
+            ->setMaxResults(15)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();
@@ -142,7 +142,7 @@ class ArchivesController extends AbstractController
     }
 
     /**
-     * @Route("/archives/api/restore/{id}", name="archives_api_restore")
+     * @Route("/archives/api/restoreOrder/{id}", name="archives_api_restoreOrder")
      * @param Order $order
      * @return Response
      */

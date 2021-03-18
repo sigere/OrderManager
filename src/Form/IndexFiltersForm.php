@@ -118,27 +118,31 @@ class IndexFiltersForm extends AbstractType
                     'Data dodania' => 'adoption',
                     'Termin' => 'deadline',
                 ],
-                'attr' => ['class' => 'form-control first'],
+                'attr' => ['class' => 'filter-date-type'],
                 'expanded' => true,
                 'multiple' => false,
                 'label' => false,
                 'data' => $preferences['index']['date-type'],
+                'choice_attr' => [
+                    'Termin' => ['style' => 'margin-left: 10px;']]
             ])
             ->add('date-from', DateType::class,[
                 'label' => 'Data od',
                 'widget' => 'single_text',
                 'required' => false,
-                'attr' => ['class' => 'form-control first'],
+                'attr' => ['class' => 'filter-date-from'],
                 'data' => $preferences['index']['date-from'] ?
                     new \DateTime($preferences['index']['date-from']['date']) : null,
+                'label_attr' => ['style' => 'display: block;'],
             ])
             ->add('date-to', DateType::class,[
                 'label' => 'Data do',
                 'widget' => 'single_text',
                 'required' => false,
-                'attr' => ['class' => 'form-control first'],
+                'attr' => ['class' => 'filter-date-to'],
                 'data' => $preferences['index']['date-to'] ?
                     new \DateTime($preferences['index']['date-to']['date']) : null,
+                'label_attr' => ['style' => 'display: block;'],
             ])
             ;
     }

@@ -1,8 +1,7 @@
 {% if client.deletedAt is not null %}
-<div class="alert alert-danger">Klient został usunięty {{ client.deletedAt|date("d-m-Y H:i") }}. Aby je przywrócić
-    skontaktuj sie z administratorem
-</div>
-{%  endif %}
+    <div class="alert alert-danger">Klient został usunięty {{ client.deletedAt|date("d-m-Y H:i") }}.
+    </div>
+{% endif %}
 
 <div class="property">
     <div class="name">Alias</div>
@@ -61,18 +60,13 @@
         <th>Akcja</th>
         </thead>
         <tbody>
-        {# {% for l in logs %} #}
-        {# <tr> #}
-        {# <td style="width: min-content;">{{ l.createdAt | date('d-m-Y H:i:s') }}</td> #}
-        {# <td style="width: min-content;">{{ l.user }}</td> #}
-        {# <td>{{ l.action }}</td> #}
-        {# </tr> #}
-        {# {% endfor %} #}
-        <tr>
-            <td>bla</td>
-            <td>bla</td>
-            <td>bla</td>
-        </tr>
+        {% for l in logs %}
+            <tr>
+                <td style="width: min-content;">{{ l.createdAt | date('d-m-Y H:i:s') }}</td>
+                <td style="width: min-content;">{{ l.user }}</td>
+                <td>{{ l.action }}</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

@@ -1,7 +1,7 @@
 {% if order.deletedAt is not null %}
-	<div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}. Aby je przywrócić skontaktuj sie z administratorem</div>
-{% elseif order.state == "rozliczone" %}
-	<div class="alert alert-success">Zlecenie zostało rozliczone.</div>
+	<div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}.</div>
+{% elseif order.settledAt is not null %}
+	<div class="alert alert-success">Zlecenie zostało rozliczone {{ order.settledAt|date("d-m-Y H:i") }}.</div>
 {% endif %}
 
 <div class="property">
@@ -13,6 +13,12 @@
 <div class="property">
 	<div class="name">Wprowadzono</div>
 	<div class="value">{{ order.adoption | date('d-m-Y H:i') }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+	<div class="name">Termin</div>
+	<div class="value">{{ order.deadline | date('d-m-Y H:i') }}</div>
 </div>
 <div style="clear:both;"></div>
 
@@ -72,13 +78,6 @@
 	<div class="value">{{ order.netto }} PLN</div>
 </div>
 <div style="clear:both;"></div>
-{% if order.deletedAt is null and order.state != "rozliczone" %}
-<a href="#">
-	<div class="invoice">
-		<button class="btn btn-primary">Faktura</button>
-	</div>
-</a>
-{% endif %}
 
 <div class="logs">
 	<table class="table table-dark">

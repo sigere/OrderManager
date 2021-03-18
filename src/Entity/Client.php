@@ -6,6 +6,7 @@ use App\Repository\ClientRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
@@ -51,6 +52,9 @@ class Client
 
     /**
      * @ORM\Column(type="string", length=2)
+     * @Assert\Country(
+     *     message = "Wprowadź poprawny kraj."
+     * )
      */
     private $country;
 
@@ -63,6 +67,13 @@ class Client
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $deletedAt;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Assert\Email(
+     *     message = "Adres email '{{ value }}' nie jest poprawny.")
+     */
+    private $email;
 
     public function __construct()
     {
@@ -177,6 +188,18 @@ class Client
     public function setDeletedAt(DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

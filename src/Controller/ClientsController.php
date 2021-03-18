@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\Log;
 use App\Form\AddClientForm;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,7 +39,7 @@ class ClientsController extends AbstractController
         $clients = $repository->createQueryBuilder('c');
         $clients = $clients
             ->andWhere('c.deletedAt is null')
-            ->setMaxResults(400)
+            ->setMaxResults(15)
             ->orderBy('c.alias', 'ASC')
             ->getQuery()
             ->getResult();
@@ -46,7 +47,7 @@ class ClientsController extends AbstractController
     }
 
     /**
-     * @Route("/clients/api/reloadTable", name="clients_reload_table")
+     * @Route("/clients/api/reloadTable", name="clients_api_reload_table")
      */
     public function reloadTable(): Response
     {
@@ -55,23 +56,29 @@ class ClientsController extends AbstractController
         ]);
     }
 
-
     /**
-     * @Route("/clients/api/deleteClient/{id}", name="clients_api_deleteClient")
+     * @Route("/clients/api/updateClient/{id}", name="clients_api_updateClient")
      * @param Client $client
      * @return Response
      */
-    public function deleteClient(Client $client): Response
+    public function updateClient(Client $client):Response
     {
-        if ($client->getDeletedAt())
-            return new Response("Klient został już usunięty", 406);
+        $form = $this->createForm(AddClientForm::class, $client);
 
-        $client->setDeletedAt(new Datetime());
-        $this->entityManager->persist($client);
-        //TODO logs
-        $this->entityManager->flush();
-        return new Response("Klient usunięty", 200);
+        $form->handleRequest($this->request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $client = $form->getData();
+            $this->entityManager->persist($client);
+            $this->entityManager->persist(new Log($this->getUser(), "Zaktualizowano klienta", $client));
+            $this->entityManager->flush();
+            return new Response("Zaktualizowano klienta.", 202, ["orderId" => $client->getId()]);
+        }
+
+        return $this->render('clients/addClient.html.twig', [
+            'addClientForm' => $form->createView(),
+        ]);
     }
+
 
     /**
      * @Route("/clients/api/addClient", name="clients_api_addClient")
@@ -80,12 +87,11 @@ class ClientsController extends AbstractController
     public function addOrder(): Response
     {
         $form = $this->createForm(AddClientForm::class);
-
         $form->handleRequest($this->request);
         if ($form->isSubmitted() && $form->isValid()) {
             $client = $form->getData();
             $this->entityManager->persist($client);
-            //TODO logs
+            $this->entityManager->persist(new Log($this->getUser(), "Dodano klienta klienta", $client));
             $this->entityManager->flush();
             return new Response("Dodano klienta", 201);
         }
@@ -103,8 +109,10 @@ class ClientsController extends AbstractController
      */
     public function details(Client $client): Response
     {
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(['client' => $client], ['createdAt' => 'DESC'], 100);
         return $this->render('clients/details.twig', [
-            'client' => $client
+            'client' => $client,
+            'logs' => $logs,
         ]);
     }
 }

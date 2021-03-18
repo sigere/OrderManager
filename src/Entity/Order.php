@@ -256,7 +256,7 @@ class Order
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(DateTime $dateTime): self
+    public function setDeletedAt(?DateTime $dateTime): self
     {
         $this->deletedAt = $dateTime;
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
@@ -103,7 +104,7 @@ class IndexController extends AbstractController
         $orders = $orders
             ->andWhere('o.settledAt is null')
             ->andWhere('o.deletedAt is null')
-            ->setMaxResults(400)
+            ->setMaxResults(15)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();
@@ -154,7 +155,7 @@ class IndexController extends AbstractController
         if (!$order) {
             throw $this->createNotFoundException('Nie znaleziono zlecenia');
         }
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC']);
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC'],100);
 
         return $this->render('index/details.twig', [
             'order' => $order,
@@ -287,11 +288,14 @@ class IndexController extends AbstractController
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         // $order = $entityManager->getRepository(Order::class)->findOneBy(['id' => 1]);
-        // $log = new Log($this->getUser(),"crazy shit just happend", $order);
+        $log = new Log($this->getUser(),"crazy shit just happend", new Order());
+        dump($log);
+        $log = new Log($this->getUser(),"crazy shit just happend", new Client());
+        dump($log);
+        die("ok");
         // $entityManager->persist($log);
         // $entityManager->flush();
         // dd($log);
-
 
         // $client = new Client();
         // $client->setName("W11 wydział kryminalny");

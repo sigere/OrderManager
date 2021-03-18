@@ -24,28 +24,28 @@
     </thead>
     <tbody>
     {% for order in orders %}
-        <tr>
-            <td class="clickable-row" onclick="reloadDetails({{ order.id }})" style="white-space: nowrap;">
+        <tr order-id="{{ order.id }}">
+            <td class="clickable-row" style="white-space: nowrap;">
                 {{ order.id }}
             </td>
             {% if app.user.preferences['archives']['adoption'] == true %}
-                <td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.adoption | date('d-m-Y H:i') }}</td>
+                <td class="clickable-row">{{ order.adoption | date('d-m-Y H:i') }}</td>
             {% endif %}
             {% if app.user.preferences['archives']['client'] == true %}
-                <td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.client }}</td>
+                <td class="clickable-row">{{ order.client }}</td>
             {% endif %}
             {% if app.user.preferences['archives']['topic'] == true %}
-                <td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.topic }}</td>
+                <td class="clickable-row">{{ order.topic }}</td>
             {% endif %}
             {% if app.user.preferences['archives']['lang'] == true %}
-                <td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.baseLang }}
+                <td class="clickable-row">{{ order.baseLang }}
                     ->
                     {{ order.targetLang }}</td>
             {% endif %}
             {% if app.user.preferences['archives']['deadline'] == true %}
-                <td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.deadline | date('d-m-Y H:i')}}</td>
+                <td class="clickable-row">{{ order.deadline | date('d-m-Y H:i')}}</td>
             {% endif %}
-            <td class="clickable-row" onclick="reloadDetails({{ order.id }})">{{ order.staff }}</td>
+            <td class="clickable-row">{{ order.staff }}</td>
             <td>
                 {% if order.deletedAt is not null %}
                     <select class="form-select" state="usuniete" disabled style="background-color: #632435;">

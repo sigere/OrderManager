@@ -43,7 +43,6 @@ class Controller {
             let options = lastCell.getElementsByTagName("option");
             for (let j = 0; j < options.length; j++) {
                 options[j].addEventListener("click", this.updateState.bind(this, options[j], orderId), false);
-                console.log(options[j]);
             }
         }
 
@@ -55,11 +54,21 @@ class Controller {
                 cells[j].addEventListener("click", this.reloadDetails.bind(this, orderId), false);
             }
         }
+        if (tableRows.length - 1 >= 15) {
+            this.overlay.style.display = "block";
+            this.centerPopup.classList.add("active");
+            this.centerPopupContent.innerHTML = '' +
+                '<div class="alert alert-danger" style="text-align: center">' +
+                'Liczba zwróconych przez serwer rekordów przekracza 15.<br/>' +
+                'Część danych nie może zostać wyświetlona.<br/>' +
+                'Użyj filtrów, by ograniczyć wynik' +
+                '</div>';
+        }
     }
 
     updateSelected() {
         let tableRows = this.tableContainer.getElementsByTagName("tr");
-        if(!this.currentId)
+        if (!this.currentId)
             return;
         if (this.selectedRow)
             this.selectedRow.classList.toggle("active-row");

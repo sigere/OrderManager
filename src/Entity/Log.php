@@ -32,15 +32,30 @@ class Log
     private $action = "";
     /**
      * @ORM\ManyToOne(targetEntity=Order::class)
-     * @ORM\JoinColumn(nullable=false)
      */
     private $order;
 
-    public function __construct($user, $action, $order)
+    /**
+     * @ORM\ManyToOne(targetEntity=Client::class)
+     */
+    private $client;
+
+
+    public function __construct($user, $action, $object)
     {
         $this->user = $user;
         $this->action = $action;
-        $this->order = $order;
+
+        $this->client = null;
+        $this->order = null;
+        switch (get_class($object)){
+            case Order::class:
+                $this->order = $object;
+                break;
+            case Client::class:
+                $this->client = $object;
+        }
+
         $this->createdAt = new DateTime();
     }
 
@@ -86,6 +101,18 @@ class Log
     public function setOrder(?Order $order): self
     {
         $this->order = $order;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }

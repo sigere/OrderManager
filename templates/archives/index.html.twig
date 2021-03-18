@@ -14,7 +14,7 @@
 {% block javascript %}
 {{ parent() }}
 <script type="text/javascript" src="{{ asset("js/index-popups.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/archives.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/archives/archives.js") }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -58,6 +58,12 @@
                     <header>
                         Szczegóły zlecenia
                         <i id="details-header-id"></i>
+                        <div id="restore-button" class="buttons clickable">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                                <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+                            </svg>
+                        </div>
                     </header>
                     <div class="col-content" id="details-content">
                         <div class="alert alert-primary">Wybierz zlecenie, aby wyświetlić jego szczegóły</div>
