@@ -1,4 +1,4 @@
-<table class="table table-dark table-hover">
+<table id="main-table" class="table table-dark table-hover">
 	<thead>
 		<tr>
 			<th>id</th>
@@ -17,8 +17,10 @@
 			{% if app.user.preferences['index']['deadline'] == true %}
 				<th>Termin</th>
 			{% endif %}
+			{% if app.user.preferences['index']['staff'] == true %}
+				<th>Wykonawca</th>
+			{% endif %}
 
-			<th>Wykonawca</th>
 			<th>Zmien status</th>
 		</tr>
 	</thead>
@@ -32,7 +34,7 @@
 					{{ order.id }}
 				</td>
 				{% if app.user.preferences['index']['adoption'] == true %}
-					<td class="clickable-row">{{ order.adoption | date('d-m-Y H:i') }}</td>
+					<td class="clickable-row">{{ order.adoption | date('d.m.Y H:i') }}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['client'] == true %}
 					<td class="clickable-row">{{ order.client }}</td>
@@ -46,9 +48,11 @@
 						{{ order.targetLang }}</td>
 				{% endif %}
 				{% if app.user.preferences['index']['deadline'] == true %}
-					<td class="clickable-row">{{ order.deadline | date('d-m-Y H:i')}}</td>
+					<td class="clickable-row">{{ order.deadline | date('d.m.Y H:i')}}</td>
 				{% endif %}
-				<td class="clickable-row">{{ order.staff }}</td>
+				{% if app.user.preferences['index']['staff'] == true %}
+					<td class="clickable-row">{{ order.staff }}</td>
+				{% endif %}
 				<td>
 					{% if order.deletedAt is not null %}
 						<select class="form-select" state="usuniete" disabled style="background-color: #632435;">

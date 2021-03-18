@@ -32,7 +32,7 @@ class ArchivesController extends AbstractController
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(ArchivesFiltersForm::class);
-
+        dump($form);
 
         return $this->render('archives/index.html.twig', [
             "orders" => $orders,
@@ -45,7 +45,7 @@ class ArchivesController extends AbstractController
         $repository = $this->entityManager->getRepository(Order::class);
         $user = $this->getUser();
         $preferences = $user->getPreferences();
-        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['archives']['staff']]);
+        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['archives']['select-staff']]);
         //doctrine nie zapisuje obiektów w user->preferences['archives']['select-client'],
         //więc mapuje na id przy zapisie i na obiekt przy odczycie
 
@@ -56,10 +56,10 @@ class ArchivesController extends AbstractController
         else
             $orders->andWhere('o.settledAt is not null');
 
-        if ($preferences['archives']['staff']) {
+        if ($preferences['archives']['select-staff']) {
             $orders = $orders
                 ->andWhere('o.staff = :staff')
-                ->setParameter('staff', $staff ? $staff : $this->getUser());
+                ->setParameter('select-staff', $staff ? $staff : $this->getUser());
         }
 
         if ($preferences['archives']['select-client'])
@@ -131,7 +131,7 @@ class ArchivesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['archives'] = $form->getData();
-            $preferences['archives']['staff'] = $preferences['archives']['staff'] ? $preferences['archives']['staff']->getId() : null;
+            $preferences['archives']['select-staff'] = $preferences['archives']['select-staff'] ? $preferences['archives']['select-staff']->getId() : null;
             $preferences['archives']['select-client'] = $preferences['archives']['select-client'] ? $preferences['archives']['select-client']->getId() : null;
             $user->setPreferences($preferences);
             $this->entityManager->persist($user);

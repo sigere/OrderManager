@@ -64,11 +64,11 @@ class IndexController extends AbstractController
         $statesString = substr($statesString, 0, -14);
 
         $repo = $this->entityManager->getRepository(Order::class);
-        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['index']['staff']]);
+        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['index']['select-staff']]);
         $orders = $repo->createQueryBuilder('o')
             ->andWhere($statesString);
 
-        if ($preferences['index']['staff']) {
+        if ($preferences['index']['select-staff']) {
             $orders = $orders
                 ->andWhere('o.staff = :staff')
                 ->setParameter('staff', $staff ? $staff : $this->getUser());
@@ -117,13 +117,14 @@ class IndexController extends AbstractController
      */
     public function indexApiFilters(): Response
     {
+        dump($this->getUser()->getPreferences());
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($this->request);
         $user = $this->getUser();
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['index'] = $form->getData();
-            $preferences['index']['staff'] = $preferences['index']['staff'] ? $preferences['index']['staff']->getId() : null;
+            $preferences['index']['select-staff'] = $preferences['index']['select-staff'] ? $preferences['index']['select-staff']->getId() : null;
             $preferences['index']['select-client'] = $preferences['index']['select-client'] ? $preferences['index']['select-client']->getId() : null;
             $user->setPreferences($preferences);
             $this->entityManager->persist($user);
@@ -288,11 +289,11 @@ class IndexController extends AbstractController
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         // $order = $entityManager->getRepository(Order::class)->findOneBy(['id' => 1]);
-        $log = new Log($this->getUser(),"crazy shit just happend", new Order());
-        dump($log);
-        $log = new Log($this->getUser(),"crazy shit just happend", new Client());
-        dump($log);
-        die("ok");
+//        $log = new Log($this->getUser(),"crazy shit just happend", new Order());
+//        dump($log);
+//        $log = new Log($this->getUser(),"crazy shit just happend", new Client());
+//        dump($log);
+//        die("ok");
         // $entityManager->persist($log);
         // $entityManager->flush();
         // dd($log);

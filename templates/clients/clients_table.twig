@@ -1,4 +1,4 @@
-<table class="table table-dark table-hover">
+<table id="main-table" class="table table-dark table-hover">
     <thead>
     <tr>
         <th>id</th>
@@ -12,12 +12,15 @@
     {% for client in clients %}
         <tr client-id="{{ client.id }}">
             <td class="clickable-row" style="white-space: nowrap;">
+                {% if not client.email %}
+                    {% include 'icons/warning.html'  %}
+                {% endif %}
                 {{ client.id }}
             </td>
             <td class="clickable-row">{{ client.alias }}</td>
             <td class="clickable-row">{{ client.name }}</td>
             <td class="clickable-row">{{ client.nip }}</td>
-{#            <td class="clickable-row">{{ client.email }}#}
+            <td class="clickable-row">{{ client.email|default("brak") }}</td>
         </tr>
     {% endfor %}
     </tbody>

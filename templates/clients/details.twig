@@ -46,8 +46,19 @@
 <div style="clear:both;"></div>
 
 <div class="property">
+    <div class="name">E-mail</div>
+    <div class="value">
+        {% if not client.email %}
+            {% include 'icons/warning.html'  %}
+        {% endif %}
+        {{ client.email|default("brak") }}
+    </div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
     <div class="name">Dodano</div>
-    <div class="value">{{ client.createdAt | date('d-m-Y H:i') }}</div>
+    <div class="value">{{ client.createdAt | date('d.m.Y H:i') }}</div>
 </div>
 <div style="clear:both;"></div>
 

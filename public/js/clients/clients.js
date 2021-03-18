@@ -40,6 +40,9 @@ class ClientsController {
                 cells[j].addEventListener("click", this.reloadDetails.bind(this, clientId), false);
             }
         }
+        $(function () {
+            $("#main-table").tablesorter();
+        });
     }
 
     updateSelected() {

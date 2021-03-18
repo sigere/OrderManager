@@ -34,7 +34,11 @@ class AddClientForm extends AbstractType
             ])
             ->add('country', null, [
                 "label" => "Kraj"
-            ]);
+            ])
+            ->add('email', null, [
+                "label" => "Adres email"
+            ])
+        ;
 
     }
 

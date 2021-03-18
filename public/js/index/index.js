@@ -58,12 +58,25 @@ class Controller {
             this.overlay.style.display = "block";
             this.centerPopup.classList.add("active");
             this.centerPopupContent.innerHTML = '' +
-                '<div class="alert alert-danger" style="text-align: center">' +
+                '<div class="alert alert-warning" style="text-align: center">' +
                 'Liczba zwróconych przez serwer rekordów przekracza 15.<br/>' +
                 'Część danych nie może zostać wyświetlona.<br/>' +
                 'Użyj filtrów, by ograniczyć wynik' +
                 '</div>';
         }
+        $(function () {
+            $("#main-table").tablesorter({
+                dateFormat : "ddmmyyyy", // set the default date format
+
+                // or to change the format for specific columns, add the dateFormat to the headers option:
+                // headers: {
+                //     0: { sorter: "shortDate" } //, dateFormat will parsed as the default above
+                //     // 1: { sorter: "shortDate", dateFormat: "ddmmyyyy" }, // set day first format; set using class names
+                //     // 2: { sorter: "shortDate", dateFormat: "yyyymmdd" }  // set year first format; set using data attributes (jQuery data)
+                // }
+
+            });
+        });
     }
 
     updateSelected() {

@@ -88,7 +88,7 @@ class ArchivesFiltersForm extends AbstractType
                 findOneBy(['id' => $preferences['archives']['select-client']]),
 
             ])
-            ->add('staff', EntityType::class, [
+            ->add('select-staff', EntityType::class, [
                 'class' => Staff::class,
                 'label' => 'Wykonawca',
                 'help' => 'Tłumacz przydzielony do zlecenia',
@@ -98,7 +98,7 @@ class ArchivesFiltersForm extends AbstractType
                 'placeholder' => 'Wszyscy wykonawcy',
                 'data' => $this->entityManager->
                 getRepository(Staff::class)->
-                findOneBy(['id' => $preferences['archives']['staff']]),
+                findOneBy(['id' => $preferences['archives']['select-staff']]),
             ])
             // date
             ->add('date-type', ChoiceType::class, [

@@ -100,7 +100,7 @@ class IndexFiltersForm extends AbstractType
                 findOneBy(['id' => $preferences['index']['select-client']]),
             ])
             // staff
-            ->add('staff', EntityType::class, [
+            ->add('select-staff', EntityType::class, [
                 'class' => Staff::class,
                 'label' => 'Wykonawca',
                 'help' => 'Tłumacz przydzielony do zlecenia',
@@ -110,7 +110,7 @@ class IndexFiltersForm extends AbstractType
                 'placeholder' => 'Wszyscy wykonawcy',
                 'data' => $this->entityManager->
                 getRepository(Staff::class)->
-                findOneBy(['id' => $preferences['index']['staff']]),
+                findOneBy(['id' => $preferences['index']['select-staff']]),
             ])
             // date
             ->add('date-type', ChoiceType::class, [
