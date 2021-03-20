@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Client;
 use App\Entity\Log;
 use App\Form\AddClientForm;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -61,7 +60,7 @@ class ClientsController extends AbstractController
      * @param Client $client
      * @return Response
      */
-    public function updateClient(Client $client):Response
+    public function updateClient(Client $client): Response
     {
         $form = $this->createForm(AddClientForm::class, $client);
 

@@ -45,7 +45,7 @@
                     {{ order.targetLang }}</td>
             {% endif %}
             {% if app.user.preferences['archives']['deadline'] == true %}
-                <td class="clickable-row">{{ order.deadline | date('d.m.Y H:i')}}</td>
+                <td class="clickable-row">{{ order.deadline | date('d.m.Y H:i') }}</td>
             {% endif %}
             {% if app.user.preferences['archives']['staff'] == true %}
                 <td class="clickable-row">{{ order.staff }}</td>

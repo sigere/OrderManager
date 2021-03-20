@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -134,24 +135,24 @@ class Company
         return $this;
     }
 
-    public function getIssueDate(): ?\DateTimeInterface
+    public function getIssueDate(): ?DateTimeInterface
     {
         return $this->issueDate;
     }
 
-    public function setIssueDate(?\DateTimeInterface $issueDate): self
+    public function setIssueDate(?DateTimeInterface $issueDate): self
     {
         $this->issueDate = $issueDate;
 
         return $this;
     }
 
-    public function getPaymentTo(): ?\DateTimeInterface
+    public function getPaymentTo(): ?DateTimeInterface
     {
         return $this->paymentTo;
     }
 
-    public function setPaymentTo(?\DateTimeInterface $paymentTo): self
+    public function setPaymentTo(?DateTimeInterface $paymentTo): self
     {
         $this->paymentTo = $paymentTo;
 

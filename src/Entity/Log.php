@@ -48,7 +48,7 @@ class Log
 
         $this->client = null;
         $this->order = null;
-        switch (get_class($object)){
+        switch (get_class($object)) {
             case Order::class:
                 $this->order = $object;
                 break;

@@ -2,18 +2,19 @@
 
 namespace App\Form;
 
-use App\Entity\Order;
 use App\Entity\Client;
 use App\Entity\Lang;
+use App\Entity\Order;
 use App\Entity\Staff;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use DateTime;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -21,23 +22,23 @@ class AddOrderForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $today = new \DateTime();
+        $today = new DateTime();
         $builder
-            ->add('client', EntityType::class,[
+            ->add('client', EntityType::class, [
                 'class' => Client::class,
                 'help' => 'Zleceniodawca nowego zlecenia',
                 'label' => 'Klient',
                 'choice_label' => 'alias'
             ])
-            ->add('staff', EntityType::class,[
+            ->add('staff', EntityType::class, [
                 'class' => Staff::class,
                 'help' => 'Osoba relizująca zlecenie',
                 'label' => 'Tłumacz',
                 'choice_label' => function ($staff) {
-                    return $staff->getFirstName().' '.$staff->getLastName();
+                    return $staff->getFirstName() . ' ' . $staff->getLastName();
                 },
             ])
-            ->add('topic', TextType::class,[
+            ->add('topic', TextType::class, [
                 'help' => 'Temat nowego zlecenia',
                 'label' => 'Temat',
                 'required' => false,
@@ -68,12 +69,12 @@ class AddOrderForm extends AbstractType
                 'label' => 'Język na',
                 'help' => 'Docelowy język dokumentu zlecenia',
             ])
-            ->add('certified', ChoiceType::class,[
+            ->add('certified', ChoiceType::class, [
                 'label' => 'Uwierzytelniane',
                 'help' => 'Czy zlecenie będzie uwierzytelniane/przysięgłe?',
                 'choices' => [
-                    'Tak'=>true,
-                    'Nie'=>false
+                    'Tak' => true,
+                    'Nie' => false
                 ],
             ])
             ->add('adoption', DateType::class, [
@@ -93,8 +94,7 @@ class AddOrderForm extends AbstractType
                 'required' => false,
                 'help' => 'Dodatkowe informacje o zleceniu',
                 'empty_data' => ''
-            ])
-            ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -44,6 +44,11 @@ class Lang
         return $this;
     }
 
+    public function __toString(): string
+    {
+        return $this->getShort();
+    }
+
     public function getShort(): ?string
     {
         return $this->short;
@@ -54,10 +59,5 @@ class Lang
         $this->short = $short;
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->getShort();
     }
 }

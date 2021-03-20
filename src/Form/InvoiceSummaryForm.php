@@ -26,8 +26,7 @@ class InvoiceSummaryForm extends AbstractType
                 'attr' => ['class' => 'date'],
                 'data' => $company ? $company->getPaymentTo() : null,
                 'label_attr' => ['style' => 'display: block;'],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

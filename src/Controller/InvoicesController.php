@@ -7,7 +7,7 @@ use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Form\InvoiceSummaryForm;
-use Doctrine\DBAL\Types\DateTimeType;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -50,7 +50,7 @@ class InvoicesController extends AbstractController
             ->andWhere("c.deletedAt is null")
             ->orderBy("c.alias", "ASC")
             ->getQuery()
-            ->getResult();;
+            ->getResult();
 
         $repo = $this->entityManager->getRepository(Order::class);
         $result = [];
@@ -118,7 +118,7 @@ class InvoicesController extends AbstractController
         $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
         $form = $this->createForm(InvoiceSummaryForm::class);
         $form->handleRequest($this->request);
-        if(!$form->isSubmitted() || !$form->isValid()){
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return new Response("<div class='alert alert-danger'>Niepoprawne dane</div>", 406);
         }
         $company->setPaymentTo($form->getData()["paymentTo"]);
@@ -135,18 +135,17 @@ class InvoicesController extends AbstractController
 
         //TODO create invoice via api
 
-        return new Response("<div class='alert alert-success'>Rozliczono</div>",200);
+        return new Response("<div class='alert alert-success'>Rozliczono</div>", 200);
     }
 
     private function settle(array $orders): void
     {
-        foreach ($orders as $order)
-        {
-            if(!get_class($order) == Order::class)
+        foreach ($orders as $order) {
+            if (!get_class($order) == Order::class)
                 continue;
-            $order->setSettledAt(new \DateTime());
+            $order->setSettledAt(new DateTime());
             $this->entityManager->persist($order);
-            $this->entityManager->persist(new Log($this->getUser(),"Rozliczono zlecenie.",$order));
+            $this->entityManager->persist(new Log($this->getUser(), "Rozliczono zlecenie.", $order));
         }
         $this->entityManager->flush();
     }
@@ -158,7 +157,7 @@ class InvoicesController extends AbstractController
     public function reloadClients(): Response
     {
         $clients = $this->loadClients();
-        return $this->render('invoices/clients_table.twig',[
+        return $this->render('invoices/clients_table.twig', [
             "clients" => $clients,
         ]);
     }

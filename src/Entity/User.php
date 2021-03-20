@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -64,10 +66,11 @@ class User implements UserInterface
      */
     private $deletedAt;
 
-    public function __construct(){
-        $this->createdAt = new \DateTime;
+    public function __construct()
+    {
+        $this->createdAt = new DateTime;
         $this->deletedAt = null;
-        $this->preferences['index']=[
+        $this->preferences['index'] = [
             'adoption' => false,
             'client' => true,
             'topic' => true,
@@ -84,7 +87,7 @@ class User implements UserInterface
             'date-from' => null,
             'date-to' => null,
         ];
-        $this->preferences['archives']=[
+        $this->preferences['archives'] = [
             'adoption' => false,
             'client' => true,
             'topic' => true,
@@ -98,8 +101,9 @@ class User implements UserInterface
             'date-from' => null,
             'date-to' => null,
         ];
-            
+
     }
+
     public function getId(): int
     {
         return $this->id;
@@ -112,7 +116,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     public function setUsername(string $username): self
@@ -146,7 +150,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self
@@ -173,6 +177,23 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
+    public function getStaff(): ?Staff
+    {
+        return $this->staff;
+    }
+
+    public function setStaff(?Staff $staff): self
+    {
+        $this->staff = $staff;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -197,6 +218,37 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getCreatedAt(): ?DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function isColumnVisible(string $column): bool
+    {
+        $this->preferences['orders_table']['langs'] = true;
+        return $this->getPreferences()['orders_table'][$column] == true;
+        //co jesli nie istenieje taki index $column w tablicy? powineinem sprawdzić isset(...)?
+    }
+
     public function getPreferences(): array
     {
         return $this->preferences;
@@ -207,53 +259,5 @@ class User implements UserInterface
         $this->preferences = $preferences;
 
         return $this;
-    }
-
-    public function getStaff(): ?Staff
-    {
-        return $this->staff;
-    }
-
-    public function setStaff(?Staff $staff): self
-    {
-        $this->staff = $staff;
-
-        return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->getFirstName().' '.$this->getLastName();
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getDeletedAt(): ?\DateTimeInterface
-    {
-        return $this->deletedAt;
-    }
-
-    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    public function isColumnVisible(string $column): bool
-    {
-        $this->preferences['orders_table']['langs']=true;
-        return $this->getPreferences()['orders_table'][$column]==true;
-        //co jesli nie istenieje taki index $column w tablicy? powineinem sprawdzić isset(...)?
     }
 }

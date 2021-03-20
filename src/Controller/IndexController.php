@@ -8,7 +8,6 @@ use App\Entity\Lang;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
-use App\Entity\User;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;
@@ -19,7 +18,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Constraints\Date;
 
 class IndexController extends AbstractController
 {
@@ -158,7 +156,7 @@ class IndexController extends AbstractController
         if (!$order) {
             throw $this->createNotFoundException('Nie znaleziono zlecenia');
         }
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC'],100);
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC'], 100);
 
         return $this->render('index/details.twig', [
             'order' => $order,
@@ -289,7 +287,7 @@ class IndexController extends AbstractController
     {
         dump($this->request);
         dump($_POST);
-        return new Response("",200);
+        return new Response("", 200);
     }
 
     /**
@@ -300,21 +298,7 @@ class IndexController extends AbstractController
      */
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
-//        $staff = new Staff();
-//        $staff->setFirstName("Papieżyca");
-//        $staff->setLastName("Joanna");
-//        $user = new User();
-//        $user->setStaff($staff);
-//        $user->setFirstName("Daria");
-//        $user->setLastName("Łuka");
-//        $user->setUsername("daria");
-//        $user->setPassword('$argon2id$v=19$m=16,t=2,p=1$OEp3ZHU3bmxUQ1JPd1Q5bA$e/YQwUHwiA+rxAsTOebLxg');
-//
-//        $this->entityManager->persist($staff);
-//        $this->entityManager->persist($user);
-//        $this->entityManager->flush();
-//
-//        return new Response("ok", 200);
+        return new Response("ok", 200);
 
         $now = new Datetime();
 //        $tmp = new Datetime();
@@ -326,21 +310,21 @@ class IndexController extends AbstractController
         $langs = $this->entityManager->getRepository(Lang::class)->findAll();
         $staff = $this->entityManager->getRepository(Staff::class)->findAll();
         $clients = $this->entityManager->getRepository(Client::class)->findAll();
-        for ($i = 0; $i < 100; $i++){
+        for ($i = 0; $i < 100; $i++) {
             $order = new Order();
             $order->setAuthor($this->getUser());
             $order->setAdoption(new Datetime());
-            $order->setBaseLang($langs[rand(0,sizeof($langs)-1)]);
-            $order->setTargetLang($langs[rand(0,sizeof($langs)-1)]);
-            $order->setStaff($staff[rand(0,sizeof($staff)-1)]);
-            $order->setCertified(rand(0,1) ? true : false);
-            $order->setInfo($words[rand(0,sizeof($words)-1)]." ".$words[rand(0,sizeof($words)-1)]);
-            $order->setTopic($words[rand(0,sizeof($words)-1)]." ".$words[rand(0,sizeof($words)-1)]." ".$words[rand(0,sizeof($words)-1)]);
-            $order->setPages(max(rand(-5, 20),0));
-            $order->setPrice(max(rand(-5, 20),0));
-            $order->setClient($clients[rand(0,sizeof($clients)-1)]);
+            $order->setBaseLang($langs[rand(0, sizeof($langs) - 1)]);
+            $order->setTargetLang($langs[rand(0, sizeof($langs) - 1)]);
+            $order->setStaff($staff[rand(0, sizeof($staff) - 1)]);
+            $order->setCertified(rand(0, 1) ? true : false);
+            $order->setInfo($words[rand(0, sizeof($words) - 1)] . " " . $words[rand(0, sizeof($words) - 1)]);
+            $order->setTopic($words[rand(0, sizeof($words) - 1)] . " " . $words[rand(0, sizeof($words) - 1)] . " " . $words[rand(0, sizeof($words) - 1)]);
+            $order->setPages(max(rand(-5, 20), 0));
+            $order->setPrice(max(rand(-5, 20), 0));
+            $order->setClient($clients[rand(0, sizeof($clients) - 1)]);
 
-            $stamp = rand($now->getTimestamp(), $now->getTimestamp()+10000000);
+            $stamp = rand($now->getTimestamp(), $now->getTimestamp() + 10000000);
             $dt = new Datetime();
             $dt->setTimestamp($stamp);
 
@@ -413,7 +397,7 @@ class IndexController extends AbstractController
         // $user->setLastName("siger");
         // $user->setUsername("siger");
         // $user->setRoles(['ROLE_USER', "ROLE_ADMIN"]);
-        // $user->setPassword($passwordEncoder->encodePassword($user, "admin123"));
+
         // $user->setStaff($staff);
         // dd($user);
 //        $entityManager->persist($user);

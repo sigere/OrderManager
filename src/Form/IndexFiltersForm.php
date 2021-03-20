@@ -4,15 +4,16 @@ namespace App\Form;
 
 use App\Entity\Client;
 use App\Entity\Staff;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class IndexFiltersForm extends AbstractType
 {
@@ -48,11 +49,11 @@ class IndexFiltersForm extends AbstractType
                 'label_attr' => ['class' => 'filter-state-label', 'state' => 'wysłane'],
                 'required' => false,
             ])
-            
+
             // columns
             ->add('adoption', CheckboxType::class, [
                 'label' => 'Wprowadzono',
-                'attr' =>  $preferences['index']['adoption'] ? ['checked' => 'checked'] : [],
+                'attr' => $preferences['index']['adoption'] ? ['checked' => 'checked'] : [],
                 'label_attr' => ['class' => 'filter-columns-label first'],
                 'required' => false,
             ])
@@ -126,25 +127,24 @@ class IndexFiltersForm extends AbstractType
                 'choice_attr' => [
                     'Termin' => ['style' => 'margin-left: 10px;']]
             ])
-            ->add('date-from', DateType::class,[
+            ->add('date-from', DateType::class, [
                 'label' => 'Data od',
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['class' => 'filter-date-from'],
                 'data' => $preferences['index']['date-from'] ?
-                    new \DateTime($preferences['index']['date-from']['date']) : null,
+                    new DateTime($preferences['index']['date-from']['date']) : null,
                 'label_attr' => ['style' => 'display: block;'],
             ])
-            ->add('date-to', DateType::class,[
+            ->add('date-to', DateType::class, [
                 'label' => 'Data do',
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['class' => 'filter-date-to'],
                 'data' => $preferences['index']['date-to'] ?
-                    new \DateTime($preferences['index']['date-to']['date']) : null,
+                    new DateTime($preferences['index']['date-to']['date']) : null,
                 'label_attr' => ['style' => 'display: block;'],
-            ])
-            ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

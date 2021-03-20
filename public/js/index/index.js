@@ -66,7 +66,7 @@ class Controller {
         }
         $(function () {
             $("#main-table").tablesorter({
-                dateFormat : "ddmmyyyy", // set the default date format
+                dateFormat: "ddmmyyyy", // set the default date format
 
                 // or to change the format for specific columns, add the dateFormat to the headers option:
                 // headers: {

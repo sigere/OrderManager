@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Client;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -37,8 +36,7 @@ class AddClientForm extends AbstractType
             ])
             ->add('email', null, [
                 "label" => "Adres email"
-            ])
-        ;
+            ]);
 
     }
 

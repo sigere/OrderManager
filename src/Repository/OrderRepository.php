@@ -27,14 +27,13 @@ class OrderRepository extends ServiceEntityRepository
     public function getActive()
     {
         return $this->createQueryBuilder('o')
-            ->andWhere('o.deletedAt IS NULL')
-        ;
+            ->andWhere('o.deletedAt IS NULL');
     }
 
     /**
      * @Return Order[]
      */
-    public function getByStaff(Staff $staff) : array
+    public function getByStaff(Staff $staff): array
     {
         return $this->createQueryBuilder('o')
             ->andWhere('o.user = :staff')
@@ -42,8 +41,7 @@ class OrderRepository extends ServiceEntityRepository
             ->setMaxResult($this->limit)
             ->orderBy('o.id', 'DESC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     // /**

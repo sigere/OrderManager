@@ -3,11 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
-use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use mysql_xdevapi\Warning;
-use PhpParser\Node\Expr\Array_;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,96 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Order
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Client::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $client;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $author;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Staff::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $staff;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Lang::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $baseLang;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Lang::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $targetLang;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $deletedAt;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $certified;
-
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
-     * @Assert\PositiveOrZero
-     */
-    private $pages;
-
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
-     * @Assert\PositiveOrZero
-     */
-    private $price;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=false)
-     * @Assert\NotBlank(message="Temat nie może być pusty")
-     */
-    private $topic;
-
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $state;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $info;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $adoption;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $deadline;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $settledAt;
-
     public const ALLCOLUMNS = [
         'client',
         'author',
@@ -126,6 +34,80 @@ class Order
     public const PRZYJETE = 'przyjete';
     public const WYKONANE = 'wykonane';
     public const WYSLANE = 'wyslane';
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+    /**
+     * @ORM\ManyToOne(targetEntity=Client::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $client;
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
+    /**
+     * @ORM\ManyToOne(targetEntity=Staff::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $staff;
+    /**
+     * @ORM\ManyToOne(targetEntity=Lang::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $baseLang;
+    /**
+     * @ORM\ManyToOne(targetEntity=Lang::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $targetLang;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $certified;
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\PositiveOrZero
+     */
+    private $pages;
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\PositiveOrZero
+     */
+    private $price;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Temat nie może być pusty")
+     */
+    private $topic;
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private $state;
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $info;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $adoption;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $deadline;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $settledAt;
 
     public function __construct()
     {
@@ -139,10 +121,23 @@ class Order
         return $this->getId();
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getInvoiceWarnings(): array
+    {
+        $warnings = $this->getWarnings();
+        if ($this->state != self::WYSLANE)
+            $warnings[] = "Zlecenie nie zostało wysłane.";
+        return $warnings;
+    }
+
     public function getWarnings(): array
     {
         $warnings = [];
-        $now = new \DateTime;
+        $now = new DateTime;
         $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
 
         if ($this->price == 0)
@@ -168,14 +163,6 @@ class Order
         return $warnings;
     }
 
-    public function getInvoiceWarnings(): array
-    {
-        $warnings = $this->getWarnings();
-        if($this->state != self::WYSLANE)
-            $warnings[] = "Zlecenie nie zostało wysłane.";
-        return $warnings;
-    }
-
     public function nextState(): string
     {
         switch ($this->state) {
@@ -194,11 +181,6 @@ class Order
             return round($this->price * $this->pages, 2);
         }
         return 0.00;
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getClient(): ?Client
@@ -261,7 +243,7 @@ class Order
         return $this;
     }
 
-    public function getDeletedAt(): ?\Datetime
+    public function getDeletedAt(): ?DateTime
     {
         return $this->deletedAt;
     }
@@ -350,7 +332,7 @@ class Order
         return $this->adoption;
     }
 
-    public function setAdoption(\DateTimeInterface $adoption): self
+    public function setAdoption(DateTimeInterface $adoption): self
     {
         $this->adoption = $adoption;
 
@@ -362,19 +344,19 @@ class Order
         return $this->deadline;
     }
 
-    public function setDeadline(\DateTimeInterface $deadline): self
+    public function setDeadline(DateTimeInterface $deadline): self
     {
         $this->deadline = $deadline;
 
         return $this;
     }
 
-    public function getSettledAt(): ?\DateTimeInterface
+    public function getSettledAt(): ?DateTimeInterface
     {
         return $this->settledAt;
     }
 
-    public function setSettledAt(?\DateTimeInterface $settledAt): self
+    public function setSettledAt(?DateTimeInterface $settledAt): self
     {
         $this->settledAt = $settledAt;
 
