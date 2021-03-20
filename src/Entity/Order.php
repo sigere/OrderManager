@@ -6,6 +6,8 @@ use App\Repository\OrderRepository;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use mysql_xdevapi\Warning;
+use PhpParser\Node\Expr\Array_;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -163,6 +165,14 @@ class Order
                 if ($this->pages == 0) $warnings[] = "Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.";
                 break;
         }
+        return $warnings;
+    }
+
+    public function getInvoiceWarnings(): array
+    {
+        $warnings = $this->getWarnings();
+        if($this->state != self::WYSLANE)
+            $warnings[] = "Zlecenie nie zostało wysłane.";
         return $warnings;
     }
 

@@ -32,7 +32,6 @@ class ArchivesController extends AbstractController
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(ArchivesFiltersForm::class);
-        dump($form);
 
         return $this->render('archives/index.html.twig', [
             "orders" => $orders,
@@ -138,7 +137,7 @@ class ArchivesController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return new Response('Zaktualizowano preferencje', 200);
+        return new Response('<div class="alert alert-success">Zaktualizowano preferencje</div>', 200);
     }
 
     /**
@@ -149,10 +148,10 @@ class ArchivesController extends AbstractController
     public function restore(Order $order): Response
     {
         if (!$order->getDeletedAt())
-            return new Response("Zlecenie nie jest usunięte", 406);
+            return new Response("<div class='alert alert-danger'>Zlecenie nie jest usunięte</div>", 406);
         $order->setDeletedAt(null);
         $this->entityManager->persist($order);
         $this->entityManager->flush();
-        return new Response("Zlecenie zostało przywrócone.", 200);
+        return new Response("<div class='alert alert-success'>Zlecenie zostało przywrócone.</div>", 200);
     }
 }

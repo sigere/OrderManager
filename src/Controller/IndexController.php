@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints\Date;
 
 class IndexController extends AbstractController
 {
@@ -36,7 +38,6 @@ class IndexController extends AbstractController
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(IndexFiltersForm::class);
-        $form->handleRequest($this->request);
 
         return $this->render('index/index.html.twig', [
             'orders' => $orders,
@@ -117,7 +118,6 @@ class IndexController extends AbstractController
      */
     public function indexApiFilters(): Response
     {
-        dump($this->getUser()->getPreferences());
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($this->request);
         $user = $this->getUser();
@@ -281,6 +281,16 @@ class IndexController extends AbstractController
     //-----------------------Development-Tools-------------------
 
     /**
+     * @Route("/dumpRequest", name="index_dump_request")
+     */
+    public function dumpRequest(): Response
+    {
+        dump($this->request);
+        dump($_POST);
+        return new Response("",200);
+    }
+
+    /**
      * @Route("/fix", name="fix")
      * @param EntityManagerInterface $entityManager
      * @param UserPasswordEncoderInterface $passwordEncoder
@@ -288,6 +298,18 @@ class IndexController extends AbstractController
      */
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        $company = $entityManager->getRepository(Company::class)->findAll()[0];
+        $company->setAddress("ul. Miodowa 112");
+        $company->setName("Biuro Tłumaczeń Kadamaxo");
+        $company->setCity("Poznań");
+        $company->setBankAccount("123132123123");
+        $company->setNip("1234567890");
+        $company->setPostCode("32-109");
+        $company->setIssueDate(new Datetime());
+        $company->setPaymentTo(new Datetime());
+        $entityManager->persist($company);
+        $entityManager->flush();
+        dd($company);
         // $order = $entityManager->getRepository(Order::class)->findOneBy(['id' => 1]);
 //        $log = new Log($this->getUser(),"crazy shit just happend", new Order());
 //        dump($log);

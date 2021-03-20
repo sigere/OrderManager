@@ -1,0 +1,33 @@
+<h6>Dane kupującego</h6>
+<div class="property">
+    <div class="name">Klient</div>
+    <div class="value">{{ client.name }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Adres</div>
+    <div class="value">
+        {{ client.street }}
+        <br/>
+        {{ client.postCode }} {{ client.city }}
+    </div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">NIP</div>
+    <div class="value">{{ client.nip }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">E-mail</div>
+    <div class="value">
+        {% if not client.email %}
+            {% include 'icons/warning.html'  %}
+        {% endif %}
+        {{ client.email|default("brak") }}
+    </div>
+</div>
+<div style="clear:both;"></div>

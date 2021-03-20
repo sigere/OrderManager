@@ -1,0 +1,38 @@
+<form id="orders-form" name="orders-form" method="post">
+    <table id="orders-table" class="table table-dark table-hover">
+        <thead>
+        <tr>
+            <th></th>
+            <th>id</th>
+            <th>Temat</th>
+            <th>Termin</th>
+            <th>Netto</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            {% set valid = order.getInvoiceWarnings is empty %}
+            <tr order-id="{{ order.id }}"
+                valid="{{ valid ? 1 : 0 }}" {{ valid ? "" : 'style="color: rgba(255,255,255,0.5);"' }}>
+                <td>
+                    {% if valid %}
+                        <input id="order-{{ order.id }}-checkbox" name="{{ order.id }}" type="checkbox" checked>
+                    {% else %}
+                        {% include 'icons/warning.html' %}
+                    {% endif %}
+                </td>
+                <td style="white-space: nowrap;">
+                    {{ order.id }}
+                </td>
+                <td>{{ order.topic }}</td>
+                <td>{{ order.deadline | date('d.m.Y H:i') }}</td>
+                <td>{{ order.netto }} PLN</td>
+                <td>{{ order.state }}</td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+</form>

@@ -335,7 +335,7 @@ class Controller {
 
                 function refresh() {
                     if (status === 202) {
-                        popup.innerHTML = '<div class="alert alert-success" role="alert">Dodano zlecenie.</div>';
+                        popup.innerHTML = '<div class="alert alert-success" role="alert">Zaktualizowano zlecenie.</div>';
                         c.reloadDetails(c.currentId);
                         c.reloadTable();
                         return;

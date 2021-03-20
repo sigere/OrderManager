@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    - Faktury
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/invoices.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset("js/index-popups.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/invoices/invoices.js") }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="content" style="height: 100%;">
+        <div class="row" style="height: 100%;">
+            <div class="col-lg-3" style=" height: 100%;">
+                <div class="column left-col">
+                    <header>
+                        Klient
+                    </header>
+                    <div class="col-content" id="clients-content" style="width: auto">
+                        <h6>Wybierz klienta, dla którego chcesz wystawić fakturę.</h6>
+                        <div class="alert alert-info">Klienci bez nierozliczonych zleceń nie są wyświetlani.</div>
+                        <div class="table-container">
+                            {% include 'invoices/clients_table.twig' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5" style=" height: 100%;">
+                <div class="column mid-col">
+                    <header>
+                        Zlecenia
+                    </header>
+                    <div class="col-content" id="orders-content" style="width: auto">
+                        <h6>Lista nierozliczonych zleceń wybranego klienta</h6>
+
+                        <div class="table-container">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4" style=" height: 100%;">
+                <div class="column right-col">
+                    <header>
+                        Faktura
+                    </header>
+                    <div class="col-content" id="summary-content">
+                        <h6>Dane sprzedawcy</h6>
+                        <div>
+                            {% include 'invoices/issuerDetails.twig' %}
+                        </div>
+                        <br/>
+                        <div id="buyer-data">
+                            <div class="alert alert-info">Wybierz klienta, by wystawić fakturę</div>
+                        </div>
+                        <div>
+                            <h6>Dane na fakturze</h6>
+                            {{ form_start(summaryForm, {'attr':{'class': 'summary-form'}}) }}
+                            {% for row in summaryForm %}
+                                {% if not loop.last %}
+                                    {{ form_widget(row) }}
+                                    {{ form_label(row, null) }}
+                                {% endif %}
+                            {% endfor %}
+                            {{ form_end(summaryForm) }}
+                        </div>
+                        <div class="buttons-bar">
+                            <input type="button" id="button-execute-invoice" class="btn btn-primary" value=" Faktura ">
+                            <input type="button" id="button-execute-settled" class="btn btn-primary" value="Rozliczone">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="center-popup">
+            <div id="center-popup-content"></div>
+        </div>
+    </div>
+{% endblock %}
