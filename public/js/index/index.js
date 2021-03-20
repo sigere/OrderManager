@@ -54,12 +54,12 @@ class Controller {
                 cells[j].addEventListener("click", this.reloadDetails.bind(this, orderId), false);
             }
         }
-        if (tableRows.length - 1 >= 15) {
+        if (tableRows.length - 1 >= 100) {
             this.overlay.style.display = "block";
             this.centerPopup.classList.add("active");
             this.centerPopupContent.innerHTML = '' +
                 '<div class="alert alert-warning" style="text-align: center">' +
-                'Liczba zwróconych przez serwer rekordów przekracza 15.<br/>' +
+                'Liczba zwróconych przez serwer rekordów przekracza 100.<br/>' +
                 'Część danych nie może zostać wyświetlona.<br/>' +
                 'Użyj filtrów, by ograniczyć wynik' +
                 '</div>';

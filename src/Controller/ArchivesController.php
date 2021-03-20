@@ -84,7 +84,7 @@ class ArchivesController extends AbstractController
         }
 
         $orders = $orders
-            ->setMaxResults(15)
+            ->setMaxResults(100)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();

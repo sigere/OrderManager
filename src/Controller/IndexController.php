@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Company;
+use App\Entity\Lang;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
+use App\Entity\User;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;
@@ -105,7 +107,7 @@ class IndexController extends AbstractController
         $orders = $orders
             ->andWhere('o.settledAt is null')
             ->andWhere('o.deletedAt is null')
-            ->setMaxResults(15)
+            ->setMaxResults(100)
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();
@@ -298,6 +300,58 @@ class IndexController extends AbstractController
      */
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+//        $staff = new Staff();
+//        $staff->setFirstName("Papieżyca");
+//        $staff->setLastName("Joanna");
+//        $user = new User();
+//        $user->setStaff($staff);
+//        $user->setFirstName("Daria");
+//        $user->setLastName("Łuka");
+//        $user->setUsername("daria");
+//        $user->setPassword('$argon2id$v=19$m=16,t=2,p=1$OEp3ZHU3bmxUQ1JPd1Q5bA$e/YQwUHwiA+rxAsTOebLxg');
+//
+//        $this->entityManager->persist($staff);
+//        $this->entityManager->persist($user);
+//        $this->entityManager->flush();
+//
+//        return new Response("ok", 200);
+
+        $now = new Datetime();
+//        $tmp = new Datetime();
+//        $tmp->setTimestamp($now->getTimestamp()+10000000);
+//        dump($tmp);
+        $words = explode(" ",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ullamcorper porttitor gravida. Quisque a massa facilisis, pellentesque metus sed, luctus ipsum. Etiam ut neque eros. Morbi leo metus, auctor ut porta in, malesuada at augue. Praesent semper odio orci, in consectetur velit rutrum nec. Nam vitae massa porta metus pulvinar sagittis. Aliquam tincidunt congue arcu sit amet malesuada."
+        );
+        $langs = $this->entityManager->getRepository(Lang::class)->findAll();
+        $staff = $this->entityManager->getRepository(Staff::class)->findAll();
+        $clients = $this->entityManager->getRepository(Client::class)->findAll();
+        for ($i = 0; $i < 100; $i++){
+            $order = new Order();
+            $order->setAuthor($this->getUser());
+            $order->setAdoption(new Datetime());
+            $order->setBaseLang($langs[rand(0,sizeof($langs)-1)]);
+            $order->setTargetLang($langs[rand(0,sizeof($langs)-1)]);
+            $order->setStaff($staff[rand(0,sizeof($staff)-1)]);
+            $order->setCertified(rand(0,1) ? true : false);
+            $order->setInfo($words[rand(0,sizeof($words)-1)]." ".$words[rand(0,sizeof($words)-1)]);
+            $order->setTopic($words[rand(0,sizeof($words)-1)]." ".$words[rand(0,sizeof($words)-1)]." ".$words[rand(0,sizeof($words)-1)]);
+            $order->setPages(max(rand(-5, 20),0));
+            $order->setPrice(max(rand(-5, 20),0));
+            $order->setClient($clients[rand(0,sizeof($clients)-1)]);
+
+            $stamp = rand($now->getTimestamp(), $now->getTimestamp()+10000000);
+            $dt = new Datetime();
+            $dt->setTimestamp($stamp);
+
+            $order->setDeadline($dt);
+//            dump($order);
+            $this->entityManager->persist($order);
+        }
+        $this->entityManager->flush();
+        return new Response("ok", 200);
+
+
         $company = $entityManager->getRepository(Company::class)->findAll()[0];
         $company->setAddress("ul. Miodowa 112");
         $company->setName("Biuro Tłumaczeń Kadamaxo");

@@ -4,7 +4,6 @@ class InvoicesController {
     selectedRow;
     summaryContent;
     buyerDataContent;
-    ordersContent;
     currentId;
     ordersForm;
     overlay;
@@ -31,7 +30,7 @@ class InvoicesController {
         this.invoiceButton = document.getElementById("button-execute-invoice");
         this.settledButton = document.getElementById("button-execute-settled");
 
-        this.invoiceButton.addEventListener("click",this.executeInvoice.bind(this), false);
+        this.invoiceButton.addEventListener("click", this.executeInvoice.bind(this), false);
         this.addTableListeners();
     }
 
@@ -48,17 +47,6 @@ class InvoicesController {
         $(function () {
             $("#main-table").tablesorter();
         });
-    }
-
-    debug()
-    {
-        console.log(this.ordersForm);
-        console.log(new FormData(this.ordersForm));
-        let request = new XMLHttpRequest();
-        request.open("POST", "dumpRequest", true);
-        request.onload = function (){
-            console.log("ok");};
-        request.send(new FormData(this.ordersForm));
     }
 
     updateSelected() {
@@ -78,9 +66,18 @@ class InvoicesController {
         this.selectedRow.classList.toggle("active-row");
     }
 
-
     reloadOrders(clientId) {
         let c = this;
+
+        if (!clientId) {
+            c.ordersTableContainer.classList.toggle("hidden");
+            setTimeout(function () {
+                c.ordersTableContainer.innerHTML = '';
+                c.ordersTableContainer.classList.toggle("hidden");
+            }, 400);
+            return;
+        }
+
         let ordersTableContainer = this.ordersTableContainer;
         let buyerDataContent = this.buyerDataContent;
         let ordersOk = false;
@@ -91,12 +88,11 @@ class InvoicesController {
         ordersRequest.open("POST", "invoices/api/reloadOrders/" + clientId, true);
 
         let clientRequest = new XMLHttpRequest();
-        clientRequest.open("POST","invoices/api/reloadClient/" + clientId, true);
+        clientRequest.open("POST", "invoices/api/reloadClient/" + clientId, true);
 
-        function check(){
-            if(ordersOk && clientOk)
-            {
-                setTimeout(function (){
+        function check() {
+            if (ordersOk && clientOk) {
+                setTimeout(function () {
                     c.ordersTableContainer.innerHTML = ordersRequest.responseText;
                     c.buyerDataContent.innerHTML = clientRequest.responseText;
                     c.currentId = clientId;
@@ -104,11 +100,11 @@ class InvoicesController {
                     c.ordersForm = document.getElementById("orders-form");
                     c.ordersTableContainer.classList.toggle("hidden");
                     c.summaryContent.classList.toggle("hidden");
-                },400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0)
+                }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0)
             }
         }
 
-        ordersRequest.onload = function (){
+        ordersRequest.onload = function () {
             if (ordersRequest.status === 200) {
                 ordersOk = true;
                 check();
@@ -122,7 +118,7 @@ class InvoicesController {
             }
         }
 
-        clientRequest.onload = function (){
+        clientRequest.onload = function () {
             if (clientRequest.status === 200) {
                 clientOk = true;
                 check();
@@ -143,26 +139,54 @@ class InvoicesController {
         clientRequest.send();
     }
 
-    executeInvoice(e){ //TODO
+    executeInvoice(e) { //TODO
         e.preventDefault();
-        if(!this.currentId || !this.ordersForm)
+        if (!this.currentId || !this.ordersForm)
             return;
 
+        let c = this;
+        let popup = this.centerPopup;
+        let popupContent = this.centerPopupContent;
         let post = new FormData(document.getElementsByClassName("summary-form")[0]);
 
         let orders = new FormData(this.ordersForm);
         let tmp = [];
-        for(let pair of orders.entries()) {
-            post.append("orders[]",pair[0]);
+        for (let pair of orders.entries()) {
+            post.append("orders[]", pair[0]);
         }
         post.append("client", this.currentId);
 
         let request = new XMLHttpRequest();
-        request.open("POST","invoices/api/execute", true);
-        request.onload = function (){
-            console.log(request.statusText);
+        request.open("POST", "invoices/api/execute", true);
+        request.onload = function () {
+            c.overlay.style.display = "block";
+            popup.classList.toggle("active");
+            if (request.status === 200) {
+                popupContent.innerHTML = '<div class="alert alert-success" role="alert">Wystawiono fakturę</div>';
+                c.buyerDataContent.innerHTML = '<div class="alert alert-info">Wybierz klienta, by wystawić fakturę</div>';
+                c.reloadClients();
+            }
+            else{
+                popupContent.innerHTML = request.responseText;
+            }
         };
         request.send(post);
+    }
+
+    reloadClients() {
+        this.currentId = null;
+        this.selectedRow = null;
+        let c = this;
+        let request = new XMLHttpRequest();
+        request.open("POST", "invoices/api/reloadClients", true);
+        request.onload = function () {
+            c.clientsTableContainer.innerHTML = request.responseText;
+            c.clientsTableContainer.classList.toggle("hidden");
+            c.addTableListeners();
+            c.reloadOrders(null);
+        };
+        c.clientsTableContainer.classList.toggle("hidden");
+        request.send();
     }
 
 }

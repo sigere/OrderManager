@@ -115,12 +115,11 @@ class InvoicesController extends AbstractController
      */
     public function executeInvoice(): Response
     {
-        dump($_POST);
         $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
         $form = $this->createForm(InvoiceSummaryForm::class);
         $form->handleRequest($this->request);
         if(!$form->isSubmitted() || !$form->isValid()){
-            return new Response("Niepoprawne dane", 406);
+            return new Response("<div class='alert alert-danger'>Niepoprawne dane</div>", 406);
         }
         $company->setPaymentTo($form->getData()["paymentTo"]);
         $company->setIssueDate($form->getData()["issueDate"]);
@@ -134,8 +133,9 @@ class InvoicesController extends AbstractController
 
         $this->settle($orders);
 
+        //TODO create invoice via api
 
-        return new Response("Rozliczono",200);
+        return new Response("<div class='alert alert-success'>Rozliczono</div>",200);
     }
 
     private function settle(array $orders): void
@@ -149,6 +149,18 @@ class InvoicesController extends AbstractController
             $this->entityManager->persist(new Log($this->getUser(),"Rozliczono zlecenie.",$order));
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * @Route("/invoices/api/reloadClients", name="invoices_api_reloadClients")
+     * @return Response
+     */
+    public function reloadClients(): Response
+    {
+        $clients = $this->loadClients();
+        return $this->render('invoices/clients_table.twig',[
+            "clients" => $clients,
+        ]);
     }
 
 }
