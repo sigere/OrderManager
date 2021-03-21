@@ -59,7 +59,7 @@ class ArchivesController extends AbstractController
         if ($preferences['archives']['select-staff']) {
             $orders = $orders
                 ->andWhere('o.staff = :staff')
-                ->setParameter('select-staff', $staff ? $staff : $this->getUser());
+                ->setParameter('staff', $staff ? $staff : $this->getUser());
         }
 
         $repository = $this->entityManager->getRepository(Client::class);
