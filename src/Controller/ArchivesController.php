@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
@@ -61,6 +62,7 @@ class ArchivesController extends AbstractController
                 ->setParameter('select-staff', $staff ? $staff : $this->getUser());
         }
 
+        $repository = $this->entityManager->getRepository(Client::class);
         if ($preferences['archives']['select-client'])
             $orders = $orders
                 ->andWhere('o.client = :client')
