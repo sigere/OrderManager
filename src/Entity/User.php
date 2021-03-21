@@ -81,7 +81,7 @@ class User implements UserInterface
             'wykonane' => true,
             'wyslane' => true,
             'usuniete' => false,
-            'select-client' => null,
+            'select-client' => 1,
             'select-staff' => null,
             'date-type' => 'deadline',
             'date-from' => null,
