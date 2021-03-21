@@ -8,6 +8,7 @@ use App\Entity\Lang;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
+use App\Entity\User;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;
@@ -298,6 +299,13 @@ class IndexController extends AbstractController
      */
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        $users = $this->entityManager->getRepository(User::class)->findAll();
+        foreach($users as $user){
+            $user->__construct();
+            $this->entityManager->persist($user);
+            dump($user);
+        }
+        $this->entityManager->flush();
         return new Response("ok", 200);
 
         $now = new Datetime();
