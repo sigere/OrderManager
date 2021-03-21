@@ -87,8 +87,6 @@ class IndexController extends AbstractController
                 ->setParameter('client', $repository->findOneBy(['id' => $preferences['index']['select-client']]));
         //doctrine nie zapisuje obiektów w user->preferences['index']['select-client'],
         //więc mapuje na id przy zapisie i na obiekt przy odczycie
-        dump($preferences['index']);
-        dump( $repository->findOneBy(['id' => $preferences['index']['select-client']]));
 
         $dateType = $preferences['index']['date-type'];
         if ($preferences['index']['date-from']) {
