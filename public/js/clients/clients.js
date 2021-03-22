@@ -35,10 +35,7 @@ class ClientsController {
         for (let i = 1; i < tableRows.length; i++) {
             let row = tableRows[i];
             let clientId = row.getAttribute("client-id");
-            let cells = row.getElementsByTagName("td");
-            for (let j = 0; j < cells.length - 1; j++) {
-                cells[j].addEventListener("click", this.reloadDetails.bind(this, clientId), false);
-            }
+            row.addEventListener("click", this.reloadDetails.bind(this, clientId), false);
         }
         $(function () {
             $("#main-table").tablesorter();
@@ -141,43 +138,40 @@ class ClientsController {
         let stamp = Date.now();
         let request = new XMLHttpRequest();
         request.open("POST", "/clients/api/addClient", true);
-        request.onload = setTimeout(
-            function (oEvent) {
+        request.onload = function (oEvent) {
 
-                let responseText = request.responseText;
-                let status = 0;
-                let newId;
+            let responseText = request.responseText;
+            let status = 0;
+            let newId;
 
-                function refresh() {
-                    if (status === 201) {
-                        popup.innerHTML = '<div class="alert alert-success" role="alert">Dodano klienta.</div>';
-                        if (newId)
-                            c.reloadDetails(newId);
-                        c.reloadTable();
-                        return;
-                    }
-
-                    popup.innerHTML = responseText;
-                    let addClientForm = document.forms.namedItem("add_client_form");
-                    addClientForm.addEventListener("submit", function (e) {
-                        e.preventDefault();
-                        let formData = new FormData(addClientForm);
-                        let request = new XMLHttpRequest();
-                        request.open("POST", "/clients/api/addClient", true);
-                        request.onload = function (oEvent) {
-                            responseText = request.responseText;
-                            status = request.status;
-                            newId = request.getResponseHeader("ClientId");
-                            refresh();
-                        };
-                        request.send(formData);
-                    }, false);
+            function refresh() {
+                if (status === 201) {
+                    popup.innerHTML = '<div class="alert alert-success" role="alert">Dodano klienta.</div>';
+                    if (newId)
+                        c.reloadDetails(newId);
+                    c.reloadTable();
+                    return;
                 }
 
-                refresh();
-            },
-            400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-        );
+                popup.innerHTML = responseText;
+                let addClientForm = document.forms.namedItem("add_client_form");
+                addClientForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    let formData = new FormData(addClientForm);
+                    let request = new XMLHttpRequest();
+                    request.open("POST", "/clients/api/addClient", true);
+                    request.onload = function (oEvent) {
+                        responseText = request.responseText;
+                        status = request.status;
+                        newId = request.getResponseHeader("ClientId");
+                        refresh();
+                    };
+                    request.send(formData);
+                }, false);
+            }
+
+            refresh();
+        };
         request.send();
     }
 

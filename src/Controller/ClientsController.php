@@ -83,7 +83,7 @@ class ClientsController extends AbstractController
      * @Route("/clients/api/addClient", name="clients_api_addClient")
      * @return Response
      */
-    public function addOrder(): Response
+    public function addClient(): Response
     {
         $form = $this->createForm(AddClientForm::class);
         $form->handleRequest($this->request);

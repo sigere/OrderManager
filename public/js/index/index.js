@@ -40,10 +40,9 @@ class Controller {
             let orderId = row.getAttribute("order-id");
             let cells = row.getElementsByTagName("td");
             let lastCell = cells[cells.length - 1];
-            let options = lastCell.getElementsByTagName("option");
-            for (let j = 0; j < options.length; j++) {
-                options[j].addEventListener("click", this.updateState.bind(this, options[j], orderId), false);
-            }
+            let select = lastCell.getElementsByTagName("select")[0];
+            select.addEventListener("change", this.updateState.bind(this, select, orderId), false)
+
         }
 
         for (let i = 1; i < tableRows.length; i++) {
@@ -66,15 +65,7 @@ class Controller {
         }
         $(function () {
             $("#main-table").tablesorter({
-                dateFormat: "ddmmyyyy", // set the default date format
-
-                // or to change the format for specific columns, add the dateFormat to the headers option:
-                // headers: {
-                //     0: { sorter: "shortDate" } //, dateFormat will parsed as the default above
-                //     // 1: { sorter: "shortDate", dateFormat: "ddmmyyyy" }, // set day first format; set using class names
-                //     // 2: { sorter: "shortDate", dateFormat: "yyyymmdd" }  // set year first format; set using data attributes (jQuery data)
-                // }
-
+                dateFormat: "ddmmyyyy",
             });
         });
     }
@@ -180,17 +171,16 @@ class Controller {
         request.send();
     }
 
-    updateState(option, id, e) {
+    updateState(select, id, e) {
         let c = this;
-        let state = option.value;
-        option.removeAttribute("selected");
-        let cell = option.parentElement.parentElement;
-        let select = option.parentElement;
-        select.setAttribute("state", state);
+        let state = select.value;
+        // let cell = option.parentElement.parentElement;
+        // let select = option.parentElement;
+        // select.setAttribute("state", state);
         // let tmp = cell.innerHTML;
         //TODO
         // cell.innerHTML =
-        //     '<svg class="icon-loading" style="margin-left: 25px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">' +
+        //     '<svg class="icon-loading" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">' +
         //     '<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>' +
         //     '<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>' +
         //     "</svg>";
@@ -207,7 +197,7 @@ class Controller {
                 c.reloadDetails(id);
                 c.reloadTable();
                 // cell.innerHTML = tmp;
-                cell.getElementsByClassName("form-select")[0].value = state;
+                // cell.getElementsByClassName("form-select")[0].value = state;
             },
             400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
         );
@@ -235,7 +225,7 @@ class Controller {
         let popup = this.centerPopupContent;
         button.addEventListener("click", function () {
             popup.innerHTML =
-                '<svg style="margin-left: 25px;" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">' +
                 '<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>' +
                 '<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>' +
                 "</svg>";
@@ -270,45 +260,47 @@ class Controller {
         let popup = this.centerPopupContent;
         let stamp = Date.now();
         let request = new XMLHttpRequest();
+        let responseText;
+        let status;
+        let newId;
+        let addOrderForm;
+        let formData;
+        let request2;
         request.open("POST", "/index/api/addOrder", true);
-        request.onload = setTimeout(
-            function (oEvent) {
+        request.onload = function (oEvent) {
+            responseText = request.responseText;
+            status = 0;
 
-                let responseText = request.responseText;
-                let status = 0;
-                let newId;
-
-                function refresh() {
-                    if (status === 201) {
-                        popup.innerHTML = '<div class="alert alert-success" role="alert">Dodano zlecenie.</div>';
-                        if (newId) c.reloadDetails(newId);
-                        c.reloadTable();
-                        return;
-                    }
-
-                    popup.innerHTML = responseText;
-                    let addOrderForm = document.forms.namedItem("add_order_form");
-                    addOrderForm.addEventListener("submit", function (e) {
-                        e.preventDefault();
-                        let formData = new FormData(addOrderForm);
-                        let request = new XMLHttpRequest();
-                        request.open("POST", "/index/api/addOrder", true);
-                        request.onload = function (oEvent) {
-                            responseText = request.responseText;
-                            status = request.status;
-                            newId = request.getResponseHeader("orderId");
-                            refresh();
-                        };
-                        request.send(formData);
-                    }, false);
+            function refresh() {
+                if (status === 201) {
+                    popup.innerHTML = '<div class="alert alert-success" role="alert">Dodano zlecenie.</div>';
+                    if (newId) c.reloadDetails(newId);
+                    c.reloadTable();
+                    return;
                 }
 
-                refresh();
+                popup.innerHTML = responseText;
+                addOrderForm = document.forms.namedItem("add_order_form");
+                addOrderForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    formData = new FormData(addOrderForm);
+                    request2 = new XMLHttpRequest();
+                    request2.open("POST", "/index/api/addOrder", true);
+                    request2.onload = function (oEvent) {
+                        responseText = request2.responseText;
+                        status = request2.status;
+                        newId = request2.getResponseHeader("orderId");
+                        refresh();
+                    };
+                    request2.send(formData);
+                }, false);
+            }
 
-            },
-            400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-        );
+            refresh();
+
+        };
         request.send();
+        console.log("wysylam");
     }
 
     updateOrder() {

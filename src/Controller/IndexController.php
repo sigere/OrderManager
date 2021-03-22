@@ -299,6 +299,8 @@ class IndexController extends AbstractController
      */
     public function fix(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        return new Response("ok", 200);
+
         $users = $this->entityManager->getRepository(User::class)->findAll();
         foreach($users as $user){
             $user->__construct();
