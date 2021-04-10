@@ -116,26 +116,96 @@ class InvoicesController extends AbstractController
     public function executeInvoice(): Response
     {
         $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
+        $fakturowniaFirm = $this->getParameter("app.fakturownia_firm");
         $form = $this->createForm(InvoiceSummaryForm::class);
         $form->handleRequest($this->request);
+
         if (!$form->isSubmitted() || !$form->isValid()) {
             return new Response("<div class='alert alert-danger'>Niepoprawne dane</div>", 406);
         }
+
         $company->setPaymentTo($form->getData()["paymentTo"]);
         $company->setIssueDate($form->getData()["issueDate"]);
         $this->entityManager->persist($company);
         $this->entityManager->flush();
+
         $ids = $this->request->get("orders");
         $repo = $this->entityManager->getRepository(Order::class);
         $orders = [];
         foreach ($ids as $id)
             $orders[] = $repo->findOneBy(["id" => $id]);
 
-        $this->settle($orders);
+        $payload = $this->getPayload(
+            $orders,
+            $this->request->get("client")
+        );
+//        dump($payload);
 
-        //TODO create invoice via api
+        $url = 'https://' . $fakturowniaFirm . '.fakturownia.pl/invoices.json';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = \curl_exec($ch);
+        $result = json_decode($result, true);
+        curl_close($ch);
+        if (!isset($result['id'])) {
+            $text = "Bład serwisu Fakturownia.pl";
+            if (isset($result['message'])) $text .= ": " . \json_encode($result['message'],JSON_UNESCAPED_UNICODE);
+            return new Response("<div class='alert alert-danger'>" . $text . "</div>", 500);
+        }
 
-        return new Response("<div class='alert alert-success'>Rozliczono</div>", 200);
+        //$this->settle($orders);
+        return new Response(
+            "<div class='alert alert-success'>Wystawiono fakturę i ustawiono zlecenia na rozliczone.<br/><a href='https://" . $fakturowniaFirm . ".fakturownia.pl/invoices/" . $result["id"] . "'>Podgląd</a></div>",
+            200);
+    }
+
+    private function getPayload($orders, $clientId): string
+    {
+        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
+        $client = $this->entityManager
+            ->getRepository(Client::class)
+            ->findOneBy(["id" => $clientId]
+            );
+
+        $positions = [];
+        foreach ($orders as $order)
+            $positions[] = [
+                'name' => $order->getTopic(),
+                'quantity' => $order->getPages(),
+                'total_price_gross' => $order->getBrutto(),
+                'tax' => 23,
+                'price_net' => $order->getPrice(),
+            ];
+
+        $token = $this->getParameter('app.fakturownia_token');
+        $payload = [
+            'api_token' => $token,
+            'invoice' => [
+                "kind" => "vat",
+                "number" => null,
+                "sell_date" => $company->getIssueDate()->format('Y-m-d'),
+                "issue_date" => $company->getIssueDate()->format('Y-m-d'),
+                "payment_to" => $company->getPaymentTo()->format('Y-m-d'),
+                "seller_name" => $company->getName(),
+                "seller_tax_no" => $company->getNip(),
+                "seller_post_code" => $company->getPostCode(),
+                "seller_city" => $company->getCity(),
+                "seller_street" => $company->getAddress(),
+                "seller_country" => "PL",
+                "seller_bank_account" => $company->getBankAccount(),
+                "buyer_name" => $client->getName(),
+                "buyer_tax_no" => $client->getNip(),
+                "buyer_post_code" => $client->getPostCode(),
+                "buyer_city" => $client->getCity(),
+                "buyer_street" => $client->getStreet(),
+                "buyer_country" => $client->getCountry(),
+                "positions" => $positions,
+            ],
+        ];
+        return \json_encode($payload);
     }
 
     private function settle(array $orders): void

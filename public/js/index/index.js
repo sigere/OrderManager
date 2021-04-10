@@ -84,7 +84,8 @@ class Controller {
                 break;
             }
         }
-        this.selectedRow.classList.toggle("active-row");
+        if(this.selectedRow)
+            this.selectedRow.classList.toggle("active-row");
     }
 
     executeFilters(e) {
@@ -269,6 +270,12 @@ class Controller {
         request.open("POST", "/index/api/addOrder", true);
         request.onload = function (oEvent) {
             responseText = request.responseText;
+
+            setTimeout(function (){
+                document.getElementById("add_order_form_deadline_date").value = new Date().toISOString().slice(0, 10);
+                document.getElementById("add_order_form_adoption").value = new Date().toISOString().slice(0, 10);
+                document.getElementById("add_order_form_deadline_time").value = "23:59";
+                }, 10);
             status = 0;
 
             function refresh() {
@@ -288,6 +295,7 @@ class Controller {
                     request2.open("POST", "/index/api/addOrder", true);
                     request2.onload = function (oEvent) {
                         responseText = request2.responseText;
+                        document.getElementById("add_order_form_deadline_date").value = new Date().toISOString().slice(0, 10);
                         status = request2.status;
                         newId = request2.getResponseHeader("orderId");
                         refresh();
@@ -300,7 +308,6 @@ class Controller {
 
         };
         request.send();
-        console.log("wysylam");
     }
 
     updateOrder() {

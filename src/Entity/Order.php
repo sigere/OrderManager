@@ -182,6 +182,13 @@ class Order
         }
         return 0.00;
     }
+    public function getBrutto(): float
+    {
+        if ($this->price && $this->pages) {
+            return round($this->price * $this->pages * 1.23, 2);
+        }
+        return 0.00;
+    }
 
     public function getClient(): ?Client
     {

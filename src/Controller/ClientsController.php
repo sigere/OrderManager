@@ -38,7 +38,6 @@ class ClientsController extends AbstractController
         $clients = $repository->createQueryBuilder('c');
         $clients = $clients
             ->andWhere('c.deletedAt is null')
-            ->setMaxResults(15)
             ->orderBy('c.alias', 'ASC')
             ->getQuery()
             ->getResult();

@@ -162,7 +162,7 @@ class InvoicesController {
             c.overlay.style.display = "block";
             popup.classList.toggle("active");
             if (request.status === 200) {
-                popupContent.innerHTML = '<div class="alert alert-success" role="alert">Wystawiono fakturę</div>';
+                popupContent.innerHTML = request.responseText;
                 c.buyerDataContent.innerHTML = '<div class="alert alert-info">Wybierz klienta, by wystawić fakturę</div>';
                 c.reloadClients();
             } else {
