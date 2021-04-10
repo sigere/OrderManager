@@ -90,8 +90,13 @@ class IndexFiltersForm extends AbstractType
             // client
             ->add('select-client', EntityType::class, [
                 'class' => Client::class,
+                'query_builder' => function () {
+                    return $this->entityManager->getRepository(Client::class)->createQueryBuilder('c')
+                        ->andWhere("c.deletedAt is null")
+                        ->orderBy('c.alias', 'ASC');
+                },
                 'label' => 'Klient',
-                'help' => 'Docelowy język dokumentu zlecenia',
+                'help' => 'Klient',
                 'attr' => ['class' => 'form-select filter-client first'],
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
