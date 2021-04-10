@@ -10,6 +10,7 @@ class Controller {
     centerPopupContent;
     deleteButton;
     addButton;
+    rep;
     editButton;
 
     constructor(tableContainer, form) {
@@ -25,11 +26,13 @@ class Controller {
         this.deleteButton = document.getElementById("delete-button");
         this.addButton = document.getElementById("add-button");
         this.editButton = document.getElementById("edit-button");
+        this.rep = document.getElementById("rep");
 
         this.form.addEventListener("submit", e => this.executeFilters(e), false);
         this.deleteButton.addEventListener("click", this.deleteOrder.bind(this), false);
         this.addButton.addEventListener("click", this.addOrder.bind(this), false);
         this.editButton.addEventListener("click", this.updateOrder.bind(this), false);
+        this.rep.addEventListener("click",this.setRep.bind(this), false);
         this.addTableListeners();
     }
 
@@ -362,6 +365,41 @@ class Controller {
             400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
         );
         request.send();
+    }
+
+    setRep(){
+        let popup = this.centerPopupContent;
+        let rep = this.rep;
+        this.overlay.style.display = "block";
+        if (!this.centerPopup.classList.contains("active"))
+            this.centerPopup.classList.add("active");
+        console.log(rep);
+        popup.innerHTML =
+            '<h5>Wprowadź nowy numer:</h5>' +
+            '<input id="rep-text" type="text" value="'+ rep.getAttribute("value") +'"/>' +
+            '<button class="btn btn-primary" id="rep-button">OK</button>';
+
+        let button = document.getElementById("rep-button");
+        let repText = document.getElementById("rep-text");
+        button.addEventListener("click",function (){
+            popup.innerHTML =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">' +
+                '<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>' +
+                '<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>' +
+                "</svg>";
+            let stamp = Date.now();
+            let request = new XMLHttpRequest();
+            request.open("POST", "/index/api/setRep/" + repText.value, true);
+            request.onload = setTimeout(
+                function (oEvent) {
+                    popup.innerHTML = request.responseText;
+                    if(request.status === 200)
+                        rep.innerHTML = repText.value;
+                },
+                400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
+            );
+            request.send();
+        },false)
     }
 }
 

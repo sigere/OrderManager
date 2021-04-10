@@ -58,6 +58,11 @@ class Company
      */
     private $paymentTo;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $rep;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -155,6 +160,18 @@ class Company
     public function setPaymentTo(?DateTimeInterface $paymentTo): self
     {
         $this->paymentTo = $paymentTo;
+
+        return $this;
+    }
+
+    public function getRep(): ?string
+    {
+        return $this->rep;
+    }
+
+    public function setRep(?string $rep): self
+    {
+        $this->rep = $rep;
 
         return $this;
     }

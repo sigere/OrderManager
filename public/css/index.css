@@ -177,16 +177,15 @@ input[type="checkbox"]:checked
     background-color: rgb(114, 114, 114);
 }
 
-.filter-date-type label
-{
+.filter-date-type label {
     margin-top: 20px;
 }
-.filter-date-type input{
+
+.filter-date-type input {
     /*display: block;*/
 }
 
-.filter-date-from, .filter-date-to
-{
+.filter-date-from, .filter-date-to {
     margin-top: 15px;
     width: 150px;
     color: white;
@@ -209,6 +208,15 @@ input[type="checkbox"]:checked
     height: 40px;
     border-top-right-radius: 10px;
     /* border: 1px solid red; */
+}
+
+#rep {
+    right: 100px;
+    width: 100px;
+    background: none;
+    border-radius: 0;
+    font-size: 15px;
+    padding: 10px 0px;
 }
 
 .mid-col table {
@@ -264,8 +272,8 @@ input[type="checkbox"]:checked
 
 .active-row {
     /*  TODO*/
-    background: rgb(255,255,255);
-    background: linear-gradient(90deg, rgba(255,255,255,0.20211834733893552) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
+    background: rgb(255, 255, 255);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.20211834733893552) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%);
 }
 
 .active-row td {

@@ -25,11 +25,13 @@ class IndexController extends AbstractController
 {
     private $entityManager;
     private $request;
+    private $company;
 
     public function __construct(EntityManagerInterface $entityManager, RequestStack $request)
     {
         $this->entityManager = $entityManager;
         $this->request = $request->getCurrentRequest();
+        $this->company = $entityManager->getRepository(Company::class)->findOneBy(['id'=> 1 ]);
     }
 
     /**
@@ -40,10 +42,12 @@ class IndexController extends AbstractController
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(IndexFiltersForm::class);
+        $rep = $this->entityManager->getRepository(Company::class)->findAll()[0]->getRep();
 
         return $this->render('index/index.html.twig', [
             'orders' => $orders,
             'filtersForm' => $form->createView(),
+            'rep' => $rep,
         ]);
     }
 
@@ -278,6 +282,19 @@ class IndexController extends AbstractController
         $this->entityManager->persist($order);
         $this->entityManager->flush();
         return new Response("Rozliczono zlecenie", 200);
+    }
+
+    /**
+     * @Route("/index/api/setRep/{rep}", name="index_api_setRep")
+     * @param $rep
+     * @return Response
+     */
+    public function setRep($rep): Response
+    {
+        $this->company->setRep($rep);
+        $this->entityManager->persist($this->company);
+        $this->entityManager->flush();
+        return new Response("Wprowadzono zmiany", 200);
     }
 
 }
