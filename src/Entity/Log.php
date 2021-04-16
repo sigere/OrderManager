@@ -40,6 +40,11 @@ class Log
      */
     private $client;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Task::class)
+     */
+    private $task;
+
 
     public function __construct($user, $action, $object)
     {
@@ -48,12 +53,16 @@ class Log
 
         $this->client = null;
         $this->order = null;
+        $this->task = null;
         switch (get_class($object)) {
             case Order::class:
                 $this->order = $object;
                 break;
             case Client::class:
                 $this->client = $object;
+                break;
+            case Task::class:
+                $this->task = $object;
         }
 
         $this->createdAt = new DateTime();
@@ -113,6 +122,18 @@ class Log
     public function setClient(?Client $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getTask(): ?Task
+    {
+        return $this->task;
+    }
+
+    public function setTask(?Task $task): self
+    {
+        $this->task = $task;
 
         return $this;
     }

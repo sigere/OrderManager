@@ -150,7 +150,8 @@ class Controller {
         let request = new XMLHttpRequest();
         request.open("POST", "index/api/details/" + id, true);
         let stamp = Date.now();
-        request.onload = setTimeout(
+        request.onload =
+            //setTimeout(
             function (oEvent) {
                 if (request.status === 200) {
                     detailsContent.innerHTML = request.responseText;
@@ -158,6 +159,8 @@ class Controller {
                     c.currentId = id;
                     c.updateSelected();
                 } else {
+                    console.log(request.status);
+                    console.log(request);
                     detailsContent.innerHTML =
                         '<div class="alert alert-danger" role="alert">Wystąpił błąd "' +
                         request.status +
@@ -169,9 +172,9 @@ class Controller {
                     // NOT FOR DEV detailsContent.innerHTML += '<div class="alert alert-danger" role="alert">'+request.responseText+'</div>';
                 }
                 detailsContent.classList.toggle("hidden");
-            },
-            400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-        );
+            }
+            //, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0)
+        ;
         request.send();
     }
 

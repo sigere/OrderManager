@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    - Zadania
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/index.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset("js/index-popups.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/tasks/tasks.js") }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="content" style="height: 100%;">
+        <div class="row" style="height: 100%;">
+            <div class="col-lg-7" style=" height: 100%;">
+                <div class="column mid-col">
+                    <header>
+                        Zadania
+                        <div id="add-button" class="buttons clickable">
+                            <svg width="20" height="20" viewbox="0 0 25 25" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24.5029 9.58814C24.1713 9.25667 23.7686 9.09099 23.2953 9.09099H15.9089V1.70438C15.9089 1.23105 15.7431 0.828495 15.4117 0.497022C15.0803 0.165799 14.6781 0 14.2041 0H10.7953C10.3219 0 9.91943 0.165612 9.58795 0.497085C9.25648 0.828557 9.09081 1.23111 9.09081 1.70444V9.09106H1.70444C1.23111 9.09106 0.828557 9.25673 0.497085 9.5882C0.165612 9.91968 0 10.3219 0 10.7955V14.2047C0 14.6785 0.16555 15.0807 0.497022 15.4119C0.828495 15.7435 1.23105 15.909 1.70438 15.909H9.09075V23.2957C9.09075 23.7691 9.25642 24.1719 9.58789 24.5033C9.91936 24.8344 10.3219 25 10.7952 25H14.2043C14.678 25 15.0803 24.8344 15.4118 24.5033C15.7434 24.1718 15.9089 23.7691 15.9089 23.2957V15.909H23.2952C23.769 15.909 24.1714 15.7435 24.5028 15.4119C24.8342 15.0807 24.9999 14.6785 24.9999 14.2047V10.7955C24.9998 10.3219 24.8345 9.91943 24.5029 9.58814Z"
+                                      fill="white"/>
+                            </svg>
+                        </div>
+                    </header>
+                    <div class="col-content" style="width: auto">
+                        <div class="table-container">
+                            {% include 'task/tasks_table.twig' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5" style=" height: 100%;">
+                <div class="column right-col">
+                    <header>
+                        Szczegóły Zadania
+                        <i id="details-header-id"></i>
+                        <div id="edit-button" class="buttons clickable">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
+                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd"
+                                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                        </div>
+                    </header>
+                    <div class="col-content" id="details-content">
+                        <div class="alert alert-primary">Wybierz zadanie, aby wyświetlić jego szczegóły</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="center-popup">
+            <div id="center-popup-content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                     fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+{% endblock %}

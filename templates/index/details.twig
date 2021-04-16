@@ -71,20 +71,20 @@
 
 <div class="property">
     <div class="name">Liczba stron</div>
-    <div class="value">{{ order.pages }}</div>
+    <div class="value">{{ order.pages | number_format(2, ".", "") }}</div>
 </div>
 <div style="clear:both;"></div>
 
 <div class="property">
     <div class="name">Cena za stronę</div>
-    <div class="value">{{ order.price }} PLN</div>
+    <div class="value">{{ order.price | number_format(2, ".", "") }} PLN</div>
 </div>
 <div style="clear:both;"></div>
 
 
 <div class="property">
     <div class="name">Netto</div>
-    <div class="value">{{ order.netto }} PLN</div>
+    <div class="value">{{ order.netto | number_format(2, ".", "") }} PLN</div>
 </div>
 <div style="clear:both;"></div>
 

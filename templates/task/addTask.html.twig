@@ -1,0 +1,12 @@
+{{ form_start(addTaskForm, {'attr':{'name': 'add_task_form', 'id': 'add-task-form'}}) }}
+{% for row in addTaskForm %}
+    {% if not loop.last %}
+        <div>
+            <span style="color: red;">{{ form_errors(row) }}</span>
+            {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
+            {{ form_widget(row,{'attr': {}}) }}
+        </div>
+    {% endif %}
+{% endfor %}
+<button type="submit" class="btn btn-primary">OK</button>
+{{ form_end(addTaskForm) }}
