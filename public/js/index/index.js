@@ -152,13 +152,13 @@ class Controller {
         request.onload =
             function (oEvent) {
                 if (request.status === 200) {
+                    console.log(400 - (Date.now() - stamp));
                     setTimeout(function () {
                         detailsContent.innerHTML = request.responseText;
                         detailsHeaderId.innerHTML = id;
                         c.currentId = id;
                         c.updateSelected();
                         detailsContent.classList.toggle("hidden");
-                        console.log(400 - (Date.now() - stamp));
                     }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
                 } else {
                     console.log(request.status);
