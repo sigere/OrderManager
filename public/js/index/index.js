@@ -152,7 +152,6 @@ class Controller {
         request.onload =
             function (oEvent) {
                 if (request.status === 200) {
-                    console.log(400 - (Date.now() - stamp));
                     setTimeout(function () {
                         detailsContent.innerHTML = request.responseText;
                         detailsHeaderId.innerHTML = id;
@@ -372,7 +371,6 @@ class Controller {
         this.overlay.style.display = "block";
         if (!this.centerPopup.classList.contains("active"))
             this.centerPopup.classList.add("active");
-        console.log(rep);
         popup.innerHTML =
             '<h5>Wprowadź nowy numer:</h5>' +
             '<input id="rep-text" type="text" value="' + rep.getAttribute("value") + '"/>' +
@@ -395,7 +393,9 @@ class Controller {
                     if (request.status === 200)
                         setTimeout(function () {
                             rep.innerHTML = repText.value;
+                            rep.setAttribute("value", repText.value);
                         }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
+
                 };
             request.send();
         }, false)

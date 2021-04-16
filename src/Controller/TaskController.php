@@ -28,7 +28,7 @@ class TaskController extends AbstractController
     public function index(): Response
     {
         $tasks = $this->loadTasks();
-        return $this->render('task/index.html.twig', [
+        return $this->render('tasks/index.html.twig', [
             'tasks' => $tasks,
         ]);
     }

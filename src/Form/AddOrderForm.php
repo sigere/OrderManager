@@ -7,6 +7,7 @@ use App\Entity\Lang;
 use App\Entity\Order;
 use App\Entity\Staff;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,12 +21,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddOrderForm extends AbstractType
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $today = new DateTime();
         $builder
             ->add('client', EntityType::class, [
                 'class' => Client::class,
+                'query_builder' => function () {
+                    return $this->entityManager->getRepository(Client::class)->createQueryBuilder('c')
+                        ->andWhere("c.deletedAt is null")
+                        ->orderBy('c.alias', 'ASC');
+                },
                 'help' => 'Zleceniodawca nowego zlecenia',
                 'label' => 'Klient',
                 'choice_label' => 'alias'
