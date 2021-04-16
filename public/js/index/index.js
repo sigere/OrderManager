@@ -32,7 +32,7 @@ class Controller {
         this.deleteButton.addEventListener("click", this.deleteOrder.bind(this), false);
         this.addButton.addEventListener("click", this.addOrder.bind(this), false);
         this.editButton.addEventListener("click", this.updateOrder.bind(this), false);
-        this.rep.addEventListener("click",this.setRep.bind(this), false);
+        this.rep.addEventListener("click", this.setRep.bind(this), false);
         this.addTableListeners();
     }
 
@@ -87,7 +87,7 @@ class Controller {
                 break;
             }
         }
-        if(this.selectedRow)
+        if (this.selectedRow)
             this.selectedRow.classList.toggle("active-row");
     }
 
@@ -114,12 +114,14 @@ class Controller {
         tableContainer.classList.toggle("hidden");
         request.open("POST", "index/api/reloadTable", true);
         let stamp = Date.now();
-        request.onload = setTimeout(
+        request.onload =
             function () {
                 if (request.status === 200) {
-                    tableContainer.innerHTML = request.responseText;
-                    c.addTableListeners();
-                    c.updateSelected();
+                    setTimeout(function () {
+                        tableContainer.innerHTML = request.responseText;
+                        c.addTableListeners();
+                        c.updateSelected();
+                    }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
                 } else {
                     tableContainer.innerHTML =
                         '<div class="alert alert-danger" role="alert">Wystąpił błąd "' +
@@ -127,12 +129,9 @@ class Controller {
                         " " +
                         request.statusText +
                         '" podczas ładowania tabeli</div>';
-                    // NOT FOR DEV tableContainer.innerHTML += '<div class="alert alert-danger" role="alert">'+request.responseText+'</div>';
                 }
                 tableContainer.classList.toggle("hidden");
-            },
-            400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-        );
+            };
         request.send();
     }
 
@@ -151,13 +150,16 @@ class Controller {
         request.open("POST", "index/api/details/" + id, true);
         let stamp = Date.now();
         request.onload =
-            //setTimeout(
             function (oEvent) {
                 if (request.status === 200) {
-                    detailsContent.innerHTML = request.responseText;
-                    detailsHeaderId.innerHTML = id;
-                    c.currentId = id;
-                    c.updateSelected();
+                    setTimeout(function () {
+                        detailsContent.innerHTML = request.responseText;
+                        detailsHeaderId.innerHTML = id;
+                        c.currentId = id;
+                        c.updateSelected();
+                        detailsContent.classList.toggle("hidden");
+                        console.log(400 - (Date.now() - stamp));
+                    }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
                 } else {
                     console.log(request.status);
                     console.log(request);
@@ -169,12 +171,10 @@ class Controller {
                         '" podczas ładowania szczegółów zlecenia ' +
                         id +
                         "</div>";
-                    // NOT FOR DEV detailsContent.innerHTML += '<div class="alert alert-danger" role="alert">'+request.responseText+'</div>';
+                    detailsContent.classList.toggle("hidden");
                 }
-                detailsContent.classList.toggle("hidden");
-            }
-            //, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0)
-        ;
+
+            };
         request.send();
     }
 
@@ -196,18 +196,13 @@ class Controller {
         request.open("POST", "index/api/updateState/" + id + "/" + state, true);
         let stamp = Date.now();
 
-        request.onload = setTimeout(
+        request.onload =
             function (oEvent) {
-                if (request.status === 200) {
-                } else {
-                }
-                c.reloadDetails(id);
-                c.reloadTable();
-                // cell.innerHTML = tmp;
-                // cell.getElementsByClassName("form-select")[0].value = state;
-            },
-            400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-        );
+                setTimeout(function () {
+                    c.reloadDetails(id);
+                    c.reloadTable();
+                }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
+            };
         request.send();
     }
 
@@ -240,18 +235,18 @@ class Controller {
             let stamp = Date.now();
             let request = new XMLHttpRequest();
             request.open("POST", "/index/api/deleteOrder/" + id, true);
-            request.onload = setTimeout(
+            request.onload =
                 function (oEvent) {
                     if (request.status === 200) {
-                        popup.innerHTML = '<div class="alert alert-success" role="alert">Usunięto zlecenie</div>';
-                        c.reloadDetails(null);
-                        c.reloadTable();
+                        setTimeout(function () {
+                            popup.innerHTML = '<div class="alert alert-success" role="alert">Usunięto zlecenie</div>';
+                            c.reloadDetails(null);
+                            c.reloadTable();
+                        });
                     } else {
                         popup.innerHTML = '<div class="alert alert-danger" role="alert">Nie udało się usunąć zlecenia</div>';
                     }
-                },
-                400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-            );
+                };
             request.send();
         }, false);
     }
@@ -277,11 +272,11 @@ class Controller {
         request.onload = function (oEvent) {
             responseText = request.responseText;
 
-            setTimeout(function (){
+            setTimeout(function () {
                 document.getElementById("add_order_form_deadline_date").value = new Date().toISOString().slice(0, 10);
                 document.getElementById("add_order_form_adoption").value = new Date().toISOString().slice(0, 10);
                 document.getElementById("add_order_form_deadline_time").value = "23:59";
-                }, 10);
+            }, 10);
             status = 0;
 
             function refresh() {
@@ -332,20 +327,21 @@ class Controller {
         let stamp = Date.now();
         let request = new XMLHttpRequest();
         request.open("POST", "/index/api/updateOrder/" + this.currentId, true);
-        request.onload = setTimeout(
+        request.onload =
             function (oEvent) {
-
                 let responseText = request.responseText;
                 let status = 0;
 
                 function refresh() {
                     if (status === 202) {
-                        popup.innerHTML = '<div class="alert alert-success" role="alert">Zaktualizowano zlecenie.</div>';
-                        c.reloadDetails(c.currentId);
-                        c.reloadTable();
+                        setTimeout(function () {
+                            popup.innerHTML = '<div class="alert alert-success" role="alert">Zaktualizowano zlecenie.</div>';
+                            c.reloadDetails(c.currentId);
+                            c.reloadTable();
+                        }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
+
                         return;
                     }
-
                     popup.innerHTML = responseText;
                     let addOrderForm = document.forms.namedItem("add_order_form");
                     addOrderForm.addEventListener("submit", function (e) {
@@ -354,9 +350,11 @@ class Controller {
                         let request = new XMLHttpRequest();
                         request.open("POST", "/index/api/updateOrder/" + c.currentId, true);
                         request.onload = function (oEvent) {
-                            responseText = request.responseText;
-                            status = request.status;
-                            refresh();
+                            setTimeout(function () {
+                                responseText = request.responseText;
+                                status = request.status;
+                                refresh();
+                            }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
                         };
                         request.send(formData);
                     }, false);
@@ -364,13 +362,11 @@ class Controller {
 
                 refresh();
 
-            },
-            400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-        );
+            };
         request.send();
     }
 
-    setRep(){
+    setRep() {
         let popup = this.centerPopupContent;
         let rep = this.rep;
         this.overlay.style.display = "block";
@@ -379,12 +375,12 @@ class Controller {
         console.log(rep);
         popup.innerHTML =
             '<h5>Wprowadź nowy numer:</h5>' +
-            '<input id="rep-text" type="text" value="'+ rep.getAttribute("value") +'"/>' +
+            '<input id="rep-text" type="text" value="' + rep.getAttribute("value") + '"/>' +
             '<button class="btn btn-primary" id="rep-button">OK</button>';
 
         let button = document.getElementById("rep-button");
         let repText = document.getElementById("rep-text");
-        button.addEventListener("click",function (){
+        button.addEventListener("click", function () {
             popup.innerHTML =
                 '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">' +
                 '<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>' +
@@ -393,16 +389,16 @@ class Controller {
             let stamp = Date.now();
             let request = new XMLHttpRequest();
             request.open("POST", "/index/api/setRep/" + repText.value, true);
-            request.onload = setTimeout(
+            request.onload =
                 function (oEvent) {
                     popup.innerHTML = request.responseText;
-                    if(request.status === 200)
-                        rep.innerHTML = repText.value;
-                },
-                400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0
-            );
+                    if (request.status === 200)
+                        setTimeout(function () {
+                            rep.innerHTML = repText.value;
+                        }, 400 - (Date.now() - stamp) > 0 ? 400 - (Date.now() - stamp) : 0);
+                };
             request.send();
-        },false)
+        }, false)
     }
 }
 
