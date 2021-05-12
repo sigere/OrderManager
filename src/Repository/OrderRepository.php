@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\Staff;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,16 +23,8 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return QueryBuilder
-     */
-    public function getActive()
-    {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.deletedAt IS NULL');
-    }
-
-    /**
-     * @Return Order[]
+     * @param Staff $staff
+     * @return array
      */
     public function getByStaff(Staff $staff): array
     {

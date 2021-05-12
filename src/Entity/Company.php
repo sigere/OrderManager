@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -62,6 +63,11 @@ class Company
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $rep;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $invoiceMonth;
 
     public function getId(): ?int
     {
@@ -172,6 +178,18 @@ class Company
     public function setRep(?string $rep): self
     {
         $this->rep = $rep;
+
+        return $this;
+    }
+
+    public function getInvoiceMonth(): ?\DateTimeInterface
+    {
+        return $this->invoiceMonth;
+    }
+
+    public function setInvoiceMonth(?DateTime $invoiceMonth): self
+    {
+        $this->invoiceMonth = $invoiceMonth;
 
         return $this;
     }

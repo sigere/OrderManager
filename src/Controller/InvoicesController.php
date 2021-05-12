@@ -6,20 +6,25 @@ use App\Entity\Client;
 use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
+use App\Form\InvoiceMonthFormType;
 use App\Form\InvoiceSummaryForm;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function curl_exec;
+use function json_encode;
 
 class InvoicesController extends AbstractController
 {
     private $entityManager;
     private $request;
+    private $company;
 
     public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
     {
@@ -32,18 +37,24 @@ class InvoicesController extends AbstractController
      */
     public function index(): Response
     {
-        $clients = $this->loadClients();
         $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
+        $clients = $this->loadClients($company->getInvoiceMonth());
         $form = $this->createForm(InvoiceSummaryForm::class, $company);
+        $month = $company->getInvoiceMonth();
+        $monthForm = $this->createForm(InvoiceMonthFormType::class, [
+            "month" => $month ? intval($month->format('n')) : null,
+            "year" => $month ? intval($month->format('Y')) : null,
+        ]);
 
         return $this->render('invoices/index.html.twig', [
             'clients' => $clients,
             'company' => $company,
             'summaryForm' => $form->createView(),
+            'monthForm' => $monthForm->createView(),
         ]);
     }
 
-    private function loadClients(): array
+    private function loadClients(?DateTime $month): array
     {
         $repo = $this->entityManager->getRepository(Client::class);
         $clients = $repo->createQueryBuilder("c")
@@ -54,12 +65,21 @@ class InvoicesController extends AbstractController
 
         $repo = $this->entityManager->getRepository(Order::class);
         $result = [];
+
         foreach ($clients as $client) {
             try {
                 $count = $repo->createQueryBuilder("o")
                     ->select("count(o.id)")
                     ->andWhere("o.deletedAt is null")
-                    ->andWhere("o.settledAt is null")
+                    ->andWhere("o.settledAt is null");
+
+                if ($month) $count = $count
+                    ->andWhere("month(o.deadline) = :month")
+                    ->andWhere("year(o.deadline) = :year")
+                    ->setParameter("month", $month->format("n"))
+                    ->setParameter("year", $month->format("Y"));
+
+                $count = $count
                     ->andWhere("o.client = :client")
                     ->setParameter("client", $client)
                     ->getQuery()
@@ -82,12 +102,22 @@ class InvoicesController extends AbstractController
      */
     public function reloadOrders(Client $client): Response
     {
+        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
+        $date = $company->getInvoiceMonth();
         $repo = $this->entityManager->getRepository(Order::class);
         $orders = $repo->createQueryBuilder("o")
             ->andWhere("o.deletedAt is null")
             ->andWhere("o.settledAt is null")
             ->andWhere("o.client = :client")
-            ->setParameter("client", $client)
+            ->setParameter("client", $client);
+
+        if ($date) $orders = $orders
+            ->andWhere("month(o.deadline) = :month")
+            ->andWhere("year(o.deadline) = :year")
+            ->setParameter("month", $date->format("n"))
+            ->setParameter("year", $date->format("Y"));
+
+        $orders = $orders
             ->orderBy("o.deadline", "ASC")
             ->getQuery()
             ->getResult();
@@ -139,7 +169,6 @@ class InvoicesController extends AbstractController
             $orders,
             $this->request->get("client")
         );
-//        dump($payload);
 
         $url = 'https://' . $fakturowniaFirm . '.fakturownia.pl/invoices.json';
         $ch = curl_init($url);
@@ -147,16 +176,16 @@ class InvoicesController extends AbstractController
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = \curl_exec($ch);
+        $result = curl_exec($ch);
         $result = json_decode($result, true);
         curl_close($ch);
         if (!isset($result['id'])) {
             $text = "Bład serwisu Fakturownia.pl";
-            if (isset($result['message'])) $text .= ": " . \json_encode($result['message'],JSON_UNESCAPED_UNICODE);
+            if (isset($result['message'])) $text .= ": " . json_encode($result['message'], JSON_UNESCAPED_UNICODE);
             return new Response("<div class='alert alert-danger'>" . $text . "</div>", 500);
         }
 
-        //$this->settle($orders);
+        $this->settle($orders);
         return new Response(
             "<div class='alert alert-success'>Wystawiono fakturę i ustawiono zlecenia na rozliczone.<br/><a href='https://" . $fakturowniaFirm . ".fakturownia.pl/invoices/" . $result["id"] . "'>Podgląd</a></div>",
             200);
@@ -205,7 +234,7 @@ class InvoicesController extends AbstractController
                 "positions" => $positions,
             ],
         ];
-        return \json_encode($payload);
+        return json_encode($payload);
     }
 
     private function settle(array $orders): void
@@ -226,10 +255,29 @@ class InvoicesController extends AbstractController
      */
     public function reloadClients(): Response
     {
-        $clients = $this->loadClients();
-        return $this->render('invoices/clients_table.twig', [
-            "clients" => $clients,
-        ]);
+        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
+        $form = $this->createForm(InvoiceMonthFormType::class);
+        $form->handleRequest($this->request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $month = $form->getData()['month'];
+            $year = $form->getData()['year'];
+            try {
+                $date = new DateTime($year . '-' . $month . '-01');
+            } catch (Exception $e) {
+                $date = null;
+            }
+            $company->setInvoiceMonth($date);
+            $this->entityManager->persist($company);
+            $this->entityManager->flush();
+
+            $clients = $this->loadClients($date);
+
+            return $this->render('invoices/clients_table.twig', [
+                "clients" => $clients,
+            ]);
+        }
+
+        return new Response("Błedne dane.", 406);
     }
 
 }

@@ -88,6 +88,7 @@ class ClientsController extends AbstractController
         $form->handleRequest($this->request);
         if ($form->isSubmitted() && $form->isValid()) {
             $client = $form->getData();
+            $client->setAlias(strtoupper($client->getAlias()));
             $this->entityManager->persist($client);
             $this->entityManager->persist(new Log($this->getUser(), "Dodano klienta klienta", $client));
             $this->entityManager->flush();

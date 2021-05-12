@@ -26,6 +26,12 @@
                         Klient
                     </header>
                     <div class="col-content" id="clients-content" style="width: auto">
+                        <h6>Wybierz miesiąc, z którego zlecenia mają być brane pod uwagę.</h6>
+                        {{ form_start(monthForm, {'attr':{'class': ''}}) }}
+                        {{ form_errors(monthForm) }}
+                        {{ form_widget(monthForm.month) }}
+                        {{ form_widget(monthForm.year) }}
+                        {{ form_end(monthForm) }}
                         <h6>Wybierz klienta, dla którego chcesz wystawić fakturę.</h6>
                         <div class="alert alert-info">Klienci bez nierozliczonych zleceń nie są wyświetlani.</div>
                         <div class="table-container">

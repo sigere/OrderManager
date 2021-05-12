@@ -6,10 +6,20 @@ use App\Repository\ClientRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * @UniqueEntity(
+ *     fields={"nip"},
+ *     message="Istnieje już klient o podanym NIPie!"
+ * )
+ * @UniqueEntity(
+ *     fields={"alias"},
+ *     message="Istnieje już klient o podanym aliasie!",
+ *     repositoryMethod="findByAliasIgnoreCase"
+ * )
  */
 class Client
 {
@@ -32,6 +42,8 @@ class Client
 
     /**
      * @ORM\Column(type="string", length=15)
+     * @Assert\Regex("/\d{10}/")
+     * @Assert\Length(min=10,max=10)
      */
     private $nip;
 

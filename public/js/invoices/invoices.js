@@ -6,6 +6,7 @@ class InvoicesController {
     buyerDataContent;
     currentId;
     ordersForm;
+    monthForm;
     overlay;
     centerPopup;
     centerPopupContent;
@@ -22,6 +23,7 @@ class InvoicesController {
         this.currentId = null;
         this.selectedRow = null;
         this.ordersForm = null;
+        this.monthForm = document.forms.namedItem("invoice_month_form");
         this.overlay = document.getElementById("overlay");
         this.centerPopup = document.getElementById("center-popup");
         this.centerPopupContent = document.getElementById("center-popup-content");
@@ -31,6 +33,14 @@ class InvoicesController {
         this.settledButton = document.getElementById("button-execute-settled");
 
         this.invoiceButton.addEventListener("click", this.executeInvoice.bind(this), false);
+        document.getElementById("invoice_month_form_year").addEventListener(
+            "change",
+            this.reloadClients.bind(this)
+        );
+        document.getElementById("invoice_month_form_month").addEventListener(
+            "change",
+            this.reloadClients.bind(this)
+        );
         this.addTableListeners();
     }
 
@@ -139,7 +149,7 @@ class InvoicesController {
         clientRequest.send();
     }
 
-    executeInvoice(e) { //TODO
+    executeInvoice(e) {
         e.preventDefault();
         if (!this.currentId || !this.ordersForm)
             return;
@@ -185,7 +195,7 @@ class InvoicesController {
             c.reloadOrders(null);
         };
         c.clientsTableContainer.classList.toggle("hidden");
-        request.send();
+        request.send(new FormData(this.monthForm));
     }
 
 }

@@ -5,15 +5,18 @@
         <th>Autor</th>
         <th>Dodano</th>
         <th>Temat</th>
-        <th>Treść</th>
+        <th>Temat</th>
         <th>Termin</th>
         <th>Status</th>
     </tr>
     </thead>
     <tbody>
     {% for task in tasks %}
-        <tr task-id="{{ task.id }}">
+        <tr task-id="{{ task.id }}" {{ task.doneAt ? 'style="color: rgba(255,255,255,0.5);"' : "" }}>
             <td class="clickable-row" style="white-space: nowrap;">
+                {% if task.getWarnings is not empty %}
+                    {% include 'icons/warning.html' %}
+                {% endif %}
                 {{ task.id }}
             </td>
             <td class="clickable-row">{{ task.author.firstName ~ " " ~ task.author.lastName }}</td>
@@ -21,7 +24,13 @@
             <td class="clickable-row">{{ task.topic }}</td>
             <td class="clickable-row">{{ task.info }}</td>
             <td class="clickable-row">{{ task.deadline | date("d.m.Y H:i") }}</td>
-            <td class="clickable-row">{{ task.doneAt ? "Wykonane" : "Nie wykonane" }}</td>
+            <td>
+                {% if task.doneAt %}
+                    <div class="state-done">Wykonane</div>
+                {% else %}
+                    <button class="state-button">Wykonaj</button>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
     </tbody>

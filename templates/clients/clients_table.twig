@@ -19,7 +19,12 @@
             </td>
             <td class="clickable-row">{{ client.alias }}</td>
             <td class="clickable-row">{{ client.name }}</td>
-            <td class="clickable-row">{{ client.nip }}</td>
+            <td class="clickable-row">{{
+                client.nip|slice(0,3) ~ "-" ~
+                client.nip|slice(3,3) ~ "-" ~
+                client.nip|slice(6,2) ~ "-" ~
+                client.nip|slice(8,2)
+                }}</td>
             <td class="clickable-row">{{ client.email|default("brak") }}</td>
         </tr>
     {% endfor %}

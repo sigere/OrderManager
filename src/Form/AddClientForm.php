@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Client;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,8 +20,8 @@ class AddClientForm extends AbstractType
             ->add('alias', TextType::class, [
                 "label" => "Alias"
             ])
-            ->add('nip', TextType::class, [
-                "label" => "NIP"
+            ->add('nip', NumberType::class, [
+                "label" => "NIP (tylko cyfry)"
             ])
             ->add('postCode', TextType::class, [
                 "label" => "Kod Pocztowy"

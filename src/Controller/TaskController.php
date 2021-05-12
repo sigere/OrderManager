@@ -39,9 +39,21 @@ class TaskController extends AbstractController
             ->getRepository(Task::class)
             ->createQueryBuilder("t")
             ->andWhere("t.deletedAt is null")
-            ->orderBy("t.deadline","ASC")
+            ->addOrderBy("t.doneAt", "ASC")
+            ->addOrderBy("t.deadline","ASC")
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @Route("/tasks/api/reloadTable", name="tasks_api_reloadTable")
+     * @return Response
+     */
+    public function reloadTable() : Response
+    {
+        return $this->render('tasks/tasks_table.twig', [
+            'tasks' => $this->loadTasks()
+        ]);
     }
 
     /**
@@ -62,7 +74,7 @@ class TaskController extends AbstractController
             return new Response("Dodano zadanie.", 201, ['task_id' => $task->getId()]);
         }
 
-        return $this->render('task/addTask.html.twig', [
+        return $this->render('tasks/addTask.html.twig', [
             'addTaskForm' => $form->createView(),
         ]);
     }
@@ -78,6 +90,9 @@ class TaskController extends AbstractController
             return new Response("Zadanie jest już wykonane.", 406);
         $task->setDoneAt(new \DateTime());
         $this->entityManager->persist($task);
+        $this->entityManager->persist(
+            new Log($this->getUser(),"Ustawiono na wykonane.", $task)
+        );
         $this->entityManager->flush();
         return new Response("Wykonano zadanie", 200);
     }
@@ -93,7 +108,24 @@ class TaskController extends AbstractController
             return new Response("Zadanie zostało juz usunięte.", 406);
         $task->setDeletedAt(new \DateTime());
         $this->entityManager->persist($task);
+        $this->entityManager->persist(
+            new Log($this->getUser(),"Usunięto zadanie..", $task)
+        );
         $this->entityManager->flush();
         return new Response("Usunieto zadanie.", 200);
+    }
+
+    /**
+     * @Route("/tasks/api/details/{id}", name="tasks_api_details")
+     * @param Task $task
+     * @return Response
+     */
+    public function details(Task $task): Response
+    {
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(['task' => $task], ['createdAt' => 'DESC'], 100);
+        return $this->render('tasks/details.twig', [
+            'task' => $task,
+            'logs' => $logs,
+        ]);
     }
 }

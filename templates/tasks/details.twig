@@ -1,0 +1,71 @@
+{% if task.warnings is not empty %}
+    <div class="warning">
+        <ul class="list-group">
+            {% for w in task.warnings %}
+                <li>{{ w }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% elseif task.deletedAt is not null %}
+    <div class="alert alert-danger">Zadanie zostało anulowane {{ task.deletedAt|date("d-m-Y H:i") }}.
+    </div>
+{% elseif task.doneAt is not null %}
+    <div class="alert alert-success">Zadanie zostało wykonane.</div>
+{% endif %}
+
+
+<div class="property">
+    <div class="name">Temat</div>
+    <div class="value">{{ task.topic }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Autor</div>
+    <div class="value">{{ task.author.firstName ~ " " ~ task.author.lastName }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Utworzono</div>
+    <div class="value">{{ task.createdAt | date("d.m.Y H:i") }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Termin</div>
+    <div class="value">{{ task.deadline | date("d.m.Y H:i") }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Status</div>
+    <div class="value">{{ task.doneAt ? "Wykonane" : "Nie wykonane" }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Szczegóły</div>
+    <div class="value">{{ task.info }}</div>
+</div>
+<div style="clear:both;"></div>
+
+
+<div class="logs">
+    <table class="table table-dark">
+        <thead>
+        <th>Data</th>
+        <th>Użytkownik</th>
+        <th>Akcja</th>
+        </thead>
+        <tbody>
+        {% for l in logs %}
+            <tr>
+                <td style="width: min-content;">{{ l.createdAt | date('d-m-Y H:i:s') }}</td>
+                <td style="width: min-content;">{{ l.user }}</td>
+                <td>{{ l.action }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

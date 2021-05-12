@@ -19,4 +19,12 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
+    public function findByAliasIgnoreCase($params) : array
+    {
+        return $this->createQueryBuilder("c")
+            ->andWhere("upper(c.alias) like :alias")
+            ->setParameter("alias", strtoupper($params['alias']))
+            ->getQuery()
+            ->getResult();
+    }
 }

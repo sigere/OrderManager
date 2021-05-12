@@ -85,8 +85,8 @@ class AddOrderForm extends AbstractType
                 'label' => 'Uwierzytelniane',
                 'help' => 'Czy zlecenie będzie uwierzytelniane/przysięgłe?',
                 'choices' => [
+                    'Nie' => false,
                     'Tak' => true,
-                    'Nie' => false
                 ],
             ])
             ->add('adoption', DateType::class, [
