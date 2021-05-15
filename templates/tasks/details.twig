@@ -21,8 +21,8 @@
 <div style="clear:both;"></div>
 
 <div class="property">
-    <div class="name">Autor</div>
-    <div class="value">{{ task.author.firstName ~ " " ~ task.author.lastName }}</div>
+    <div class="name">Wykonawca</div>
+    <div class="value">{{ task.target.firstName ~ " " ~ task.target.lastName }}</div>
 </div>
 <div style="clear:both;"></div>
 
@@ -41,6 +41,12 @@
 <div class="property">
     <div class="name">Status</div>
     <div class="value">{{ task.doneAt ? "Wykonane" : "Nie wykonane" }}</div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="property">
+    <div class="name">Autor</div>
+    <div class="value">{{ task.author.firstName ~ " " ~ task.author.lastName }}</div>
 </div>
 <div style="clear:both;"></div>
 

@@ -5,8 +5,9 @@
         <th>Autor</th>
         <th>Dodano</th>
         <th>Temat</th>
-        <th>Temat</th>
+        <th>Szczegóły</th>
         <th>Termin</th>
+        <th>Wykonawca</th>
         <th>Status</th>
     </tr>
     </thead>
@@ -24,6 +25,7 @@
             <td class="clickable-row">{{ task.topic }}</td>
             <td class="clickable-row">{{ task.info }}</td>
             <td class="clickable-row">{{ task.deadline | date("d.m.Y H:i") }}</td>
+            <td class="clickable-row">{{ task.target.firstName ~ " " ~ task.target.lastName }}</td>
             <td>
                 {% if task.doneAt %}
                     <div class="state-done">Wykonane</div>
