@@ -32,6 +32,17 @@
             </tr>
 
         {% endfor %}
+        {% set ok = validCount == (orders | length) %}
+        <tr style="color: rgb(7, 192, 107);">
+            <td></td>
+            <td {% if not ok %} style="color: rgb(255,3,64)" {% endif %}>
+                {{ validCount }} / {{ orders | length }}
+            </td>
+            <td></td>
+            <td></td>
+            <td>{{ nettoSum }} PLN</td>
+            <td></td>
+        </tr>
 
         </tbody>
     </table>

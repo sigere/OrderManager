@@ -122,8 +122,18 @@ class InvoicesController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        $nettoSum = 0.0;
+        $validCount = 0;
+        foreach ($orders as $order)
+            if(count($order->getInvoiceWarnings()) == 0){
+                $nettoSum += $order->getNetto();
+                $validCount++;
+            }
+
         return $this->render("invoices/orders_table.twig", [
             "orders" => $orders,
+            "nettoSum" => $nettoSum,
+            "validCount" =>$validCount,
         ]);
     }
 
