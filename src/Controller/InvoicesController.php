@@ -170,6 +170,10 @@ class InvoicesController extends AbstractController
         $this->entityManager->flush();
 
         $ids = $this->request->get("orders");
+        if(!$ids){
+            return new Response("<div class='alert alert-danger'>Nie wybrano żadnych zleceń</div>", 406);
+        }
+
         $repo = $this->entityManager->getRepository(Order::class);
         $orders = [];
         foreach ($ids as $id)

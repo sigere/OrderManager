@@ -11,7 +11,8 @@ class InvoicesController {
     centerPopup;
     centerPopupContent;
     invoiceButton;
-    settledButton;
+    //settleButton;
+    invoiceButtonPlaceholder;
 
     constructor() {
         this.clientsTableContainer = document
@@ -30,7 +31,8 @@ class InvoicesController {
         this.buyerDataContent = document.getElementById("buyer-data");
         this.summaryContent = document.getElementById("summary-content");
         this.invoiceButton = document.getElementById("button-execute-invoice");
-        this.settledButton = document.getElementById("button-execute-settled");
+        //this.settledButton = document.getElementById("button-execute-settled");
+        this.invoiceButtonPlaceholder = document.getElementById("invoice-button-placeholder");
 
         this.invoiceButton.addEventListener("click", this.executeInvoice.bind(this), false);
         document.getElementById("invoice_month_form_year").addEventListener(
@@ -169,6 +171,8 @@ class InvoicesController {
         let request = new XMLHttpRequest();
         request.open("POST", "invoices/api/execute", true);
         request.onload = function () {
+            c.invoiceButtonPlaceholder.style.display = "none";
+            c.invoiceButton.style.display = "block";
             c.overlay.style.display = "block";
             popup.classList.toggle("active");
             if (request.status === 200) {
@@ -179,6 +183,8 @@ class InvoicesController {
                 popupContent.innerHTML = request.responseText;
             }
         };
+        this.invoiceButtonPlaceholder.style.display = "block";
+        this.invoiceButton.style.display = "none";
         request.send(post);
     }
 

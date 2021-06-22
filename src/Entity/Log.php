@@ -46,7 +46,7 @@ class Log
     private $task;
 
 
-    public function __construct($user, $action, $object)
+    public function __construct($user, $action, $object = null)
     {
         $this->user = $user;
         $this->action = $action;
@@ -54,15 +54,18 @@ class Log
         $this->client = null;
         $this->order = null;
         $this->task = null;
-        switch (get_class($object)) {
-            case Order::class:
-                $this->order = $object;
-                break;
-            case Client::class:
-                $this->client = $object;
-                break;
-            case Task::class:
-                $this->task = $object;
+        if ($object) {
+            switch (get_class($object)) {
+                case
+                Order::class:
+                    $this->order = $object;
+                    break;
+                case Client::class:
+                    $this->client = $object;
+                    break;
+                case Task::class:
+                    $this->task = $object;
+            }
         }
 
         $this->createdAt = new DateTime();
