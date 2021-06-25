@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# printf "-----Set www-data uid to \$uid-----\n"
-# docker-compose exec php usermod -u $UID www-data
+echo "----- Set www-data uid to \$uid -----"
+docker-compose exec php usermod -u $UID www-data
 
-# printf "-----Create .env.locla.php-----\n"
-# docker-compose exec -u www-data php cp dev/.env.local.php ./.env.local.php
+echo "----- Set ownership to www-data -----"
+docker-compose exec php chown www-data:www-data /var/www/OrderManager
+docker-compose exec php mkdir /var/www/.composer
+docker-compose exec php chown www-data:www-data /var/www/.composer
 
-# printf "-----Composer install-----\n"
-# docker-compose exec -u www-data php composer install
+echo "----- Create .env.local.php-----"
+docker-compose exec -u www-data php cp dev/.env.local.php ./.env.local.php
 
-# printf "-----Execute migrations-----\n"
-# docker-compose exec -u www-data php bin/console doctrine:migrations:migrate --no-interaction
+echo "----- Composer install -----"
+docker-compose exec -u www-data php composer install
 
-# printf '-----Execute init insert-----\n'
-docker-compose exec -it db mysql --password=root < dev/init_insert.sql
+echo "----- Execute migrations -----"
+sleep 5
+docker-compose exec -u www-data php bin/console doctrine:migrations:migrate --no-interaction
+
+echo '----- Install Sample Data -----'
+docker-compose exec -u www-data php bin/console app:installSampleData
