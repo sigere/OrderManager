@@ -11,7 +11,7 @@ class InvoicesController {
     centerPopup;
     centerPopupContent;
     invoiceButton;
-    //settleButton;
+    settleButton;
     invoiceButtonPlaceholder;
 
     constructor() {
@@ -31,10 +31,11 @@ class InvoicesController {
         this.buyerDataContent = document.getElementById("buyer-data");
         this.summaryContent = document.getElementById("summary-content");
         this.invoiceButton = document.getElementById("button-execute-invoice");
-        //this.settledButton = document.getElementById("button-execute-settled");
+        this.settleButton = document.getElementById("button-execute-settle");
         this.invoiceButtonPlaceholder = document.getElementById("invoice-button-placeholder");
 
         this.invoiceButton.addEventListener("click", this.executeInvoice.bind(this), false);
+        this.settleButton.addEventListener("click", this.settleOrders.bind(this), false);
         document.getElementById("invoice_month_form_year").addEventListener(
             "change",
             this.reloadClients.bind(this)
@@ -185,6 +186,44 @@ class InvoicesController {
         };
         this.invoiceButtonPlaceholder.style.display = "block";
         this.invoiceButton.style.display = "none";
+        request.send(post);
+    }
+
+    settleOrders(e) {
+        e.preventDefault();
+        if (!this.currentId || !this.ordersForm)
+            return;
+
+        let c = this;
+        let popup = this.centerPopup;
+        let popupContent = this.centerPopupContent;
+        let post = new FormData(document.getElementsByClassName("summary-form")[0]);
+
+        let orders = new FormData(this.ordersForm);
+        for (let pair of orders.entries()) {
+            post.append("orders[]", pair[0]);
+        }
+        post.append("client", this.currentId);
+
+        let request = new XMLHttpRequest();
+        request.open("POST", "invoices/api/settleOrders", true);
+        request.onload = function () {
+            c.invoiceButtonPlaceholder.style.display = "none";
+            c.invoiceButton.style.display = "block";
+            c.settleButton.style.display = "block";
+            c.overlay.style.display = "block";
+            popup.classList.toggle("active");
+            if (request.status === 200) {
+                popupContent.innerHTML = request.responseText;
+                c.buyerDataContent.innerHTML = '<div class="alert alert-info">Wybierz klienta, by wystawić fakturę</div>';
+                c.reloadClients();
+            } else {
+                popupContent.innerHTML = request.responseText;
+            }
+        };
+        this.invoiceButtonPlaceholder.style.display = "block";
+        this.invoiceButton.style.display = "none";
+        this.settleButton.style.display = "none";
         request.send(post);
     }
 

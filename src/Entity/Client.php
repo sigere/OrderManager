@@ -182,7 +182,7 @@ class Client
 
     public function setAlias(string $alias): self
     {
-        $this->alias = $alias;
+        $this->alias = strtoupper($alias);
 
         return $this;
     }
