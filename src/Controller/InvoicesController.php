@@ -125,7 +125,7 @@ class InvoicesController extends AbstractController
         $nettoSum = 0.0;
         $validCount = 0;
         foreach ($orders as $order)
-            if(count($order->getInvoiceWarnings()) == 0){
+            if (count($order->getInvoiceWarnings()) == 0) {
                 $nettoSum += $order->getNetto();
                 $validCount++;
             }
@@ -133,7 +133,7 @@ class InvoicesController extends AbstractController
         return $this->render("invoices/orders_table.twig", [
             "orders" => $orders,
             "nettoSum" => $nettoSum,
-            "validCount" =>$validCount,
+            "validCount" => $validCount,
         ]);
     }
 
@@ -170,7 +170,7 @@ class InvoicesController extends AbstractController
         $this->entityManager->flush();
 
         $ids = $this->request->get("orders");
-        if(!$ids){
+        if (!$ids) {
             return new Response("<div class='alert alert-danger'>Nie wybrano żadnych zleceń</div>", 406);
         }
 
@@ -251,6 +251,33 @@ class InvoicesController extends AbstractController
         return json_encode($payload);
     }
 
+    /**
+     * @Route("/invoices/api/settleOrders", name="invoices_api_settleOrders")
+     */
+    public function settleOrders(): Response
+    {
+        $ids = $this->request->get("orders");
+        if (!$ids) {
+            return new Response(
+                "<div class='alert alert-danger'>Nie wybrano żadnych zleceń</div>",
+                406
+            );
+        }
+
+        $repo = $this->entityManager->getRepository(Order::class);
+        $orders = [];
+        foreach ($ids as $id)
+        {
+            $orders[] = $repo->findOneBy(["id" => $id]);
+        }
+
+        $this->settle($orders);
+        return new Response(
+            "<div class='alert alert-success'>Ustawiono zlecenia na rozliczone.</div>",
+            200
+        );
+    }
+
     private function settle(array $orders): void
     {
         foreach ($orders as $order) {
@@ -260,6 +287,7 @@ class InvoicesController extends AbstractController
             $this->entityManager->persist($order);
             $this->entityManager->persist(new Log($this->getUser(), "Rozliczono zlecenie.", $order));
         }
+
         $this->entityManager->flush();
     }
 

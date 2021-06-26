@@ -47,11 +47,11 @@
 }
 
 /* --------left-column-------------- */
-.left-col .table{
+.left-col .table {
     font-size: 13px;
 }
 
-.left-col .col-content{
+.left-col .col-content {
     overflow: scroll;
 }
 
@@ -94,9 +94,6 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
-
-
-
 
 
 /* --------mid-column-------------- */
@@ -165,8 +162,8 @@
 
 .active-row {
     /*  TODO*/
-    background: rgb(255,255,255);
-    background: linear-gradient(90deg, rgba(255,255,255,0.20211834733893552) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
+    background: rgb(255, 255, 255);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.20211834733893552) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%);
 }
 
 .active-row td {
@@ -261,12 +258,11 @@
     display: block;
 }
 
-.right-col .buttons-bar
-{
+.right-col .buttons-bar {
     position: sticky;
     bottom: 0;
     width: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     height: 70px;
     border-radius: 20px;
 }
@@ -280,17 +276,16 @@
 
 .right-col .btn:first-child {
     position: absolute;
-    left: 50%;
+    left: 30%;
     top: 50%;
     transform: translate(-50%, -50%);
 }
 
-.right-col .btn:last-child {
-    display: none;
+.right-col .second {
     position: absolute;
-    right: 15%;
+    right: 30%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(50%, -50%);
 }
 
 /*---------------others-------------------*/
