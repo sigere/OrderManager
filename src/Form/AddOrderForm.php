@@ -27,6 +27,7 @@ class AddOrderForm extends AbstractType
     {
         $this->entityManager = $entityManager;
     }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $today = new DateTime();
@@ -35,19 +36,19 @@ class AddOrderForm extends AbstractType
                 'class' => Client::class,
                 'query_builder' => function () {
                     return $this->entityManager->getRepository(Client::class)->createQueryBuilder('c')
-                        ->andWhere("c.deletedAt is null")
+                        ->andWhere('c.deletedAt is null')
                         ->orderBy('c.alias', 'ASC');
                 },
                 'help' => 'Zleceniodawca nowego zlecenia',
                 'label' => 'Klient',
-                'choice_label' => 'alias'
+                'choice_label' => 'alias',
             ])
             ->add('staff', EntityType::class, [
                 'class' => Staff::class,
                 'help' => 'Osoba relizująca zlecenie',
                 'label' => 'Tłumacz',
                 'choice_label' => function ($staff) {
-                    return $staff->getFirstName() . ' ' . $staff->getLastName();
+                    return $staff->getFirstName().' '.$staff->getLastName();
                 },
             ])
             ->add('topic', TextType::class, [
@@ -61,7 +62,7 @@ class AddOrderForm extends AbstractType
                 'help' => 'Liczba stron zaokrąglona do dwóch miejsc po przecinku (0.01)',
                 'html5' => true,
                 'attr' => ['step' => '0.01'],
-                'empty_data' => '0'
+                'empty_data' => '0',
             ])
             ->add('price', NumberType::class, [
                 'label' => 'Cena',
@@ -69,7 +70,7 @@ class AddOrderForm extends AbstractType
                 'help' => 'Cena za stronę zaokrąglona do dwóch miejsc po przecinku (0.01)',
                 'html5' => true,
                 'attr' => ['step' => '0.01'],
-                'empty_data' => '0'
+                'empty_data' => '0',
             ])
             ->add('baseLang', EntityType::class, [
                 'class' => Lang::class,
@@ -105,7 +106,7 @@ class AddOrderForm extends AbstractType
                 'label' => 'Notatki',
                 'required' => false,
                 'help' => 'Dodatkowe informacje o zleceniu',
-                'empty_data' => ''
+                'empty_data' => '',
             ]);
     }
 

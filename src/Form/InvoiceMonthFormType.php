@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Order;
 use Doctrine\ORM\EntityManagerInterface;
-use DoctrineExtensions\Query\Mysql\Date;
 use Exception;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,34 +20,35 @@ class InvoiceMonthFormType extends AbstractType
         $this->entityManager = $entityManager;
         $query = $entityManager
             ->getRepository(Order::class)
-            ->createQueryBuilder("o");
+            ->createQueryBuilder('o');
 
         $this->years = [];
         try {
             $first = $entityManager
                 ->getRepository(Order::class)
-                ->createQueryBuilder("o")
-                ->orderBy("o.deadline", 'ASC')
+                ->createQueryBuilder('o')
+                ->orderBy('o.deadline', 'ASC')
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getSingleResult();
             $last = $entityManager
                 ->getRepository(Order::class)
-                ->createQueryBuilder("o")
-                ->orderBy("o.deadline", 'DESC')
+                ->createQueryBuilder('o')
+                ->orderBy('o.deadline', 'DESC')
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getSingleResult();
             if ($last && $first) {
                 $f = intval($first->getDeadline()->format('Y'));
                 $l = intval($last->getDeadline()->format('Y'));
-                for($i = $f; $i <= $l; $i++)
+                for ($i = $f; $i <= $l; ++$i) {
                     $this->years[$i.''] = $i;
+                }
             }
         } catch (Exception $ex) {
             $now = new \DateTime();
             $this->years = [
-                $now->format('Y') => intval($now->format('Y'))
+                $now->format('Y') => intval($now->format('Y')),
             ];
         }
     }
@@ -57,7 +57,7 @@ class InvoiceMonthFormType extends AbstractType
     {
         $builder
             ->add('month', ChoiceType::class, [
-                "label" => "Miesiąc",
+                'label' => 'Miesiąc',
                 'choices' => [
                     'Wszystkie' => null,
                     'Styczeń' => 1,
@@ -71,12 +71,12 @@ class InvoiceMonthFormType extends AbstractType
                     'Wrzesień' => 9,
                     'Październik' => 10,
                     'Listopad' => 11,
-                    'Grudzień' => 12
-                ]
+                    'Grudzień' => 12,
+                ],
             ])
             ->add('year', ChoiceType::class, [
-                'label' => "Rok",
-                "choices" => $this->years
+                'label' => 'Rok',
+                'choices' => $this->years,
             ]);
     }
 

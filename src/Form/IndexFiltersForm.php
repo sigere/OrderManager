@@ -92,7 +92,7 @@ class IndexFiltersForm extends AbstractType
                 'class' => Client::class,
                 'query_builder' => function () {
                     return $this->entityManager->getRepository(Client::class)->createQueryBuilder('c')
-                        ->andWhere("c.deletedAt is null")
+                        ->andWhere('c.deletedAt is null')
                         ->orderBy('c.alias', 'ASC');
                 },
                 'label' => 'Klient',
@@ -130,7 +130,7 @@ class IndexFiltersForm extends AbstractType
                 'label' => false,
                 'data' => $preferences['index']['date-type'],
                 'choice_attr' => [
-                    'Termin' => ['style' => 'margin-left: 10px;']]
+                    'Termin' => ['style' => 'margin-left: 10px;'], ],
             ])
             ->add('date-from', DateType::class, [
                 'label' => 'Data od',

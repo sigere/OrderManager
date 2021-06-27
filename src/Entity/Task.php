@@ -158,13 +158,16 @@ class Task
 
     public function getWarnings(): array
     {
-        if($this->doneAt)
+        if ($this->doneAt) {
             return [];
+        }
         $warnings = [];
-        $now = new DateTime;
+        $now = new DateTime();
         $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
-        if ($timeToDeadline < 86400)
-            $warnings[] = "Pozostało mniej niż 24h do terminu zadania.";
+        if ($timeToDeadline < 86400) {
+            $warnings[] = 'Pozostało mniej niż 24h do terminu zadania.';
+        }
+
         return $warnings;
     }
 
@@ -174,5 +177,4 @@ class Task
 
         return $this;
     }
-
 }

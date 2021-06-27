@@ -15,31 +15,31 @@ class AddClientForm extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                "label" => "Pełna nazwa",
+                'label' => 'Pełna nazwa',
             ])
             ->add('alias', TextType::class, [
-                "label" => "Alias"
+                'label' => 'Alias',
             ])
             ->add('nip', NumberType::class, [
-                "label" => "NIP (tylko cyfry)"
+                'label' => 'NIP (tylko cyfry)',
             ])
             ->add('postCode', TextType::class, [
-                "label" => "Kod Pocztowy"
+                'label' => 'Kod Pocztowy',
             ])
             ->add('city', TextType::class, [
-                "label" => "Miasto"
+                'label' => 'Miasto',
             ])
             ->add('street', TextType::class, [
-                "label" => "Ulica"
+                'label' => 'Ulica',
             ])
             ->add('country', null, [
-                "label" => "Kraj"
+                'label' => 'Kraj',
             ])
             ->add('email', null, [
-                "label" => "Adres email"
+                'label' => 'Adres email',
             ]);
-
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

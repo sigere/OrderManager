@@ -68,7 +68,7 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->createdAt = new DateTime;
+        $this->createdAt = new DateTime();
         $this->deletedAt = null;
         $this->preferences['index'] = [
             'adoption' => false,
@@ -101,7 +101,6 @@ class User implements UserInterface
             'date-from' => null,
             'date-to' => null,
         ];
-
     }
 
     public function getId(): int
@@ -116,7 +115,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string)$this->username;
+        return (string) $this->username;
     }
 
     public function setUsername(string $username): self
@@ -150,7 +149,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string)$this->password;
+        return (string) $this->password;
     }
 
     public function setPassword(string $password): self
@@ -191,7 +190,7 @@ class User implements UserInterface
 
     public function __toString(): string
     {
-        return $this->getFirstName() . ' ' . $this->getLastName();
+        return $this->getFirstName().' '.$this->getLastName();
     }
 
     public function getFirstName(): ?string
@@ -245,7 +244,8 @@ class User implements UserInterface
     public function isColumnVisible(string $column): bool
     {
         $this->preferences['orders_table']['langs'] = true;
-        return $this->getPreferences()['orders_table'][$column] == true;
+
+        return true == $this->getPreferences()['orders_table'][$column];
         //co jesli nie istenieje taki index $column w tablicy? powineinem sprawdzić isset(...)?
     }
 

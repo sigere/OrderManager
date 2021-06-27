@@ -17,20 +17,22 @@ class AddTaskForm extends AbstractType
 {
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    public function __construct(EntityManagerInterface $entityManager)
+    {
         $this->entityManager = $entityManager;
     }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('topic', TextType::class, [
                 'label' => 'Temat',
-                'required' =>true,
+                'required' => true,
             ])
             ->add('info', TextareaType::class, [
                 'label' => 'Notatki',
                 'required' => false,
-                'empty_data' => ''
+                'empty_data' => '',
             ])
             ->add('deadline', DateTimeType::class, [
                 'label' => 'Termin',
@@ -39,10 +41,10 @@ class AddTaskForm extends AbstractType
                 'time_widget' => 'single_text',
             ])
             ->add('target', EntityType::class, [
-                'label' => "Wykonawca",
+                'label' => 'Wykonawca',
                 'class' => User::class,
                 'choice_label' => function ($user) {
-                    return $user->getFirstName() . ' ' . $user->getLastName();
+                    return $user->getFirstName().' '.$user->getLastName();
                 },
                 'query_builder' => function () {
                     return $this->entityManager->getRepository(User::class)->createQueryBuilder('u')
