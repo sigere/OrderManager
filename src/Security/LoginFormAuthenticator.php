@@ -5,7 +5,6 @@ namespace App\Security;
 use App\Entity\Log;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -81,9 +80,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
-        if($this->passwordEncoder->isPasswordValid($user, $credentials['password'])){
+        if ($this->passwordEncoder->isPasswordValid($user, $credentials['password'])) {
             $this->entityManager->persist(
-                new Log($user, "Success validation, user logged in.", null)
+                new Log($user, 'Success validation, user logged in.', null)
             );
             $this->entityManager->flush();
 
@@ -91,7 +90,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         }
 
         $this->entityManager->persist(
-            new Log($user, "Invalid password, while attempting to log in.", null)
+            new Log($user, 'Invalid password, while attempting to log in.', null)
         );
         $this->entityManager->flush();
         throw new CustomUserMessageAuthenticationException('Podane hasło nie jest poprawne.');
@@ -99,8 +98,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
+     *
      * @param $credentials
-     * @return string|null
      */
     public function getPassword($credentials): ?string
     {
@@ -112,6 +111,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
+
         return new RedirectResponse($this->urlGenerator->generate('index'));
     }
 

@@ -129,37 +129,46 @@ class Order
     public function getInvoiceWarnings(): array
     {
         $warnings = $this->getWarnings();
-        if ($this->state != self::WYSLANE)
-            $warnings[] = "Zlecenie nie zostało wysłane.";
+        if (self::WYSLANE != $this->state) {
+            $warnings[] = 'Zlecenie nie zostało wysłane.';
+        }
+
         return $warnings;
     }
 
     public function getWarnings(): array
     {
         $warnings = [];
-        $now = new DateTime;
+        $now = new DateTime();
         $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
 
-        if ($this->price == 0)
-            $warnings[] = "Cena za stronę jest równa 0.";
+        if (0 == $this->price) {
+            $warnings[] = 'Cena za stronę jest równa 0.';
+        }
 
         switch ($this->state) {
             case self::PRZYJETE:
-                if ($timeToDeadline < 0)
-                    $warnings[] = "Minął termin zlecenia, a jego status jest ustawiony na przyjęte";
-                else if ($timeToDeadline < 86400)
-                    $warnings[] = "Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte";
+                if ($timeToDeadline < 0) {
+                    $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
+                } elseif ($timeToDeadline < 86400) {
+                    $warnings[] = 'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
+                }
                 break;
             case self::WYKONANE:
-                if ($timeToDeadline < 0)
-                    $warnings[] = "Minął termin zlecenia, a jego status jest ustawiony na wykonane";
-                if ($this->pages == 0)
-                    $warnings[] = "Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.";
+                if ($timeToDeadline < 0) {
+                    $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na wykonane';
+                }
+                if (0 == $this->pages) {
+                    $warnings[] = 'Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.';
+                }
                 break;
             case self::WYSLANE:
-                if ($this->pages == 0) $warnings[] = "Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.";
+                if (0 == $this->pages) {
+                    $warnings[] = 'Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.';
+                }
                 break;
         }
+
         return $warnings;
     }
 
@@ -180,13 +189,16 @@ class Order
         if ($this->price && $this->pages) {
             return round($this->price * $this->pages, 2);
         }
+
         return 0.00;
     }
+
     public function getBrutto(): float
     {
         if ($this->price && $this->pages) {
             return round($this->price * $this->pages * 1.23, 2);
         }
+
         return 0.00;
     }
 

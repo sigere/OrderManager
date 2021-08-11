@@ -22,10 +22,6 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    /**
-     * @param Staff $staff
-     * @return array
-     */
     public function getByStaff(Staff $staff): array
     {
         return $this->createQueryBuilder('o')

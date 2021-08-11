@@ -29,7 +29,7 @@ class Log
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $action = "";
+    private $action = '';
     /**
      * @ORM\ManyToOne(targetEntity=Order::class)
      */
@@ -45,7 +45,6 @@ class Log
      */
     private $task;
 
-
     public function __construct($user, $action, $object = null)
     {
         $this->user = $user;
@@ -56,8 +55,7 @@ class Log
         $this->task = null;
         if ($object) {
             switch (get_class($object)) {
-                case
-                Order::class:
+                case Order::class:
                     $this->order = $object;
                     break;
                 case Client::class:

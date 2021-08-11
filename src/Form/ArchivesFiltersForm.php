@@ -87,7 +87,6 @@ class ArchivesFiltersForm extends AbstractType
                 'data' => $this->entityManager->
                 getRepository(Client::class)->
                 findOneBy(['id' => $preferences['archives']['select-client']]),
-
             ])
             ->add('select-staff', EntityType::class, [
                 'class' => Staff::class,
@@ -113,7 +112,7 @@ class ArchivesFiltersForm extends AbstractType
                 'label' => false,
                 'data' => $preferences['archives']['date-type'],
                 'choice_attr' => [
-                    'Termin' => ['style' => 'margin-left: 10px;']]
+                    'Termin' => ['style' => 'margin-left: 10px;'], ],
             ])
             ->add('date-from', DateType::class, [
                 'label' => 'Data od',
@@ -138,7 +137,6 @@ class ArchivesFiltersForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-
         ]);
     }
 }

@@ -14,14 +14,14 @@ class InvoiceSummaryForm extends AbstractType
         $company = $builder->getData();
         $builder
             ->add('issueDate', DateType::class, [
-                "label" => "Data wystawienia",
+                'label' => 'Data wystawienia',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'date'],
                 'data' => $company ? $company->getIssueDate() : null,
                 'label_attr' => ['style' => 'display: block;'],
             ])
             ->add('paymentTo', DateType::class, [
-                "label" => "Płatność do",
+                'label' => 'Płatność do',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'date'],
                 'data' => $company ? $company->getPaymentTo() : null,

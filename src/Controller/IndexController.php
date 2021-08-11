@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Company;
-use App\Entity\Lang;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
@@ -13,13 +12,11 @@ use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class IndexController extends AbstractController
 {
@@ -31,12 +28,11 @@ class IndexController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->request = $request->getCurrentRequest();
-        $this->company = $entityManager->getRepository(Company::class)->findOneBy(['id'=> 1 ]);
+        $this->company = $entityManager->getRepository(Company::class)->findOneBy(['id' => 1]);
     }
 
     /**
      * @Route("/", name="index")
-     * @return Response
      */
     public function index(): Response
     {
@@ -57,16 +53,23 @@ class IndexController extends AbstractController
         $user = $this->getUser();
         $preferences = $user->getPreferences();
         $states = [];
-        if ($preferences['index']['przyjete']) $states[] = 'przyjete';
-        if ($preferences['index']['wykonane']) $states[] = 'wykonane';
-        if ($preferences['index']['wyslane']) $states[] = 'wyslane';
+        if ($preferences['index']['przyjete']) {
+            $states[] = 'przyjete';
+        }
+        if ($preferences['index']['wykonane']) {
+            $states[] = 'wykonane';
+        }
+        if ($preferences['index']['wyslane']) {
+            $states[] = 'wyslane';
+        }
 
-        if (!count($states) > 0)
+        if (!count($states) > 0) {
             return [];
+        }
 
         $statesString = 'o.state = ';
         foreach ($states as $s) {
-            $statesString .= ':' . $s . ' or o.state = ';
+            $statesString .= ':'.$s.' or o.state = ';
         }
         $statesString = substr($statesString, 0, -14);
 
@@ -86,10 +89,11 @@ class IndexController extends AbstractController
         }
 
         $repository = $this->entityManager->getRepository(Client::class);
-        if ($preferences['index']['select-client'])
+        if ($preferences['index']['select-client']) {
             $orders = $orders
                 ->andWhere('o.client = :client')
                 ->setParameter('client', $repository->findOneBy(['id' => $preferences['index']['select-client']]));
+        }
         //doctrine nie zapisuje obiektów w user->preferences['index']['select-client'],
         //więc mapuje na id przy zapisie i na obiekt przy odczycie
 
@@ -97,14 +101,14 @@ class IndexController extends AbstractController
         if ($preferences['index']['date-from']) {
             $dateFrom = new Datetime($preferences['index']['date-from']['date']);
             $orders
-                ->andWhere('o.' . $dateType . ' >= :dateFrom')
+                ->andWhere('o.'.$dateType.' >= :dateFrom')
                 ->setParameter('dateFrom', $dateFrom);
         }
         if ($preferences['index']['date-to']) {
             $dateTo = new Datetime($preferences['index']['date-to']['date']);
             $dateTo->setTime(23, 59);
             $orders
-                ->andWhere('o.' . $dateType . ' <= :dateTo')
+                ->andWhere('o.'.$dateType.' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);
         }
 
@@ -115,12 +119,12 @@ class IndexController extends AbstractController
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();
+
         return $orders;
     }
 
     /**
      * @Route("/index/api/filters", name="index_api_filters")
-     * @return Response
      */
     public function indexApiFilters(): Response
     {
@@ -135,7 +139,8 @@ class IndexController extends AbstractController
             $user->setPreferences($preferences);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-            return new Response("Zastosowano filtry.", 200);
+
+            return new Response('Zastosowano filtry.', 200);
         }
 
         return new Response('Błędne dane.', 400);
@@ -147,15 +152,14 @@ class IndexController extends AbstractController
     public function reloadTable(): Response
     {
         $orders = $this->loadOrdersTable();
+
         return $this->render('index/orders_table.twig', [
-            'orders' => $orders
+            'orders' => $orders,
         ]);
     }
 
     /**
      * @Route("/index/api/details/{id}", name="index_api_details")
-     * @param Order $order
-     * @return Response
      */
     public function details(Order $order): Response
     {
@@ -166,21 +170,21 @@ class IndexController extends AbstractController
 
         return $this->render('index/details.twig', [
             'order' => $order,
-            'logs' => $logs
+            'logs' => $logs,
         ]);
     }
 
     /**
      * @Route("/index/api/updateState/{id}/{state}", name="index_updateState")
-     * @param Order $order
+     *
      * @param $state
-     * @return Response
      */
     public function updateState(Order $order, $state): Response
     {
         //TODO autoryzacja?
-        if ($order->getState() == $state)
+        if ($order->getState() == $state) {
             return new Response('state not changed');
+        }
 
         $currentState = $order->getState();
         switch ($state) {
@@ -190,38 +194,37 @@ class IndexController extends AbstractController
                 $order->setState($state);
                 break;
             default:
-                return new Response("given state not found", 404);
+                return new Response('given state not found', 404);
         }
         $this->entityManager->persist(new Log(
             $this->getUser(),
-            "Zmiana statusu: " . $currentState . " -> " . $state . ".", $order
+            'Zmiana statusu: '.$currentState.' -> '.$state.'.', $order
         ));
         $this->entityManager->persist($order);
         $this->entityManager->flush();
+
         return new Response('Zmieniono status', 200);
     }
 
     /**
      * @Route("/index/api/deleteOrder/{id}", name="index_api_deleteOrder")
-     * @param Order $order
-     * @return Response
      */
     public function deleteOrder(Order $order): Response
     {
-        if ($order->getDeletedAt())
-            return new Response("Zlecenie zostało już usunięte", 406);
+        if ($order->getDeletedAt()) {
+            return new Response('Zlecenie zostało już usunięte', 406);
+        }
 
         $order->setDeletedAt(new Datetime());
         $this->entityManager->persist($order);
-        $this->entityManager->persist(new Log($this->getUser(), "Usunięto zlecenie", $order));
+        $this->entityManager->persist(new Log($this->getUser(), 'Usunięto zlecenie', $order));
         $this->entityManager->flush();
-        return new Response("Zlecenie usunięte", 200);
+
+        return new Response('Zlecenie usunięte', 200);
     }
 
     /**
      * @Route("/index/api/addOrder", name="index_api_addorder")
-     * @param Request $request
-     * @return Response
      */
     public function addOrder(Request $request): Response
     {
@@ -233,9 +236,10 @@ class IndexController extends AbstractController
             $order->setAuthor($this->getUser());
 
             $this->entityManager->persist($order);
-            $this->entityManager->persist(new Log($this->getUser(), "Dodano zlecenie", $order));
+            $this->entityManager->persist(new Log($this->getUser(), 'Dodano zlecenie', $order));
             $this->entityManager->flush();
-            return new Response("Dodano zlecenie", 201, ["orderId" => $order->getId()]);
+
+            return new Response('Dodano zlecenie', 201, ['orderId' => $order->getId()]);
         }
 
         return $this->render('index/addOrder.html.twig', [
@@ -245,8 +249,6 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/updateOrder/{id}", name="index_api_updateOrder")
-     * @param Order $order
-     * @return Response
      */
     public function updateOrder(Order $order): Response
     {
@@ -257,9 +259,10 @@ class IndexController extends AbstractController
             $order = $form->getData();
             $this->entityManager->persist($order);
 //            TODO sprawdzanie co się zmieniło i logowanie tego
-            $this->entityManager->persist(new Log($this->getUser(), "Zaktualizowano zlecenie", $order));
+            $this->entityManager->persist(new Log($this->getUser(), 'Zaktualizowano zlecenie', $order));
             $this->entityManager->flush();
-            return new Response("Zaktualizowano zlecenie.", 202, ["orderId" => $order->getId()]);
+
+            return new Response('Zaktualizowano zlecenie.', 202, ['orderId' => $order->getId()]);
         }
 
         return $this->render('index/addOrder.html.twig', [
@@ -269,32 +272,33 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/settle/{id}", name="index_api_settle")
-     * @param Order $order
-     * @return Response
      */
     public function settle(Order $order): Response
     {
-        if (count($order->getWarnings()))
-            return new Response("Zlecenie nie może zostać rozliczone", 406);
-        if ($order->getSettledAt())
-            return new Response("Zlecenie zostało już rozliczone.", 406);
+        if (count($order->getWarnings())) {
+            return new Response('Zlecenie nie może zostać rozliczone', 406);
+        }
+        if ($order->getSettledAt()) {
+            return new Response('Zlecenie zostało już rozliczone.', 406);
+        }
         $order->setSettledAt(new Datetime());
         $this->entityManager->persist($order);
         $this->entityManager->flush();
-        return new Response("Rozliczono zlecenie", 200);
+
+        return new Response('Rozliczono zlecenie', 200);
     }
 
     /**
      * @Route("/index/api/setRep/{rep}", name="index_api_setRep")
+     *
      * @param $rep
-     * @return Response
      */
     public function setRep($rep): Response
     {
         $this->company->setRep($rep);
         $this->entityManager->persist($this->company);
         $this->entityManager->flush();
-        return new Response("Wprowadzono zmiany", 200);
-    }
 
+        return new Response('Wprowadzono zmiany', 200);
+    }
 }

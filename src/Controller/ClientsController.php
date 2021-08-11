@@ -41,6 +41,7 @@ class ClientsController extends AbstractController
             ->orderBy('c.alias', 'ASC')
             ->getQuery()
             ->getResult();
+
         return $clients;
     }
 
@@ -56,8 +57,6 @@ class ClientsController extends AbstractController
 
     /**
      * @Route("/clients/api/updateClient/{id}", name="clients_api_updateClient")
-     * @param Client $client
-     * @return Response
      */
     public function updateClient(Client $client): Response
     {
@@ -67,9 +66,10 @@ class ClientsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $client = $form->getData();
             $this->entityManager->persist($client);
-            $this->entityManager->persist(new Log($this->getUser(), "Zaktualizowano klienta", $client));
+            $this->entityManager->persist(new Log($this->getUser(), 'Zaktualizowano klienta', $client));
             $this->entityManager->flush();
-            return new Response("Zaktualizowano klienta.", 202, ["orderId" => $client->getId()]);
+
+            return new Response('Zaktualizowano klienta.', 202, ['orderId' => $client->getId()]);
         }
 
         return $this->render('clients/addClient.html.twig', [
@@ -77,10 +77,8 @@ class ClientsController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/clients/api/addClient", name="clients_api_addClient")
-     * @return Response
      */
     public function addClient(): Response
     {
@@ -89,9 +87,10 @@ class ClientsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $client = $form->getData();
             $this->entityManager->persist($client);
-            $this->entityManager->persist(new Log($this->getUser(), "Dodano klienta klienta", $client));
+            $this->entityManager->persist(new Log($this->getUser(), 'Dodano klienta klienta', $client));
             $this->entityManager->flush();
-            return new Response("Dodano klienta", 201);
+
+            return new Response('Dodano klienta', 201);
         }
 
         return $this->render('clients/addClient.html.twig', [
@@ -99,15 +98,13 @@ class ClientsController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/clients/api/details/{id}", name="clients_api_details")
-     * @param Client $client
-     * @return Response
      */
     public function details(Client $client): Response
     {
         $logs = $this->entityManager->getRepository(Log::class)->findBy(['client' => $client], ['createdAt' => 'DESC'], 100);
+
         return $this->render('clients/details.twig', [
             'client' => $client,
             'logs' => $logs,

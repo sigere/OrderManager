@@ -182,7 +182,7 @@ class Company
         return $this;
     }
 
-    public function getInvoiceMonth(): ?\DateTimeInterface
+    public function getInvoiceMonth(): ?DateTimeInterface
     {
         return $this->invoiceMonth;
     }

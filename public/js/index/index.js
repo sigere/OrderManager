@@ -68,7 +68,7 @@ class Controller {
         }
         $(function () {
             $("#main-table").tablesorter({
-                dateFormat: "ddmmyyyy",
+                dateFormat: "ddmmyyyy"
             });
         });
     }

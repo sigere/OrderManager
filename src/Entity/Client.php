@@ -89,7 +89,7 @@ class Client
 
     public function __construct()
     {
-        $this->createdAt = new DateTime;
+        $this->createdAt = new DateTime();
         $this->deletedAt = null;
     }
 

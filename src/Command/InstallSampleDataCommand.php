@@ -24,8 +24,7 @@ class InstallSampleDataCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         string $name = null
-    )
-    {
+    ) {
         parent::__construct($name);
     }
 
@@ -43,7 +42,7 @@ class InstallSampleDataCommand extends Command
             ->setFirstName('Administrator')
             ->setLastName('Administrative');
         $this->entityManager->persist($staff);
-        $io->info("Created staff pearson.");
+        $io->info('Created staff pearson.');
 
         $user = new User();
         $user = $user
@@ -51,10 +50,10 @@ class InstallSampleDataCommand extends Command
             ->setFirstName('Admin')
             ->setLastName('Admin')
             ->setStaff($staff)
-            ->setRoles(["ROLE_USER", "ROLE_ADMIN"])
+            ->setRoles(['ROLE_USER', 'ROLE_ADMIN'])
             ->setPassword('$argon2id$v=19$m=16,t=2,p=1$UjBOZUdsZ3E0RFc1U3BqTw$lwY1VMjdwlDL+37w8jjrBA');
         $this->entityManager->persist($user);
-        $io->info("Created user admin:admin.");
+        $io->info('Created user admin:admin.');
 
         $company = new Company();
         $company = $company
@@ -69,21 +68,21 @@ class InstallSampleDataCommand extends Command
             ->setIssueDate(new DateTime())
             ->setInvoiceMonth(new DateTime());
         $this->entityManager->persist($company);
-        $io->info("Created sample company.");
+        $io->info('Created sample company.');
 
         $lang = new Lang();
         $lang = $lang
-            ->setName("Polski")
+            ->setName('Polski')
             ->setShort('PL');
         $this->entityManager->persist($lang);
-        $io->info("Created language: Polski.");
+        $io->info('Created language: Polski.');
 
         $lang = new Lang();
         $lang = $lang
-            ->setName("Angielski")
+            ->setName('Angielski')
             ->setShort('EN');
         $this->entityManager->persist($lang);
-        $io->info("Created language: Angielski.");
+        $io->info('Created language: Angielski.');
 
         $client = new Client();
         $client = $client
@@ -96,7 +95,7 @@ class InstallSampleDataCommand extends Command
             ->setCountry('PL')
             ->setAlias('client');
         $this->entityManager->persist($client);
-        $io->info("Created sample client.");
+        $io->info('Created sample client.');
 
         $order = new Order();
         $order = $order
@@ -113,16 +112,17 @@ class InstallSampleDataCommand extends Command
             ->setPrice(30)
             ->setClient($client);
         $this->entityManager->persist($order);
-        $io->info("Created sample order.");
+        $io->info('Created sample order.');
 
         $this->entityManager->persist(
             new Log($user, 'Dodano zlecenie.', $order)
         );
-        $io->info("Created log for order.");
+        $io->info('Created log for order.');
 
         $this->entityManager->flush();
 
         $io->success('Installation completed.');
+
         return Command::SUCCESS;
     }
 }

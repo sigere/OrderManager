@@ -27,7 +27,6 @@ class ArchivesController extends AbstractController
 
     /**
      * @Route("/archives", name="archives")
-     * @return Response
      */
     public function index(): Response
     {
@@ -35,8 +34,8 @@ class ArchivesController extends AbstractController
         $form = $this->createForm(ArchivesFiltersForm::class);
 
         return $this->render('archives/index.html.twig', [
-            "orders" => $orders,
-            "filtersForm" => $form->createView(),
+            'orders' => $orders,
+            'filtersForm' => $form->createView(),
         ]);
     }
 
@@ -51,10 +50,11 @@ class ArchivesController extends AbstractController
 
         $orders = $repository->createQueryBuilder('o');
 
-        if ($preferences['archives']['usuniete'])
+        if ($preferences['archives']['usuniete']) {
             $orders->andWhere('o.deletedAt is not null or o.settledAt is not null');
-        else
+        } else {
             $orders->andWhere('o.settledAt is not null');
+        }
 
         if ($preferences['archives']['select-staff']) {
             $orders = $orders
@@ -63,10 +63,11 @@ class ArchivesController extends AbstractController
         }
 
         $repository = $this->entityManager->getRepository(Client::class);
-        if ($preferences['archives']['select-client'])
+        if ($preferences['archives']['select-client']) {
             $orders = $orders
                 ->andWhere('o.client = :client')
                 ->setParameter('client', $repository->findOneBy(['id' => $preferences['archives']['select-client']]));
+        }
         //doctrine nie zapisuje obiektów w user->preferences['archives']['select-client'],
         //więc mapuje na id przy zapisie i na obiekt przy odczycie
 
@@ -74,14 +75,14 @@ class ArchivesController extends AbstractController
         if ($preferences['archives']['date-from']) {
             $dateFrom = new Datetime($preferences['archives']['date-from']['date']);
             $orders
-                ->andWhere('o.' . $dateType . ' >= :dateFrom')
+                ->andWhere('o.'.$dateType.' >= :dateFrom')
                 ->setParameter('dateFrom', $dateFrom);
         }
         if ($preferences['archives']['date-to']) {
             $dateTo = new Datetime($preferences['archives']['date-to']['date']);
             $dateTo->setTime(23, 59);
             $orders
-                ->andWhere('o.' . $dateType . ' <= :dateTo')
+                ->andWhere('o.'.$dateType.' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);
         }
 
@@ -100,28 +101,27 @@ class ArchivesController extends AbstractController
     public function reloadTable(): Response
     {
         $orders = $this->loadOrdersTable();
+
         return $this->render('archives/orders_table.twig', [
-            'orders' => $orders
+            'orders' => $orders,
         ]);
     }
 
     /**
      * @Route("/archives/api/details/{id}", name="archives_details")
-     * @param Order $order
-     * @return Response
      */
     public function details(Order $order): Response
     {
         $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC']);
+
         return $this->render('archives/details.twig', [
             'order' => $order,
-            'logs' => $logs
+            'logs' => $logs,
         ]);
     }
 
     /**
      * @Route("/archives/api/filters", name="archives_api_filters")
-     * @return Response
      */
     public function filters(): Response
     {
@@ -144,16 +144,16 @@ class ArchivesController extends AbstractController
 
     /**
      * @Route("/archives/api/restoreOrder/{id}", name="archives_api_restoreOrder")
-     * @param Order $order
-     * @return Response
      */
     public function restore(Order $order): Response
     {
-        if (!$order->getDeletedAt())
+        if (!$order->getDeletedAt()) {
             return new Response("<div class='alert alert-danger'>Zlecenie nie jest usunięte</div>", 406);
+        }
         $order->setDeletedAt(null);
         $this->entityManager->persist($order);
         $this->entityManager->flush();
+
         return new Response("<div class='alert alert-success'>Zlecenie zostało przywrócone.</div>", 200);
     }
 }
