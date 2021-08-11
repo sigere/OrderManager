@@ -58,7 +58,9 @@ class InvoicesController {
             }
         }
         $(function () {
-            $("#main-table").tablesorter();
+            $("#main-table").tablesorter({
+                dateFormat: "ddmmyyyy"
+            });
         });
     }
 
