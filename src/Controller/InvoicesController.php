@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Company;
+use App\Entity\Invoice;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Form\InvoiceMonthFormType;
@@ -204,6 +205,7 @@ class InvoicesController extends AbstractController
         }
 
         $this->settle($orders);
+        $this->logInvoice($orders);
 
         return new Response(
             "<div class='alert alert-success'>Wystawiono fakturę i ustawiono zlecenia na rozliczone.<br/><a href='https://".$fakturowniaFirm.'.fakturownia.pl/invoices/'.$result['id']."'>Podgląd</a></div>",
@@ -278,6 +280,7 @@ class InvoicesController extends AbstractController
         }
 
         $this->settle($orders);
+        $this->logInvoice($orders);
 
         return new Response(
             "<div class='alert alert-success'>Ustawiono zlecenia na rozliczone.</div>",
@@ -327,5 +330,15 @@ class InvoicesController extends AbstractController
         }
 
         return new Response('Błedne dane.', 406);
+    }
+  
+    private function logInvoice(Array $orders): void
+    {
+        $invoice = new Invoice($this->getUser());
+        foreach ($orders as $order) {
+            $invoice->addOrder($order);
+        }
+        $this->entityManager->persist($invoice);
+        $this->entityManager->flush();
     }
 }
