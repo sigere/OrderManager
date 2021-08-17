@@ -331,7 +331,7 @@ class InvoicesController extends AbstractController
 
         return new Response('Błedne dane.', 406);
     }
-
+  
     private function logInvoice(Array $orders): void
     {
         $invoice = new Invoice($this->getUser());
