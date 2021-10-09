@@ -9,7 +9,13 @@ use JetBrains\PhpStorm\Pure;
 
 class ReportsFactory
 {
-    const CERTIFIED_UA_PL = 1;
+    const REPORTS = [
+        [
+            'id' => 'CERTIFIED_UA_PL',
+            'name' => 'Albert',
+            'description' => 'Tłumaczenia przysięgłe pl->ua i ua->pl',
+        ]
+    ];
 
     public function __construct(
         private OrderRepository $orderRepository,
@@ -17,10 +23,10 @@ class ReportsFactory
     ){
     }
 
-    #[Pure] public function getReportService(int $report) : ?ReportInterface
+    #[Pure] public function getReportService(string $report) : ?ReportInterface
     {
         return match ($report) {
-            self::CERTIFIED_UA_PL => new CertifiedUaPlReport($this->langRepository, $this->orderRepository),
+            self::REPORTS[0]['id'] => new CertifiedUaPlReport($this->langRepository, $this->orderRepository),
             default => null
         };
     }

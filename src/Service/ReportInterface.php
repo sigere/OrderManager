@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 interface ReportInterface
 {
@@ -13,7 +14,7 @@ interface ReportInterface
     public function export() : string;
 
     /**
-     * @param array $config
+     * @param Request $request
      */
-    public function configure(array $config) : void;
+    public function configure(Request $request) : void;
 }

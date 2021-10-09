@@ -7,10 +7,11 @@ use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
 use App\Service\ReportInterface;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 class CertifiedUaPlReport implements ReportInterface
 {
-    private array $config;
+    private array $config = [];
 
     public function __construct (
         private LangRepository $langRepository,
@@ -18,9 +19,20 @@ class CertifiedUaPlReport implements ReportInterface
     ) {
     }
 
-    public function configure(array $config): void
+    /**
+     * @throws Exception
+     */
+    public function configure(Request $request): void
     {
-        $this->config = $config;
+        $from = $request->get('from');
+        if ($from) {
+            $this->config['from'] = new \DateTime($from);
+        }
+
+        $to = $request->get('to');
+        if ($to) {
+            $this->config['to'] = new \DateTime($to);
+        }
     }
 
     /**
