@@ -2,104 +2,87 @@
 
 namespace App\Controller;
 
-use App\Entity\Order;
-use App\Repository\LangRepository;
-use App\Repository\OrderRepository;
+use App\Service\ReportsFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
 {
     public function __construct(
-        private OrderRepository $orderRepository,
-        private LangRepository $langRepository
+        private ReportsFactory $factory
     ) {
     }
 
     /**
-     * @return Response
-     * @Route("/api/xlsExport", name="api_xlx_export")
+     * @param Request $request
+     * @param $report
+     * @return JsonResponse
+     * @Route("/api/reports/{report}", name="api_reports")
      */
-    public function xlsExport() : Response
+    public function report(Request $request, $report) : JsonResponse
     {
-        $orders = $this->getOrders();
+        $service = match($report) {
+            'CertifiedUaPl' => $this->factory->getReportService(ReportsFactory::CERTIFIED_UA_PL),
+            default => null
+        };
 
-        $table = [];
-        $sumOfNetto = 0;
-
-        /** @var Order $order */
-        foreach ($orders as $order) {
-            $table[] = [
-                $order->getId(),
-                $order->getDeadline(),
-                $order->getAdoption(),
-                (string)$order->getClient(),
-                $order->getTopic(),
-                $order->getInfo(),
-                (string)$order->getStaff(),
-                (string)$order->getBaseLang(),
-                (string)$order->getTargetLang(),
-                $order->getCertified() ? 'tak' : 'nie',
-                $order->getPages(),
-                $order->getPrice(),
-                $order->getNetto(),
-                (string)$order->getState()
-            ];
-            $sumOfNetto += $order->getNetto();
+        if (!$service) {
+            return new JsonResponse(['success' => false, 'error' => 'Report type not found.']);
         }
-        $header = [];
-        $header[] = array_merge(array_fill(0, 12, ''), [$sumOfNetto, '']);
-        $header[] = [
-            'Id',
-            'Wprowadzono',
-            'Termin',
-            'Klient',
-            'Temat',
-            'Notatki',
-            'Wykonawca',
-            'Z',
-            'Na',
-            'UW',
-            'L_str',
-            'Cena',
-            'Netto',
-            'Status'
-        ];
 
-        $result = array_merge($header,$table);
-//        dd($result);
-//        \SimpleXLSXGen::fromArray($result, 'TestXLS')->saveAs('./var/testxls.xlsx');
-        return new BinaryFileResponse(\SimpleXLSXGen::fromArray($result, 'TestXLS')->download());
-//        return new JsonResponse(['success' => true, 'orders' => $this->getOrders()]);
+        $from = $request->get('from');
+        $to = $request->get('to');
+
+        if ($from) {
+            try {
+                $from = new \DateTime($from);
+            } catch (\Exception $e) {
+                return new JsonResponse(['success' => false, 'error' => 'Cannot parse "from" value.']);
+            }
+        }
+
+        if ($to) {
+            try {
+                $from = new \DateTime($to);
+            } catch (\Exception $e) {
+                return new JsonResponse(['success' => false, 'error' => 'Cannot parse "to" value.']);
+            }
+        }
+
+        $service->configure([
+            'from' => $from?->format('Y-m-d 00:00:00'),
+            'to' => $to?->format('Y-m-d 23:59:59'),
+            ]);
+
+        $result = $service->export();
+
+        return new JsonResponse(['success' => true, 'path' => $result]);
     }
 
-    private function getOrders()
+    /**
+     * @param $report
+     * @return Response
+     * @Route("/api/reports/get/{report}", name="api_reports_get")
+     */
+    public function getReport($report) : Response
     {
-        $ua = $this->langRepository->findOneBy(['short' => 'UA']);
-        $pl = $this->langRepository->findOneBy(['short' => 'PL']);
-
-        $queryBuilder = $this->orderRepository->createQueryBuilder('o');
-        return $queryBuilder
-            ->andWhere('o.deletedAt is null')
-            ->andWhere('o.certified = 1')
-            ->andWhere(
-                $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('o.baseLang', ':pl'),
-                        $queryBuilder->expr()->eq('o.targetLang', ':ua')
-                    ),
-                    $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('o.baseLang', ':ua'),
-                        $queryBuilder->expr()->eq('o.targetLang', ':pl')
-                    )
-                )
-            )
-            ->setParameter('ua', $ua)
-            ->setParameter('pl', $pl)
-            ->getQuery()
-            ->getResult();
+        if (file_exists('../var/tmp/' . $report)) {
+            $response = new BinaryFileResponse(
+                '../var/tmp/' . $report,
+                200,
+                ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+            );
+            $response->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                'certifed_ua_pl.xlsx'
+            );
+            return $response;
+        }
+         return new JsonResponse(['success' => false, 'error' => 'File "' . $report . '" not found.']);
     }
 }
