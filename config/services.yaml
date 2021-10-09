@@ -23,3 +23,7 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
             - '../src/Service/Reports/'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: [ 'controller.service_arguments' ]
