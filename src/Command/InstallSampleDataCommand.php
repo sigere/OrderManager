@@ -84,6 +84,13 @@ class InstallSampleDataCommand extends Command
         $this->entityManager->persist($lang);
         $io->info('Created language: Angielski.');
 
+        $lang = new Lang();
+        $lang = $lang
+            ->setName('Ukraiński')
+            ->setShort('UA');
+        $this->entityManager->persist($lang);
+        $io->info('Created language: Ukraiński.');
+
         $client = new Client();
         $client = $client
             ->setName('Przykładowy firma s.c.')

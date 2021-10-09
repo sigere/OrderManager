@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    - Raporty
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/invoices.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="content" style="height: 100%;">
+        <div class="row" style="height: 100%;">
+            <div class="col-lg-2" style=" height: 100%;">
+                <div class="column left-col">
+                    <header>
+                        Dostępne raporty
+                    </header>
+
+                    <div class="table-container">
+{#                        {% include 'reports/reports.html.twig' %}#}
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-7" style=" height: 100%;">
+                <div class="column mid-col">
+                    <header>
+                        Dane i podgląd
+                    </header>
+                    <div class="col-content" id="form-preview-content" style="width: 400px">
+
+                        <div style="float: left;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-exclamation-octagon" viewBox="0 0 16 16">
+                                <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
+                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                            </svg>
+                        </div>
+                        <div style="float: left; margin-left: 10px;"><h5>Strona w trakcie budowy</h5></div>
+
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3" style=" height: 100%;">
+                <div class="column right-col">
+                    <header>
+                        Szczegóły raportu
+                    </header>
+
+                </div>
+            </div>
+        </div>
+        <div id="center-popup">
+            <div id="center-popup-content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                     fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+{% endblock %}

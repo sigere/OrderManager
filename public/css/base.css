@@ -8,15 +8,30 @@ body {
 /* -----top-nav------- */
 
 .navbar {
-  background: rgb(35, 105, 252);
   background: linear-gradient(
-    90deg,
-    rgba(35, 105, 252, 1) 0%,
-    rgba(35, 105, 252, 1) 45%,
-    rgba(239, 83, 96, 1) 75%,
-    rgba(239, 83, 96, 1) 100%
+          90deg,
+          rgba(35, 105, 252, 1) 0%,
+          rgba(35, 105, 252, 1) 38%,
+          rgba(239, 83, 96, 1) 56%,
+          rgba(239, 83, 96, 1) 100%
   );
+  background-size: 150% 100%;
+  animation: gradient 5s ease infinite;
 }
+
+@keyframes gradient {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+
 .nav-link {
   word-spacing: 12px;
 }
