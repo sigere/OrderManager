@@ -133,11 +133,9 @@ class CertifiedUaPlReport implements ReportInterface
         foreach ($orders as $order) {
             $table[] = [
                 $order->getId(),
-                $order->getAdoption()->format('d.m.Y h:i'),
                 $order->getDeadline()->format('d.m.Y h:i'),
                 (string)$order->getClient(),
                 $order->getTopic(),
-                $order->getInfo(),
                 (string)$order->getStaff(),
                 (string)$order->getBaseLang(),
                 (string)$order->getTargetLang(),
@@ -153,11 +151,9 @@ class CertifiedUaPlReport implements ReportInterface
         $header[] = array_merge(array_fill(0, 12, ''), [$sumOfNetto, '']);
         $header[] = [
             'Id',
-            'Wprowadzono',
             'Termin',
             'Klient',
             'Temat',
-            'Notatki',
             'Wykonawca',
             'Z',
             'Na',
