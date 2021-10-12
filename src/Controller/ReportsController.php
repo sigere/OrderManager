@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Service\Reports\CertifiedUaPlReport;
 use App\Service\ReportsFactory;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,11 +11,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig;
 
 class ReportsController extends AbstractController
 {
     public function __construct(
-        private ReportsFactory $factory
+        private ReportsFactory $factory,
+        private Twig\Environment $twig
     ) {
     }
 
@@ -31,13 +33,66 @@ class ReportsController extends AbstractController
     }
 
     /**
+     * @Route("/reports/api/form/{report}", name="reports_form_report")
+     */
+    public function getForm($report): JsonResponse
+    {
+        $service = $this->factory->getReportService($report);
+        return new JsonResponse([
+            'success' => true,
+            'form' => $service->renderForm()
+        ]);
+    }
+
+    /**
+     * @Route("/reports/api/details/{report}", name="reports_form_details")
+     */
+    public function getDetails($report): JsonResponse
+    {
+        foreach (ReportsFactory::REPORTS as $rep) {
+            if ($rep['id'] == $report) {
+                return new JsonResponse([
+                    'success' => true,
+                    'details' => $rep['details']
+                ]);
+            }
+        }
+        return new JsonResponse(['success' => false, 'error' => 'Report not found.']);
+    }
+
+    /**
      * @param Request $request
      * @param $report
      * @return JsonResponse
-     * @throws \Exception
-     * @Route("/reports/api/{report}", name="reports_report")
+     * @throws Exception
+     * @Route("/reports/api/preview/{report}", name="reports_preview_report")
      */
-    public function report(Request $request, $report) : JsonResponse
+    public function getPreview(Request $request, $report): JsonResponse
+    {
+        $service = $this->factory->getReportService($report);
+
+        if (!$service) {
+            return new JsonResponse(['success' => false, 'error' => 'Report type not found.']);
+        }
+
+        $service->configure($request);
+
+        $preview = $service->getPreview();
+
+        return  new JsonResponse([
+            'success' => true,
+            'preview' => $this->twig->render('reports/preview.html.twig', ['preview' => $preview])
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param $report
+     * @return JsonResponse
+     * @throws Exception
+     * @Route("/reports/api/export/{report}", name="reports_export_report")
+     */
+    public function export(Request $request, $report): JsonResponse
     {
         $service = $this->factory->getReportService($report);
 

@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 interface ReportInterface
 {
@@ -17,4 +18,15 @@ interface ReportInterface
      * @param Request $request
      */
     public function configure(Request $request) : void;
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getPreview() : array;
+
+    /**
+     * @return string
+     */
+    public function renderForm() : string;
 }

@@ -1,14 +1,12 @@
 <table id="reports-table" class="table table-dark table-hover">
     <thead>
     <tr>
-
     </tr>
     </thead>
     <tbody>
     {% for report in reports %}
-        {% dump(reports) %}
-        <tr>
-            <td class="clickable-row" report-id="{{ report['id'] }}">
+        <tr report-id="{{ report['id'] }}">
+            <td class="clickable-row">
                 {{ report['name'] }}
             </td>
         </tr>

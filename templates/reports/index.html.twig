@@ -7,13 +7,14 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/reports.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/invoices.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
 {% endblock %}
 
 {% block javascript %}
-{{ parent() }}
-
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset("js/reports/reports.js") }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -24,9 +25,10 @@
                     <header>
                         Dostępne raporty
                     </header>
-
-                    <div class="table-container">
-{#                        {% include 'reports/reports.html.twig' %}#}
+                        <div class="col-content" id="reports-content" style="width: auto">
+                            <div class="table-container">
+                                {% include 'reports/reports.html.twig' %}
+                            </div>
                     </div>
 
                 </div>
@@ -36,17 +38,17 @@
                     <header>
                         Dane i podgląd
                     </header>
-                    <div class="col-content" id="form-preview-content" style="width: 400px">
+                    <div class="col-content" id="form-preview-content" style="">
 
-                        <div style="float: left;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-exclamation-octagon" viewBox="0 0 16 16">
-                                <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
-                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-                            </svg>
+                        <div id="form-preview-content-form" style="height: 100px;">
+                            <div class="alert alert-primary">Wybierz raport, aby go wykonać.</div>
                         </div>
-                        <div style="float: left; margin-left: 10px;"><h5>Strona w trakcie budowy</h5></div>
+                        <div>
+                        <div id="form-preview-content-preview">
 
-                        <div style="clear: both;"></div>
+                        </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -55,7 +57,9 @@
                     <header>
                         Szczegóły raportu
                     </header>
-
+                    <div class="col-content" id="details-content" style="">
+                        <div class="alert alert-primary">Wybierz raport, aby wyświetlić jego szczegóły</div>
+                    </div>
                 </div>
             </div>
         </div>

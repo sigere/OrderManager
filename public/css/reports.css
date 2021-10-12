@@ -1,0 +1,19 @@
+.input-date-from, .input-date-to {
+    margin-top: 15px;
+    width: 150px;
+    color: white;
+    background-color: rgb(39, 39, 39);
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+#form-preview-content {
+    width: auto;
+}
+#form-preview-content-preview {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: scroll;
+    height: 630px;
+}

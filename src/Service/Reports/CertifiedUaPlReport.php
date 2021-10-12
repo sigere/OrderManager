@@ -2,6 +2,7 @@
 
 namespace App\Service\Reports;
 
+use Twig\Environment;
 use App\Entity\Order;
 use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
@@ -15,8 +16,20 @@ class CertifiedUaPlReport implements ReportInterface
 
     public function __construct (
         private LangRepository $langRepository,
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private Environment $twig
     ) {
+    }
+
+    /**
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function renderForm(): string
+    {
+        return $this->twig->render('reports/forms/CERTIFIED_UA_PL.html.twig');
     }
 
     /**
@@ -36,6 +49,19 @@ class CertifiedUaPlReport implements ReportInterface
     }
 
     /**
+     * @return array
+     * @throws Exception
+     */
+    public function getPreview(): array
+    {
+        if (!isset($this->config)) {
+            throw new Exception('Report not configured.');
+        }
+        return $this->getArray();
+    }
+
+
+    /**
      * @return string
      * @throws Exception
      */
@@ -45,51 +71,8 @@ class CertifiedUaPlReport implements ReportInterface
             throw new Exception('Report not configured.');
         }
 
-        $orders = $this->getOrders();
+        $array = $this->getArray();
 
-        $table = [];
-        $sumOfNetto = 0;
-
-        /** @var Order $order */
-        foreach ($orders as $order) {
-            $table[] = [
-                $order->getId(),
-                $order->getDeadline(),
-                $order->getAdoption(),
-                (string)$order->getClient(),
-                $order->getTopic(),
-                $order->getInfo(),
-                (string)$order->getStaff(),
-                (string)$order->getBaseLang(),
-                (string)$order->getTargetLang(),
-                $order->getCertified() ? 'tak' : 'nie',
-                $order->getPages(),
-                $order->getPrice(),
-                $order->getNetto(),
-                (string)$order->getState()
-            ];
-            $sumOfNetto += $order->getNetto();
-        }
-        $header = [];
-        $header[] = array_merge(array_fill(0, 12, ''), [$sumOfNetto, '']);
-        $header[] = [
-            'Id',
-            'Wprowadzono',
-            'Termin',
-            'Klient',
-            'Temat',
-            'Notatki',
-            'Wykonawca',
-            'Z',
-            'Na',
-            'UW',
-            'L_str',
-            'Cena',
-            'Netto',
-            'Status'
-        ];
-
-        $array = array_merge($header,$table);
         $filename = uniqid() . '.xlsx';
         $path = '../var/tmp/' . $filename;
         if (!file_exists('../var/tmp')) {
@@ -126,7 +109,7 @@ class CertifiedUaPlReport implements ReportInterface
 
         if (isset($this->config['from']) && $this->config['from']) {
             $queryBuilder = $queryBuilder
-                ->andWhere('o.deadline < :from')
+                ->andWhere('o.deadline > :from')
                 ->setParameter('from', $this->config['from']);
         }
 
@@ -137,5 +120,54 @@ class CertifiedUaPlReport implements ReportInterface
         }
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    private function getArray() : array
+    {
+        $orders = $this->getOrders();
+
+        $table = [];
+        $sumOfNetto = 0;
+
+        /** @var Order $order */
+        foreach ($orders as $order) {
+            $table[] = [
+                $order->getId(),
+                $order->getAdoption()->format('d.m.Y h:i'),
+                $order->getDeadline()->format('d.m.Y h:i'),
+                (string)$order->getClient(),
+                $order->getTopic(),
+                $order->getInfo(),
+                (string)$order->getStaff(),
+                (string)$order->getBaseLang(),
+                (string)$order->getTargetLang(),
+                $order->getCertified() ? 'tak' : 'nie',
+                $order->getPages(),
+                $order->getPrice(),
+                $order->getNetto(),
+                (string)$order->getState()
+            ];
+            $sumOfNetto += $order->getNetto();
+        }
+        $header = [];
+        $header[] = array_merge(array_fill(0, 12, ''), [$sumOfNetto, '']);
+        $header[] = [
+            'Id',
+            'Wprowadzono',
+            'Termin',
+            'Klient',
+            'Temat',
+            'Notatki',
+            'Wykonawca',
+            'Z',
+            'Na',
+            'UW',
+            'L_str',
+            'Cena',
+            'Netto',
+            'Status'
+        ];
+
+        return array_merge($header,$table);
     }
 }
