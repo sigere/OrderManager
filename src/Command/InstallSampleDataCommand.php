@@ -94,7 +94,7 @@ class InstallSampleDataCommand extends Command
         $client = new Client();
         $client = $client
             ->setName('Przykładowy firma s.c.')
-            ->setNip('123123123')
+            ->setNip('1231231231')
             ->setPostCode('00000')
             ->setCity('Warszawa')
             ->setStreet('ul. Wiejska 123')
