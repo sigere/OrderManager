@@ -6,6 +6,7 @@ use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
 use App\Service\Reports\CertifiedUaPlReport;
 use JetBrains\PhpStorm\Pure;
+use Twig;
 
 class ReportsFactory
 {
@@ -13,20 +14,21 @@ class ReportsFactory
         [
             'id' => 'CERTIFIED_UA_PL',
             'name' => 'Albert',
-            'description' => 'Tłumaczenia przysięgłe pl->ua i ua->pl',
+            'details' => 'Tłumaczenia przysięgłe pl->ua i ua->pl',
         ]
     ];
 
     public function __construct(
         private OrderRepository $orderRepository,
-        private LangRepository $langRepository
+        private LangRepository $langRepository,
+        private Twig\Environment $twig
     ){
     }
 
     #[Pure] public function getReportService(string $report) : ?ReportInterface
     {
         return match ($report) {
-            self::REPORTS[0]['id'] => new CertifiedUaPlReport($this->langRepository, $this->orderRepository),
+            self::REPORTS[0]['id'] => new CertifiedUaPlReport($this->langRepository, $this->orderRepository, $this->twig),
             default => null
         };
     }
