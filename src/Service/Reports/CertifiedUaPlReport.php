@@ -148,7 +148,7 @@ class CertifiedUaPlReport implements ReportInterface
             $sumOfNetto += $order->getNetto();
         }
         $header = [];
-        $header[] = array_merge(array_fill(0, 12, ''), [$sumOfNetto, '']);
+        $header[] = array_merge(array_fill(0, 10, ''), [$sumOfNetto, '']);
         $header[] = [
             'Id',
             'Termin',
