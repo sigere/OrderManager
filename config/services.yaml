@@ -22,7 +22,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
-#            - '../src/Service/Reports/'
+            - '../src/Service/Reports/'
 
     App\Controller\:
         resource: '../src/Controller/'
