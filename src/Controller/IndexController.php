@@ -37,7 +37,6 @@ class IndexController extends AbstractController
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(IndexFiltersForm::class);
-//        dd($form);
         $rep = $this->entityManager->getRepository(Company::class)->findAll()[0]->getRep();
 
         return $this->render('index/index.html.twig', [
