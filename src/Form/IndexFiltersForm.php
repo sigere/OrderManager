@@ -114,9 +114,14 @@ class IndexFiltersForm extends AbstractType
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
                 'placeholder' => 'Wszyscy wykonawcy',
-                'data' => $this->entityManager->
-                getRepository(Staff::class)->
-                findOneBy(['id' => $preferences['index']['select-staff']]),
+                'query_builder' => function () {
+                    return $this->entityManager->getRepository(Staff::class)->createQueryBuilder('s')
+                        ->andWhere('s.deletedAt is null')
+                        ->orderBy('s.lastName', 'ASC');
+                },
+                'data' => $this->entityManager
+                    ->getRepository(Staff::class)
+                    ->findOneBy(['id' => $preferences['index']['select-staff']])
             ])
             // date
             ->add('date-type', ChoiceType::class, [

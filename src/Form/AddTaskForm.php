@@ -48,6 +48,7 @@ class AddTaskForm extends AbstractType
                 },
                 'query_builder' => function () {
                     return $this->entityManager->getRepository(User::class)->createQueryBuilder('u')
+                        ->andWhere('u.deletedAt is null')
                         ->orderBy('u.id', 'DESC');
                 },
             ])

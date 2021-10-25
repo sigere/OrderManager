@@ -12,26 +12,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class InvoiceMonthFormType extends AbstractType
 {
-    private $entityManager;
-    private $years;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    private array $years;
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $query = $entityManager
-            ->getRepository(Order::class)
-            ->createQueryBuilder('o');
-
         $this->years = [];
         try {
-            $first = $entityManager
+            $first = $this->entityManager
                 ->getRepository(Order::class)
                 ->createQueryBuilder('o')
                 ->orderBy('o.deadline', 'ASC')
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getSingleResult();
-            $last = $entityManager
+            $last = $this->entityManager
                 ->getRepository(Order::class)
                 ->createQueryBuilder('o')
                 ->orderBy('o.deadline', 'DESC')
@@ -83,7 +77,6 @@ class InvoiceMonthFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            // Configure your form options here
         ]);
     }
 }

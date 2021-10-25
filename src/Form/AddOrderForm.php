@@ -6,7 +6,6 @@ use App\Entity\Client;
 use App\Entity\Lang;
 use App\Entity\Order;
 use App\Entity\Staff;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -30,7 +29,6 @@ class AddOrderForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $today = new DateTime();
         $builder
             ->add('client', EntityType::class, [
                 'class' => Client::class,
@@ -42,9 +40,15 @@ class AddOrderForm extends AbstractType
                 'help' => 'Zleceniodawca nowego zlecenia',
                 'label' => 'Klient',
                 'choice_label' => 'alias',
+                'required' => true
             ])
             ->add('staff', EntityType::class, [
                 'class' => Staff::class,
+                'query_builder' => function () {
+                    return $this->entityManager->getRepository(Staff::class)->createQueryBuilder('s')
+                        ->andWhere('s.deletedAt is null')
+                        ->orderBy('s.lastName', 'ASC');
+                },
                 'help' => 'Osoba relizująca zlecenie',
                 'label' => 'Tłumacz',
                 'choice_label' => function ($staff) {

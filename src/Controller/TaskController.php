@@ -7,14 +7,15 @@ use App\Entity\Task;
 use App\Form\AddTaskForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TaskController extends AbstractController
 {
-    private $entityManager;
-    private $request;
+    private EntityManagerInterface $entityManager;
+    private ?Request $request;
 
     public function __construct(EntityManagerInterface $em, RequestStack $request)
     {

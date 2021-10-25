@@ -7,7 +7,6 @@ use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
-use App\Entity\User;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;
@@ -38,6 +37,7 @@ class IndexController extends AbstractController
     {
         $orders = $this->loadOrdersTable();
         $form = $this->createForm(IndexFiltersForm::class);
+//        dd($form);
         $rep = $this->entityManager->getRepository(Company::class)->findAll()[0]->getRep();
 
         return $this->render('index/index.html.twig', [
