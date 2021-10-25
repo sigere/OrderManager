@@ -7,7 +7,6 @@ use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Entity\Staff;
-use App\Entity\User;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
 use Datetime;

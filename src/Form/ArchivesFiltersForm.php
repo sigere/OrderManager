@@ -72,6 +72,11 @@ class ArchivesFiltersForm extends AbstractType
             ->add('staff', CheckboxType::class, [
                 'label' => 'Wykonawca',
                 'attr' => $preferences['archives']['staff'] ? ['checked' => 'checked'] : [],
+                'query_builder' => function () {
+                    return $this->entityManager->getRepository(Staff::class)->createQueryBuilder('s')
+                        ->andWhere('s.deletedAt is null')
+                        ->orderBy('s.lastName', 'ASC');
+                },
                 'label_attr' => ['class' => 'filter-columns-label'],
                 'required' => false,
             ])
@@ -96,6 +101,11 @@ class ArchivesFiltersForm extends AbstractType
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
                 'placeholder' => 'Wszyscy wykonawcy',
+                'query_builder' => function () {
+                    return $this->entityManager->getRepository(Staff::class)->createQueryBuilder('s')
+                        ->andWhere('s.deletedAt is null')
+                        ->orderBy('s.lastName', 'ASC');
+                },
                 'data' => $this->entityManager->
                 getRepository(Staff::class)->
                 findOneBy(['id' => $preferences['archives']['select-staff']]),
