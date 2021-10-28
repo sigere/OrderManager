@@ -47,7 +47,7 @@ class AddOrderForm extends AbstractType
                 'query_builder' => function () {
                     return $this->entityManager->getRepository(Staff::class)->createQueryBuilder('s')
                         ->andWhere('s.deletedAt is null')
-                        ->orderBy('s.lastName', 'ASC');
+                        ->orderBy('s.id', 'ASC');
                 },
                 'help' => 'Osoba relizująca zlecenie',
                 'label' => 'Tłumacz',
