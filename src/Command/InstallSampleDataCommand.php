@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\CertifiedOrder;
 use App\Entity\Client;
 use App\Entity\Company;
 use App\Entity\Lang;
@@ -77,18 +78,18 @@ class InstallSampleDataCommand extends Command
         $this->entityManager->persist($lang);
         $io->info('Created language: Polski.');
 
-        $lang = new Lang();
-        $lang = $lang
+        $lang1 = new Lang();
+        $lang1 = $lang1
             ->setName('Angielski')
             ->setShort('EN');
-        $this->entityManager->persist($lang);
+        $this->entityManager->persist($lang1);
         $io->info('Created language: Angielski.');
 
-        $lang = new Lang();
-        $lang = $lang
+        $lang2 = new Lang();
+        $lang2 = $lang2
             ->setName('Ukraiński')
             ->setShort('UA');
-        $this->entityManager->persist($lang);
+        $this->entityManager->persist($lang2);
         $io->info('Created language: Ukraiński.');
 
         $client = new Client();
@@ -115,11 +116,30 @@ class InstallSampleDataCommand extends Command
             ->setAdoption(new DateTime())
             ->setCertified(false)
             ->setBaseLang($lang)
-            ->setTargetLang($lang)
+            ->setTargetLang($lang2)
             ->setPrice(30)
             ->setClient($client);
         $this->entityManager->persist($order);
         $io->info('Created sample order.');
+
+        $certifiedOrder = new CertifiedOrder();
+        $certifiedOrder = $certifiedOrder
+            ->setStaff($staff)
+            ->setAuthor($user)
+            ->setDeadline(new \DateTime())
+            ->setTopic('Dowód osobisty')
+            ->setPages(4)
+            ->setInfo('Bardzo ważne')
+            ->setAdoption(new \DateTime())
+            ->setCertified(true)
+            ->setBaseLang($lang2)
+            ->setTargetLang($lang1)
+            ->setPrice(30)
+            ->setClient($client)
+            ->setComments("Nieczytelny dokument.")
+            ->setDocumentIssuer("Burmistrz miasta Jarosławia.");
+        $this->entityManager->persist($certifiedOrder);
+        $io->info('Created sample certified order.');
 
         $this->entityManager->persist(
             new Log($user, 'Dodano zlecenie.', $order)

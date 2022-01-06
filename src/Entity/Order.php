@@ -11,26 +11,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discr", type="string")
+ * @ORM\DiscriminatorMap({"order" = "Order", "certifiedOrder" = "CertifiedOrder"})
  */
 class Order
 {
-    public const ALLCOLUMNS = [
-        'client',
-        'author',
-        'staff',
-        'baseLang',
-        'targetLang',
-        'deleted',
-        'certified',
-        'pages',
-        'price',
-        'netto',
-        'topic',
-        'state',
-        'info',
-        'adoption',
-        'deadline',
-    ];
     public const PRZYJETE = 'przyjete';
     public const WYKONANE = 'wykonane';
     public const WYSLANE = 'wyslane';
