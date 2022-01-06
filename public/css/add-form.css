@@ -1,0 +1,26 @@
+.add-form-container {
+    width: 600px;
+}
+
+.add-form-row {
+    width: 550px;
+    margin: 3px auto;
+}
+
+.add-form-label {
+    padding: 5px;
+    float: left;
+    width: 200px;
+    height: 20px;
+}
+
+.add-form-widget {
+    float: right;
+    padding: 5px;
+}
+
+.add-form-submit-container {
+    float: right;
+    margin-right: 30px;
+    margin-top: 15px;
+}

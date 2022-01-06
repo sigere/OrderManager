@@ -1,12 +1,22 @@
-{{ form_start(addOrderForm, {'attr':{'name': 'add_order_form', 'id': 'add-order-form'}}) }}
-{% for row in addOrderForm %}
-    {% if not loop.last %}
-        <div>
-            <span style="color: red;">{{ form_errors(row) }}</span>
-            {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
-            {{ form_widget(row,{'attr': {}}) }}
-        </div>
-    {% endif %}
-{% endfor %}
-<button type="submit" class="btn btn-primary">OK</button>
-{{ form_end(addOrderForm) }}
+<div class="add-form-container">
+    <h4>Dodaj nowe zlecenie</h4>
+    {{ form_start(addOrderForm, {'attr':{'name': 'add_order_form', 'id': 'add-form'}}) }}
+    {% for row in addOrderForm %}
+        {% if not loop.last %}
+            <div class="add-form-row">
+                <span style="color: red;">{{ form_errors(row) }}</span>
+                <div class="add-form-label">
+                    {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
+                </div>
+                <div class="add-form-widget">
+                    {{ form_widget(row,{'attr': {}}) }}
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="add-form-submit-container">
+        <button type="submit" class="btn btn-primary">OK</button>
+    </div>
+    {{ form_end(addOrderForm) }}
+</div>
