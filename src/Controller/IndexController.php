@@ -266,6 +266,7 @@ class IndexController extends AbstractController
 
         return $this->render('index/addOrder.html.twig', [
             'addOrderForm' => $form->createView(),
+            'update' => true
         ]);
     }
 

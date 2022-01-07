@@ -58,7 +58,7 @@ class AddOrderForm extends AbstractType
             ->add('topic', TextType::class, [
                 'help' => 'Temat nowego zlecenia',
                 'label' => 'Temat',
-                'required' => false,
+                'required' => true,
             ])
             ->add('pages', NumberType::class, [
                 'label' => 'Strony',
