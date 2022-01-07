@@ -11,8 +11,14 @@ jobs:
 
       - name: PHP CodeSniffer
         run: |
-            ./vendor/bin/phpcs --config-set colors 1
-            ./vendor/bin/phpcs \
-              --extensions=php \
-              --standard=./dev/phpcs/ruleset.xml \
-              ./src  -s
+            composer global require "squizlabs/php_codesniffer=*" \
+              --no-interaction --prefer-dist --ignore-platform-reqs --quiet
+            pwd
+            ls -la
+            ls -la ~/.composer
+            ls -la ~/.composer/vendor
+#            ./vendor/bin/phpcs --config-set colors 1
+#            ./vendor/bin/phpcs \
+#              --extensions=php \
+#              --standard=./dev/phpcs/ruleset.xml \
+#              ./src  -s
