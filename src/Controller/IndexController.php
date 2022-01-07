@@ -175,7 +175,6 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/updateState/{id}/{state}", name="index_updateState")
-     *
      * @param $state
      */
     public function updateState(Order $order, $state): Response
