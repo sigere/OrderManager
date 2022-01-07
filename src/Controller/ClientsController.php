@@ -74,6 +74,7 @@ class ClientsController extends AbstractController
 
         return $this->render('clients/addClient.html.twig', [
             'addClientForm' => $form->createView(),
+            'update' => true
         ]);
     }
 

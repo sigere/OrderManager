@@ -1,5 +1,9 @@
 <div class="add-form-container">
-    <h4>Dodaj nowego klienta</h4>
+    {% if update is defined and update == true %}
+        <h4>Edytuj klienta</h4>
+    {% else %}
+        <h4>Dodaj nowego klienta</h4>
+    {% endif %}
     {{ form_start(addClientForm, {'attr':{'name': 'add_client_form', 'id': 'add-client-form'}}) }}
     {% for row in addClientForm %}
         {% if not loop.last %}
@@ -7,6 +11,7 @@
                 <span style="color: red;">{{ form_errors(row) }}</span>
                 <div class="add-form-label">
                     {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
+                    {% if row.vars.required %}*{% endif %}
                 </div>
                 <div class="add-form-widget">
                     {{ form_widget(row,{'attr': {}}) }}
