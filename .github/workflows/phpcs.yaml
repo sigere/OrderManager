@@ -11,8 +11,8 @@ jobs:
 
       - name: PHP CodeSniffer
         run: |
-          /home/runner/.composer/vendor/bin/phpcs --config-set colors 1
-            /home/runner/.composer/vendor/bin/phpcs \
+            ./vendor/bin/phpcs --config-set colors 1
+            ./vendor/bin/phpcs \
               --extensions=php \
               --standard=./dev/phpcs/ruleset.xml \
               ./src  -s
