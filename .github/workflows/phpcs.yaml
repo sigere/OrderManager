@@ -18,7 +18,9 @@ jobs:
             ls -la ~/.composer
             echo "ls -la ~/.composer/vendor/bin"
             ls -la ~/.composer/vendor/bin
-#            ./vendor/bin/phpcs --config-set colors 1
+            echo "ls -la ~/.composer/vendor/bin/phpcs"
+            ls -la ~/.composer/vendor/bin/phpcs
+            ~/.composer/vendor/bin/phpcs --config-set colors 1
 #            ./vendor/bin/phpcs \
 #              --extensions=php \
 #              --standard=./dev/phpcs/ruleset.xml \
