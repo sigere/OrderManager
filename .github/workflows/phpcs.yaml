@@ -16,8 +16,8 @@ jobs:
             pwd
             ls -la
             ls -la ~/.composer
-            echo "ls -la ~/.composer/vendor"
-            ls -la ~/.composer/vendor
+            echo "ls -la ~/.composer/vendor/bin"
+            ls -la ~/.composer/vendor/bin
 #            ./vendor/bin/phpcs --config-set colors 1
 #            ./vendor/bin/phpcs \
 #              --extensions=php \
