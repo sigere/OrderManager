@@ -13,14 +13,9 @@ jobs:
         run: |
             composer global require "squizlabs/php_codesniffer=*" \
               --no-interaction --prefer-dist --ignore-platform-reqs --quiet
-            pwd
-            ls -la
-            ls -la ~/.composer
-            echo "ls -la ~/.composer/vendor/bin"
-            ls -la ~/.composer/vendor/bin
-            echo "ls -la ~/.composer/vendor/bin/phpcs"
-            ls -la ~/.composer/vendor/bin/phpcs
+              |
             ~/.composer/vendor/bin/phpcs --config-set colors 1
+              |
             ~/.composer/vendor/bin/phpcs \
               --extensions=php \
               --standard=./dev/phpcs/ruleset.xml \
