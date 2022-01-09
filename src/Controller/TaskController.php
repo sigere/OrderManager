@@ -121,7 +121,11 @@ class TaskController extends AbstractController
      */
     public function details(Task $task): Response
     {
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(['task' => $task], ['createdAt' => 'DESC'], 100);
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(
+            ['task' => $task],
+            ['createdAt' => 'DESC'],
+            100
+        );
 
         return $this->render('tasks/details.twig', [
             'task' => $task,

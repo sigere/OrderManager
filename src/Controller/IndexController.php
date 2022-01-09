@@ -68,12 +68,14 @@ class IndexController extends AbstractController
 
         $statesString = 'o.state = ';
         foreach ($states as $s) {
-            $statesString .= ':'.$s.' or o.state = ';
+            $statesString .= ':' . $s . ' or o.state = ';
         }
         $statesString = substr($statesString, 0, -14);
 
         $repo = $this->entityManager->getRepository(Order::class);
-        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(['id' => $preferences['index']['select-staff']]);
+        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(
+            ['id' => $preferences['index']['select-staff']]
+        );
         $orders = $repo->createQueryBuilder('o')
             ->andWhere($statesString);
 
@@ -98,16 +100,16 @@ class IndexController extends AbstractController
 
         $dateType = $preferences['index']['date-type'];
         if ($preferences['index']['date-from']) {
-            $dateFrom = new Datetime($preferences['index']['date-from']['date']);
+            $dateFrom = new \Datetime($preferences['index']['date-from']['date']);
             $orders
-                ->andWhere('o.'.$dateType.' >= :dateFrom')
+                ->andWhere('o.' . $dateType . ' >= :dateFrom')
                 ->setParameter('dateFrom', $dateFrom);
         }
         if ($preferences['index']['date-to']) {
             $dateTo = new Datetime($preferences['index']['date-to']['date']);
             $dateTo->setTime(23, 59);
             $orders
-                ->andWhere('o.'.$dateType.' <= :dateTo')
+                ->andWhere('o.' . $dateType . ' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);
         }
 
@@ -116,10 +118,9 @@ class IndexController extends AbstractController
             ->andWhere('o.deletedAt is null')
             ->setMaxResults(100)
             ->orderBy('o.deadline', 'ASC')
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
 
-        return $orders;
+        return $orders->getResult();
     }
 
     /**
@@ -133,8 +134,10 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $preferences = $user->getPreferences();
             $preferences['index'] = $form->getData();
-            $preferences['index']['select-staff'] = $preferences['index']['select-staff'] ? $preferences['index']['select-staff']->getId() : null;
-            $preferences['index']['select-client'] = $preferences['index']['select-client'] ? $preferences['index']['select-client']->getId() : null;
+            $preferences['index']['select-staff'] = $preferences['index']['select-staff'] ?
+                $preferences['index']['select-staff']->getId() : null;
+            $preferences['index']['select-client'] = $preferences['index']['select-client'] ?
+                $preferences['index']['select-client']->getId() : null;
             $user->setPreferences($preferences);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -165,7 +168,11 @@ class IndexController extends AbstractController
         if (!$order) {
             throw $this->createNotFoundException('Nie znaleziono zlecenia');
         }
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(['order' => $order], ['createdAt' => 'DESC'], 100);
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(
+            ['order' => $order],
+            ['createdAt' => 'DESC'],
+            100
+        );
 
         return $this->render('index/details.twig', [
             'order' => $order,
@@ -175,7 +182,9 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/updateState/{id}/{state}", name="index_updateState")
+     * @param Order $order
      * @param $state
+     * @return Response
      */
     public function updateState(Order $order, $state): Response
     {
@@ -196,7 +205,8 @@ class IndexController extends AbstractController
         }
         $this->entityManager->persist(new Log(
             $this->getUser(),
-            'Zmiana statusu: '.$currentState.' -> '.$state.'.', $order
+            'Zmiana statusu: ' . $currentState . ' -> ' . $state . '.',
+            $order
         ));
         $this->entityManager->persist($order);
         $this->entityManager->flush();

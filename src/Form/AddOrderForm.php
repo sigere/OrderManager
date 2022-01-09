@@ -20,11 +20,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddOrderForm extends AbstractType
 {
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -52,7 +50,7 @@ class AddOrderForm extends AbstractType
                 'help' => 'Osoba relizująca zlecenie',
                 'label' => 'Tłumacz',
                 'choice_label' => function ($staff) {
-                    return $staff->getFirstName().' '.$staff->getLastName();
+                    return $staff->getFirstName() . ' ' . $staff->getLastName();
                 },
             ])
             ->add('topic', TextType::class, [

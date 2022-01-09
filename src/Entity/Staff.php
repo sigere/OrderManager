@@ -52,7 +52,7 @@ class Staff
 
     public function __toString(): string
     {
-        return $this->getFirstName().' '.$this->getLastName();
+        return $this->getFirstName() . ' ' . $this->getLastName();
     }
 
     public function getFirstName(): ?string
