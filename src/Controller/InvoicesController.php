@@ -9,13 +9,12 @@ use App\Entity\Log;
 use App\Entity\Order;
 use App\Form\InvoiceMonthFormType;
 use App\Form\InvoiceSummaryForm;
-use function curl_exec;
+use Symfony\Component\HttpFoundation\Request;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Exception;
-use function json_encode;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,13 +22,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InvoicesController extends AbstractController
 {
-    private $entityManager;
-    private $request;
-    private $company;
+    private ?Request $request;
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        RequestStack $requestStack
+    ) {
         $this->request = $requestStack->getCurrentRequest();
     }
 
@@ -186,7 +184,7 @@ class InvoicesController extends AbstractController
             $this->request->get('client')
         );
 
-        $url = 'https://'.$fakturowniaFirm.'.fakturownia.pl/invoices.json';
+        $url = 'https://' . $fakturowniaFirm . '.fakturownia.pl/invoices.json';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json']);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -198,18 +196,22 @@ class InvoicesController extends AbstractController
         if (!isset($result['id'])) {
             $text = 'Bład serwisu Fakturownia.pl';
             if (isset($result['message'])) {
-                $text .= ': '.json_encode($result['message'], JSON_UNESCAPED_UNICODE);
+                $text .= ': ' . json_encode($result['message'], JSON_UNESCAPED_UNICODE);
             }
 
-            return new Response("<div class='alert alert-danger'>".$text.'</div>', 500);
+            return new Response("<div class='alert alert-danger'>" . $text . '</div>', 500);
         }
 
         $this->settle($orders);
         $this->logInvoice($orders);
 
         return new Response(
-            "<div class='alert alert-success'>Wystawiono fakturę i ustawiono zlecenia na rozliczone.<br/><a href='https://".$fakturowniaFirm.'.fakturownia.pl/invoices/'.$result['id']."'>Podgląd</a></div>",
-            200);
+            "<div class='alert alert-success'>" .
+            "Wystawiono fakturę i ustawiono zlecenia na rozliczone.<br/>" .
+            "<a href='https://" . $fakturowniaFirm . '.fakturownia.pl/invoices/' .
+            $result['id'] . "'>Podgląd</a></div>",
+            200
+        );
     }
 
     private function getPayload($orders, $clientId): string
@@ -217,8 +219,7 @@ class InvoicesController extends AbstractController
         $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
         $client = $this->entityManager
             ->getRepository(Client::class)
-            ->findOneBy(['id' => $clientId]
-            );
+            ->findOneBy(['id' => $clientId]);
 
         $positions = [];
         foreach ($orders as $order) {
@@ -314,7 +315,7 @@ class InvoicesController extends AbstractController
             $month = $form->getData()['month'];
             $year = $form->getData()['year'];
             try {
-                $date = new DateTime($year.'-'.$month.'-01');
+                $date = new DateTime($year . '-' . $month . '-01');
             } catch (Exception $e) {
                 $date = null;
             }
@@ -329,7 +330,7 @@ class InvoicesController extends AbstractController
             ]);
         }
 
-        return new Response('Błedne dane.', 406);
+        return new Response('Błędne dane.', 406);
     }
   
     private function logInvoice(Array $orders): void

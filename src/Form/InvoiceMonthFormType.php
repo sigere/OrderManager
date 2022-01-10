@@ -36,7 +36,7 @@ class InvoiceMonthFormType extends AbstractType
                 $f = intval($first->getDeadline()->format('Y'));
                 $l = intval($last->getDeadline()->format('Y'));
                 for ($i = $f; $i <= $l; ++$i) {
-                    $this->years[$i.''] = $i;
+                    $this->years[(string) $i] = $i;
                 }
             }
         } catch (Exception $ex) {

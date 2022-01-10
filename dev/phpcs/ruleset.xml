@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="OrderManagerDefaultPHPCS">
+    <description>Order Manage rDefault PHP Code Sniffer ruleset.</description>
+    <rule ref="PSR2" />
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <property name="spacing" value="1" />
+            <property name="ignoreNewlines" value="true" />
+        </properties>
+    </rule>
+</ruleset>
+

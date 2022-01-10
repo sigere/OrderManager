@@ -7,18 +7,19 @@ use App\Entity\Log;
 use App\Form\AddClientForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ClientsController extends AbstractController
 {
-    private $entityManager;
-    private $request;
+    private ?Request $request;
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $request)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        RequestStack $request
+    ) {
         $this->request = $request->getCurrentRequest();
     }
 
@@ -35,14 +36,13 @@ class ClientsController extends AbstractController
     private function loadClientsTable(): array
     {
         $repository = $this->entityManager->getRepository(Client::class);
-        $clients = $repository->createQueryBuilder('c');
-        $clients = $clients
+        $clients = $repository
+            ->createQueryBuilder('c')
             ->andWhere('c.deletedAt is null')
             ->orderBy('c.alias', 'ASC')
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
 
-        return $clients;
+        return $clients->getResult();
     }
 
     /**
@@ -74,6 +74,7 @@ class ClientsController extends AbstractController
 
         return $this->render('clients/addClient.html.twig', [
             'addClientForm' => $form->createView(),
+            'update' => true
         ]);
     }
 
@@ -103,7 +104,11 @@ class ClientsController extends AbstractController
      */
     public function details(Client $client): Response
     {
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(['client' => $client], ['createdAt' => 'DESC'], 100);
+        $logs = $this->entityManager->getRepository(Log::class)->findBy(
+            ['client' => $client],
+            ['createdAt' => 'DESC'],
+            100
+        );
 
         return $this->render('clients/details.twig', [
             'client' => $client,
