@@ -151,7 +151,8 @@ class Order
                 if ($timeToDeadline < 0) {
                     $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
                 } elseif ($timeToDeadline < 86400) {
-                    $warnings[] = 'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
+                    $warnings[] =
+                        'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
                 }
                 break;
             case self::WYKONANE:

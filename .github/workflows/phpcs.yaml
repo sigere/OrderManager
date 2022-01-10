@@ -1,0 +1,20 @@
+name: Analysis
+on: pull_request
+
+jobs:
+  build:
+    name: Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+
+      - name: PHP CodeSniffer
+        run: |
+            composer global require "squizlabs/php_codesniffer=*" \
+              --no-interaction --prefer-dist --ignore-platform-reqs --quiet
+            ~/.composer/vendor/bin/phpcs --config-set colors 1
+            ~/.composer/vendor/bin/phpcs \
+              --extensions=php \
+              --standard=./dev/phpcs/ruleset.xml \
+              ./src  -s

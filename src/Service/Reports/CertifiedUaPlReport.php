@@ -9,12 +9,15 @@ use App\Repository\OrderRepository;
 use App\Service\ReportInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class CertifiedUaPlReport implements ReportInterface
 {
     private array $config = [];
 
-    public function __construct (
+    public function __construct(
         private LangRepository $langRepository,
         private OrderRepository $orderRepository,
         private Environment $twig
@@ -23,9 +26,9 @@ class CertifiedUaPlReport implements ReportInterface
 
     /**
      * @return string
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderForm(): string
     {
@@ -164,6 +167,6 @@ class CertifiedUaPlReport implements ReportInterface
             'Status'
         ];
 
-        return array_merge($header,$table);
+        return array_merge($header, $table);
     }
 }

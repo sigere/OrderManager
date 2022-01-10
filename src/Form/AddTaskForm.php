@@ -44,7 +44,7 @@ class AddTaskForm extends AbstractType
                 'label' => 'Wykonawca',
                 'class' => User::class,
                 'choice_label' => function ($user) {
-                    return $user->getFirstName().' '.$user->getLastName();
+                    return $user->getFirstName() . ' ' . $user->getLastName();
                 },
                 'query_builder' => function () {
                     return $this->entityManager->getRepository(User::class)->createQueryBuilder('u')
