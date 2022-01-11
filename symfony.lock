@@ -241,7 +241,7 @@
         ]
     },
     "symfony/http-client-contracts": {
-        "version": "v2.3.1"
+        "version": "v2.5.0"
     },
     "symfony/http-foundation": {
         "version": "v5.2.1"
@@ -284,6 +284,9 @@
     },
     "symfony/orm-pack": {
         "version": "v2.1.0"
+    },
+    "symfony/password-hasher": {
+        "version": "v5.4.2"
     },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.22.0"
