@@ -122,24 +122,24 @@ class InstallSampleDataCommand extends Command
         $this->entityManager->persist($order);
         $io->info('Created sample order.');
 
-//        $certifiedOrder = new CertifiedOrder();
-//        $certifiedOrder = $certifiedOrder
-//            ->setStaff($staff)
-//            ->setAuthor($user)
-//            ->setDeadline(new \DateTime())
-//            ->setTopic('Dowód osobisty')
-//            ->setPages(4)
-//            ->setInfo('Bardzo ważne')
-//            ->setAdoption(new \DateTime())
-//            ->setCertified(true)
-//            ->setBaseLang($lang2)
-//            ->setTargetLang($lang1)
-//            ->setPrice(30)
-//            ->setClient($client)
-//            ->setComments("Nieczytelny dokument.")
-//            ->setDocumentIssuer("Burmistrz miasta Jarosławia.");
-//        $this->entityManager->persist($certifiedOrder);
-//        $io->info('Created sample certified order.');
+        $certifiedOrder = new CertifiedOrder();
+        $certifiedOrder = $certifiedOrder
+            ->setStaff($staff)
+            ->setAuthor($user)
+            ->setDeadline(new \DateTime())
+            ->setTopic('Dowód osobisty')
+            ->setPages(4)
+            ->setInfo('Bardzo ważne')
+            ->setAdoption(new \DateTime())
+            ->setCertified(true)
+            ->setBaseLang($lang2)
+            ->setTargetLang($lang1)
+            ->setPrice(30)
+            ->setClient($client)
+            ->setComments("Nieczytelny dokument.")
+            ->setDocumentIssuer("Burmistrz miasta Jarosławia.");
+        $this->entityManager->persist($certifiedOrder);
+        $io->info('Created sample certified order.');
 
         $this->entityManager->persist(
             new Log($user, 'Dodano zlecenie.', $order)
