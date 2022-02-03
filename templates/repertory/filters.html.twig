@@ -1,12 +1,7 @@
 <div class="">
     {{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}}) }}
     {% for row in filtersForm %}
-        {% if not loop.last %}
-
             {{ form_widget(row,{'attr': {}}) }}
-            {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
-
-        {% endif %}
     {% endfor %}
     <button type="submit" class="btn btn-primary">Wykonaj</button>
     {{ form_end(filtersForm) }}

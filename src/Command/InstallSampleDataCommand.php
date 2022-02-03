@@ -8,8 +8,10 @@ use App\Entity\Company;
 use App\Entity\Lang;
 use App\Entity\Log;
 use App\Entity\Order;
+use App\Entity\RepertoryEntry;
 use App\Entity\Staff;
 use App\Entity\User;
+use App\Repository\RepertoryEntryRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -122,27 +124,22 @@ class InstallSampleDataCommand extends Command
         $this->entityManager->persist($order);
         $io->info('Created sample order.');
 
-        $certifiedOrder = new CertifiedOrder();
-        $certifiedOrder = $certifiedOrder
-            ->setStaff($staff)
-            ->setAuthor($user)
-            ->setDeadline(new \DateTime())
-            ->setTopic('Dowód osobisty')
-            ->setPages(4)
-            ->setInfo('Bardzo ważne')
-            ->setAdoption(new \DateTime())
-            ->setCertified(true)
-            ->setBaseLang($lang2)
-            ->setTargetLang($lang1)
-            ->setPrice(30)
-            ->setClient($client)
-            ->setComments("Nieczytelny dokument.")
-            ->setDocumentIssuer("Burmistrz miasta Jarosławia.");
-        $this->entityManager->persist($certifiedOrder);
+        $repertoryEntry = new RepertoryEntry(
+            $this->entityManager->getRepository(RepertoryEntry::class),
+            $order
+        );
+
+        $repertoryEntry = $repertoryEntry
+            ->setComments("Comments")
+            ->setCopies(2)
+            ->setCopyPrice(10)
+            ->setDocumentDate(new \DateTime())
+            ->setOrder($order);
+        $this->entityManager->persist($repertoryEntry);
         $io->info('Created sample certified order.');
 
         $this->entityManager->persist(
-            new Log($user, 'Dodano zlecenie.', $order)
+            new Log($user, 'Dodano wpis do repertorium.', $repertoryEntry)
         );
         $io->info('Created log for order.');
 
