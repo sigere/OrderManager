@@ -13,13 +13,13 @@ class RepertoryController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ){
+    ) {
     }
 
     /**
      * @Route("/repertory", name="repertory")
      */
-    public function index() : Response
+    public function index(): Response
     {
         $filtersForm = $this->createForm(RepertoryFiltersForm::class);
         $entries = $this->entityManager
