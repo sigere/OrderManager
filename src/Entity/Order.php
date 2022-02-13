@@ -14,9 +14,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Order
 {
-    public const PRZYJETE = 'przyjete';
-    public const WYKONANE = 'wykonane';
-    public const WYSLANE = 'wyslane';
+    public const ACCEPTED = 'accepted';
+    public const DONE = 'done';
+    public const SENT = 'sent';
+    public const STATES = [self::ACCEPTED, self::DONE, self::SENT];
 
     /**
      * @ORM\Id
@@ -111,12 +112,12 @@ class Order
     /**
      * @ORM\OneToOne(targetEntity=RepertoryEntry::class, mappedBy="order", cascade={"persist", "remove"})
      */
-    private $repertoryEntry;
+    private ?RepertoryEntry $repertoryEntry;
 
     public function __construct()
     {
         $this->deletedAt = null;
-        $this->state = self::PRZYJETE;
+        $this->state = self::ACCEPTED;
         $this->settledAt = null;
     }
 
@@ -133,7 +134,7 @@ class Order
     public function getInvoiceWarnings(): array
     {
         $warnings = $this->getWarnings();
-        if (self::WYSLANE != $this->state) {
+        if (self::SENT != $this->state) {
             $warnings[] = 'Zlecenie nie zostało wysłane.';
         }
 
@@ -151,7 +152,7 @@ class Order
         }
 
         switch ($this->state) {
-            case self::PRZYJETE:
+            case self::ACCEPTED:
                 if ($timeToDeadline < 0) {
                     $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
                 } elseif ($timeToDeadline < 86400) {
@@ -159,7 +160,7 @@ class Order
                         'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
                 }
                 break;
-            case self::WYKONANE:
+            case self::DONE:
                 if ($timeToDeadline < 0) {
                     $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na wykonane';
                 }
@@ -167,7 +168,7 @@ class Order
                     $warnings[] = 'Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.';
                 }
                 break;
-            case self::WYSLANE:
+            case self::SENT:
                 if (0 == $this->pages) {
                     $warnings[] = 'Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.';
                 }
@@ -180,10 +181,10 @@ class Order
     public function nextState(): string
     {
         switch ($this->state) {
-            case self::PRZYJETE:
-                return self::WYKONANE;
-            case self::WYKONANE:
-                return self::WYSLANE;
+            case self::ACCEPTED:
+                return self::DONE;
+            case self::DONE:
+                return self::SENT;
             default:
                 return '';
         }
@@ -191,11 +192,14 @@ class Order
 
     public function getNetto(): float
     {
-        if ($this->price && $this->pages) {
-            return round($this->price * $this->pages, 2);
+        if (!$this->price || !$this->pages) {
+            return 0.0;
         }
 
-        return 0.00;
+        $result = round($this->price * $this->pages, 2);
+        $result += $this->repertoryEntry?->getAdditionalFee() ?? 0.0;
+
+        return $result;
     }
 
     public function getBrutto(): float

@@ -2,13 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Entity\Staff;
 use App\Form\AddOrderForm;
 use App\Form\IndexFiltersForm;
+use App\Repository\LogRepository;
+use App\Repository\OrderRepository;
+use App\Service\UserPreferences\IndexPreferences;
 use Datetime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,15 +20,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    private $entityManager;
-    private $request;
-    private $company;
+    private ?Request $request;
+    private mixed $company;
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $request)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private OrderRepository $orderRepository,
+        private LogRepository $logRepository,
+        private IndexPreferences $preferences,
+        RequestStack $request
+    ) {
         $this->request = $request->getCurrentRequest();
-        $this->company = $entityManager->getRepository(Company::class)->findOneBy(['id' => 1]);
+        $this->company = $entityManager->getRepository(Company::class)->findAll()[0];
     }
 
     /**
@@ -35,92 +39,16 @@ class IndexController extends AbstractController
      */
     public function index(): Response
     {
-        $orders = $this->loadOrdersTable();
+        $orders = $this->orderRepository->getByIndexPreferences($this->preferences);
         $form = $this->createForm(IndexFiltersForm::class);
-        $rep = $this->entityManager->getRepository(Company::class)->findAll()[0]->getRep();
+        $rep = $this->company->getRep();
 
         return $this->render('index/index.html.twig', [
             'orders' => $orders,
             'filtersForm' => $form->createView(),
+            'preferences' => $this->preferences,
             'rep' => $rep,
         ]);
-    }
-
-    private function loadOrdersTable() //improvements required
-    {
-        $repository = $this->entityManager->getRepository(Order::class);
-        $user = $this->getUser();
-        $preferences = $user->getPreferences();
-        $states = [];
-        if ($preferences['index']['przyjete']) {
-            $states[] = 'przyjete';
-        }
-        if ($preferences['index']['wykonane']) {
-            $states[] = 'wykonane';
-        }
-        if ($preferences['index']['wyslane']) {
-            $states[] = 'wyslane';
-        }
-
-        if (!count($states) > 0) {
-            return [];
-        }
-
-        $statesString = 'o.state = ';
-        foreach ($states as $s) {
-            $statesString .= ':' . $s . ' or o.state = ';
-        }
-        $statesString = substr($statesString, 0, -14);
-
-        $repo = $this->entityManager->getRepository(Order::class);
-        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(
-            ['id' => $preferences['index']['select-staff']]
-        );
-        $orders = $repo->createQueryBuilder('o')
-            ->andWhere($statesString);
-
-        if ($preferences['index']['select-staff']) {
-            $orders = $orders
-                ->andWhere('o.staff = :staff')
-                ->setParameter('staff', $staff ? $staff : $this->getUser());
-        }
-
-        foreach ($states as $s) {
-            $orders = $orders->setParameter($s, $s);
-        }
-
-        $repository = $this->entityManager->getRepository(Client::class);
-        if ($preferences['index']['select-client']) {
-            $orders = $orders
-                ->andWhere('o.client = :client')
-                ->setParameter('client', $repository->findOneBy(['id' => $preferences['index']['select-client']]));
-        }
-        //doctrine nie zapisuje obiektów w user->preferences['index']['select-client'],
-        //więc mapuje na id przy zapisie i na obiekt przy odczycie
-
-        $dateType = $preferences['index']['date-type'];
-        if ($preferences['index']['date-from']) {
-            $dateFrom = new \Datetime($preferences['index']['date-from']['date']);
-            $orders
-                ->andWhere('o.' . $dateType . ' >= :dateFrom')
-                ->setParameter('dateFrom', $dateFrom);
-        }
-        if ($preferences['index']['date-to']) {
-            $dateTo = new Datetime($preferences['index']['date-to']['date']);
-            $dateTo->setTime(23, 59);
-            $orders
-                ->andWhere('o.' . $dateType . ' <= :dateTo')
-                ->setParameter('dateTo', $dateTo);
-        }
-
-        $orders = $orders
-            ->andWhere('o.settledAt is null')
-            ->andWhere('o.deletedAt is null')
-            ->setMaxResults(100)
-            ->orderBy('o.deadline', 'ASC')
-            ->getQuery();
-
-        return $orders->getResult();
     }
 
     /**
@@ -130,18 +58,9 @@ class IndexController extends AbstractController
     {
         $form = $this->createForm(IndexFiltersForm::class);
         $form->handleRequest($this->request);
-        $user = $this->getUser();
-        if ($form->isSubmitted() && $form->isValid()) {
-            $preferences = $user->getPreferences();
-            $preferences['index'] = $form->getData();
-            $preferences['index']['select-staff'] = $preferences['index']['select-staff'] ?
-                $preferences['index']['select-staff']->getId() : null;
-            $preferences['index']['select-client'] = $preferences['index']['select-client'] ?
-                $preferences['index']['select-client']->getId() : null;
-            $user->setPreferences($preferences);
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->preferences->applyForm($form->getData());
             return new Response('Zastosowano filtry.', 200);
         }
 
@@ -153,10 +72,11 @@ class IndexController extends AbstractController
      */
     public function reloadTable(): Response
     {
-        $orders = $this->loadOrdersTable();
+        $orders = $this->orderRepository->getByIndexPreferences($this->preferences);
 
         return $this->render('index/orders_table.twig', [
             'orders' => $orders,
+            'preferences' => $this->preferences
         ]);
     }
 
@@ -165,10 +85,7 @@ class IndexController extends AbstractController
      */
     public function details(Order $order): Response
     {
-        if (!$order) {
-            throw $this->createNotFoundException('Nie znaleziono zlecenia');
-        }
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(
+        $logs = $this->logRepository->findBy(
             ['order' => $order],
             ['createdAt' => 'DESC'],
             100
@@ -188,21 +105,16 @@ class IndexController extends AbstractController
      */
     public function updateState(Order $order, $state): Response
     {
-        //TODO autoryzacja?
         if ($order->getState() == $state) {
-            return new Response('state not changed');
+            return new Response('State not changed');
         }
 
         $currentState = $order->getState();
-        switch ($state) {
-            case $order::WYSLANE:
-            case $order::WYKONANE:
-            case $order::PRZYJETE:
-                $order->setState($state);
-                break;
-            default:
-                return new Response('given state not found', 404);
+        if (!in_array($state,Order::STATES)) {
+            return new Response('given state not found', 404);
         }
+
+        $order->setState($state);
         $this->entityManager->persist(new Log(
             $this->getUser(),
             'Zmiana statusu: ' . $currentState . ' -> ' . $state . '.',
@@ -266,7 +178,6 @@ class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $this->entityManager->persist($order);
-//            TODO sprawdzanie co się zmieniło i logowanie tego
             $this->entityManager->persist(new Log($this->getUser(), 'Zaktualizowano zlecenie', $order));
             $this->entityManager->flush();
 
@@ -287,9 +198,11 @@ class IndexController extends AbstractController
         if (count($order->getWarnings())) {
             return new Response('Zlecenie nie może zostać rozliczone', 406);
         }
+
         if ($order->getSettledAt()) {
             return new Response('Zlecenie zostało już rozliczone.', 406);
         }
+
         $order->setSettledAt(new Datetime());
         $this->entityManager->persist($order);
         $this->entityManager->flush();
@@ -299,8 +212,8 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/index/api/setRep/{rep}", name="index_api_setRep")
-     *
      * @param $rep
+     * @return Response
      */
     public function setRep($rep): Response
     {

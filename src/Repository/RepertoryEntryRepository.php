@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Order;
 use App\Entity\RepertoryEntry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,24 @@ class RepertoryEntryRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RepertoryEntry::class);
+    }
+
+    /**
+     * @param RepertoryEntry $entry
+     * @param Order $order
+     * @return void
+     * @throws \Exception
+     */
+    public function configureEntry(RepertoryEntry $entry, Order $order): void
+    {
+        if ($entry->getOrder() != null) {
+            throw new \Exception("Entry already configured!");
+        }
+
+        $order->setRepertoryEntry($entry);
+        $year = (int) $order->getDeadline()->format('Y');
+        $entry->setYear($year);
+        $entry->setNumber($this->getNumber($year));
     }
 
     /**

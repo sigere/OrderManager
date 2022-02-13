@@ -10,6 +10,7 @@ class Controller {
     centerPopupContent;
     deleteButton;
     addButton;
+    repertoryButton;
     rep;
     editButton;
 
@@ -26,12 +27,14 @@ class Controller {
         this.deleteButton = document.getElementById("delete-button");
         this.addButton = document.getElementById("add-button");
         this.editButton = document.getElementById("edit-button");
+        this.repertoryButton = document.getElementById("repertory-button");
         this.rep = document.getElementById("rep");
 
         this.form.addEventListener("submit", e => this.executeFilters(e), false);
         this.deleteButton.addEventListener("click", this.deleteOrder.bind(this), false);
         this.addButton.addEventListener("click", this.addOrder.bind(this), false);
         this.editButton.addEventListener("click", this.updateOrder.bind(this), false);
+        this.repertoryButton.addEventListener("click", this.addEntry.bind(this), false);
         this.rep.addEventListener("click", this.setRep.bind(this), false);
         this.addTableListeners();
     }
@@ -399,6 +402,37 @@ class Controller {
                 };
             request.send();
         }, false)
+    }
+
+    addEntry() {
+        this.overlay.style.display = "block";
+
+        if (!this.centerPopup.classList.contains("active")) {
+            this.centerPopup.classList.add("active");
+        }
+
+        let c = this;
+        let popup = this.centerPopupContent;
+        let request = new XMLHttpRequest();
+        let responseText;
+        let addEntryForm;
+
+        request.open("POST", "/repertory/entry", true);
+        request.onload = function (oEvent) {
+            responseText = request.responseText;
+            popup.innerHTML = responseText;
+
+            if (request.status === 200) {
+                addEntryForm = document.forms.namedItem("repertory_entry_form");
+                addEntryForm.addEventListener("submit", c.addEntryExecute.bind(c), false);
+            }
+        }
+        request.send();
+    }
+
+    addEntryExecute(e) {
+        e.preventDefault();
+        console.log("DUPA");
     }
 }
 

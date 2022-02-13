@@ -4,7 +4,8 @@ namespace App\Form;
 
 use App\Entity\Client;
 use App\Entity\Staff;
-use DateTime;
+use App\Service\UserPreferences\AbstractOrderPreferences;
+use App\Service\UserPreferences\ArchivesPreferences;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -13,135 +14,99 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 
 class ArchivesFiltersForm extends AbstractType
 {
-    private $security;
-    private $entityManager;
-
-    public function __construct(Security $security, EntityManagerInterface $entityManager)
-    {
-        $this->security = $security;
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ArchivesPreferences $preferences
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $preferences = $this->security->getUser()->getPreferences();
         $builder
-            // states
-            ->add('usuniete', CheckboxType::class, [
-                'label' => 'Usunięte',
-                'attr' => $preferences['archives']['usuniete'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-state-label', 'state' => 'usunięte'],
+            ->add('deleted', CheckboxType::class, [
+                'label' => 'Deleted',
+                'attr' => $this->preferences->getDeleted() ? ['checked' => 'checked'] : [],
+                'label_attr' => ['class' => 'filter-state-label', 'state' => 'deleted'],
                 'required' => false,
-            ])
+            ]);
 
-            // columns
-            ->add('adoption', CheckboxType::class, [
-                'label' => 'Wprowadzono',
-                'attr' => $preferences['archives']['adoption'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-columns-label first'],
-                'required' => false,
-            ])
-            ->add('client', CheckboxType::class, [
-                'label' => 'Klient',
-                'attr' => $preferences['archives']['client'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-columns-label'],
-                'required' => false,
-            ])
-            ->add('topic', CheckboxType::class, [
-                'label' => 'Temat',
-                'attr' => $preferences['archives']['topic'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-columns-label'],
-                'required' => false,
-            ])
-            ->add('lang', CheckboxType::class, [
-                'label' => 'Język',
-                'attr' => $preferences['archives']['lang'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-columns-label'],
-                'required' => false,
-            ])
-            ->add('deadline', CheckboxType::class, [
-                'label' => 'Termin',
-                'attr' => $preferences['archives']['deadline'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-columns-label'],
-                'required' => false,
-            ])
-            ->add('staff', CheckboxType::class, [
-                'label' => 'Wykonawca',
-                'attr' => $preferences['archives']['staff'] ? ['checked' => 'checked'] : [],
-                'label_attr' => ['class' => 'filter-columns-label'],
-                'required' => false,
-            ])
-            // client
+        $columns = $this->preferences->getColumns();
+        $class = 'filter-columns-label';
+        foreach (AbstractOrderPreferences::COLUMNS as $key => $COLUMN) {
+            $first = array_key_first(AbstractOrderPreferences::COLUMNS) == $key;
+            $builder
+                ->add($COLUMN, CheckboxType::class, [
+                    'label' => ucfirst($COLUMN),
+                    'attr' => in_array($COLUMN, $columns) ? ['checked' => 'checked'] : [],
+                    'label_attr' => ['class' => $first ? $class . ' first' : $class],
+                    'required' => false,
+                ]);
+        }
+
+        $builder
             ->add('select-client', EntityType::class, [
                 'class' => Client::class,
-                'label' => 'Klient',
-                'help' => 'Docelowy język dokumentu zlecenia',
+                'query_builder' => $this->entityManager
+                    ->getRepository(Client::class)
+                    ->createQueryBuilder('c')
+                    ->andWhere('c.deletedAt is null')
+                    ->orderBy('c.alias', 'ASC'),
+                'label' => 'Client',
                 'attr' => ['class' => 'form-select filter-client first'],
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
-                'placeholder' => 'Wszyscy klienci',
-                'data' => $this->entityManager->
-                getRepository(Client::class)->
-                findOneBy(['id' => $preferences['archives']['select-client']]),
+                'placeholder' => 'All clients',
+                'data' => $this->preferences->getClient()
             ])
             ->add('select-staff', EntityType::class, [
                 'class' => Staff::class,
-                'label' => 'Wykonawca',
-                'help' => 'Tłumacz przydzielony do zlecenia',
-                'attr' => ['class' => 'form-select filter-client first'],
+                'label' => 'Staff',
+                'attr' => ['class' => 'form-select filter-client'],
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
-                'placeholder' => 'Wszyscy wykonawcy',
-                'query_builder' => function () {
-                    return $this->entityManager->getRepository(Staff::class)->createQueryBuilder('s')
-                        ->andWhere('s.deletedAt is null')
-                        ->orderBy('s.lastName', 'ASC');
-                },
-                'data' => $this->entityManager->
-                getRepository(Staff::class)->
-                findOneBy(['id' => $preferences['archives']['select-staff']]),
+                'placeholder' => 'All staff',
+                'query_builder' => $this->entityManager
+                    ->getRepository(Staff::class)
+                    ->createQueryBuilder('s')
+                    ->andWhere('s.deletedAt is null')
+                    ->orderBy('s.lastName', 'ASC'),
+                'data' => $this->preferences->getStaff()
             ])
-            // date
             ->add('date-type', ChoiceType::class, [
                 'choices' => [
-                    'Data dodania' => 'adoption',
-                    'Termin' => 'deadline',
+                    'Adoption' => AbstractOrderPreferences::DATE_TYPE_ADOPTION,
+                    'Deadline' => AbstractOrderPreferences::DATE_TYPE_DEADLINE,
                 ],
                 'attr' => ['class' => 'filter-date-type'],
                 'expanded' => true,
                 'multiple' => false,
                 'label' => false,
-                'data' => $preferences['archives']['date-type'],
-                'choice_attr' => [
-                    'Termin' => ['style' => 'margin-left: 10px;'], ],
+                'data' => $this->preferences->getDateType(),
+                'choice_attr' => ['Deadline' => ['style' => 'margin-left: 10px;']],
             ])
             ->add('date-from', DateType::class, [
-                'label' => 'Data od',
+                'label' => 'Date from',
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['class' => 'filter-date-from'],
-                'data' => $preferences['archives']['date-from'] ?
-                    new DateTime($preferences['archives']['date-from']['date']) : null,
+                'data' => $this->preferences->getDateFrom(),
                 'label_attr' => ['style' => 'display: block;'],
             ])
             ->add('date-to', DateType::class, [
-                'label' => 'Data do',
+                'label' => 'Date to',
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['class' => 'filter-date-to'],
-                'data' => $preferences['archives']['date-to'] ?
-                    new DateTime($preferences['archives']['date-to']['date']) : null,
+                'data' => $this->preferences->getDateTo(),
                 'label_attr' => ['style' => 'display: block;'],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-        ]);
+        $resolver->setDefaults([]);
     }
 }

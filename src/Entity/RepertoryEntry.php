@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\RepertoryEntryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=RepertoryEntryRepository::class)
@@ -20,7 +22,7 @@ class RepertoryEntry
     /**
      * @ORM\OneToOne(targetEntity=Order::class, inversedBy="repertoryEntry", cascade={"persist", "remove"})
      */
-    private Order $order;
+    private ?Order $order;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -34,18 +36,19 @@ class RepertoryEntry
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\PositiveOrZero
      */
     private int $copies;
 
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    private int $number;
+    private ?int $number;
 
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    private int $year;
+    private ?int $year;
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -54,6 +57,7 @@ class RepertoryEntry
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @Assert\PositiveOrZero
      */
     private float $copyPrice;
 
@@ -62,15 +66,33 @@ class RepertoryEntry
      */
     private \DateTimeInterface $createdAt;
 
-    public function __construct(RepertoryEntryRepository $repository, Order $order)
+    public function __construct()
     {
-        $this->order = $order;
         $this->copies = 0;
         $this->copyPrice = 0.0;
         $this->createdAt = new \DateTimeImmutable();
+        $this->order = null;
+        $this->documentIssuer = null;
+        $this->comments = null;
+    }
 
-        $this->year = (int) $order->getDeadline()->format('Y');
-        $this->number = $repository->getNumber($this->year);
+    /**
+     * @return array
+     */
+    public function getWarnings(): array
+    {
+        // todo
+        return [];
+    }
+
+    public function getFormattedNumber(): string
+    {
+        return $this->number . "/" . $this->year;
+    }
+
+    public function getAdditionalFee(): float
+    {
+        return round($this->copyPrice * $this->copies,2);
     }
 
     /**
@@ -82,9 +104,9 @@ class RepertoryEntry
     }
 
     /**
-     * @return Order
+     * @return Order|null
      */
-    public function getOrder(): Order
+    public function getOrder(): ?Order
     {
         return $this->order;
     }
@@ -154,17 +176,17 @@ class RepertoryEntry
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getNumber(): int
+    public function getNumber(): ?int
     {
         return $this->number;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
@@ -211,5 +233,25 @@ class RepertoryEntry
     public function getCreatedAt(): \DateTime|\DateTimeInterface
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param int $number
+     * @return RepertoryEntry
+     */
+    public function setNumber(int $number): RepertoryEntry
+    {
+        $this->number = $number;
+        return $this;
+    }
+
+    /**
+     * @param int $year
+     * @return RepertoryEntry
+     */
+    public function setYear(int $year): RepertoryEntry
+    {
+        $this->year = $year;
+        return $this;
     }
 }

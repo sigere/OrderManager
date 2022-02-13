@@ -1,23 +1,25 @@
 <table id="main-table" class="table table-dark table-hover">
     <thead>
     <tr>
+        <th class="entity-table icon-col"></th>
+        <th class="entity-table icon-col"></th>
         <th>id</th>
-        {% if app.user.preferences['index']['adoption'] == true %}
+        {% if 'adoption' in preferences.columns %}
             <th>Wprowadzono</th>
         {% endif %}
-        {% if app.user.preferences['index']['client'] == true %}
+        {% if 'client' in preferences.columns %}
             <th>Klient</th>
         {% endif %}
-        {% if app.user.preferences['index']['topic'] == true %}
+        {% if 'topic' in preferences.columns %}
             <th>Temat</th>
         {% endif %}
-        {% if app.user.preferences['index']['lang'] == true %}
+        {% if 'lang' in preferences.columns %}
             <th>Język</th>
         {% endif %}
-        {% if app.user.preferences['index']['deadline'] == true %}
+        {% if 'deadline' in preferences.columns %}
             <th>Termin</th>
         {% endif %}
-        {% if app.user.preferences['index']['staff'] == true %}
+        {% if 'staff' in preferences.columns %}
             <th>Wykonawca</th>
         {% endif %}
 
@@ -27,30 +29,36 @@
     <tbody>
     {% for order in orders %}
         <tr order-id="{{ order.id }}">
-            <td class="clickable-row" style="white-space: nowrap;">
+            <td class="entity-table icon-col clickable-row" style="white-space: nowrap;">
                 {% if order.getWarnings is not empty %}
-                    {% include 'icons/warning.html' %}
+                    {% include 'icons/notice.html' %}
                 {% endif %}
-                {{ order.id }}
             </td>
-            {% if app.user.preferences['index']['adoption'] == true %}
+            <td class="entity-table icon-col clickable-row" style="white-space: nowrap;">
+                {% if order.repertoryEntry is not null %}
+                    {% include 'icons/repertory_entry.html' %}
+                {% endif %}
+            </td>
+            <td>{{ order.id }}</td>
+
+            {% if 'adoption' in preferences.columns %}
                 <td class="clickable-row">{{ order.adoption | date('d.m.Y H:i') }}</td>
             {% endif %}
-            {% if app.user.preferences['index']['client'] == true %}
+            {% if 'client' in preferences.columns %}
                 <td class="clickable-row">{{ order.client }}</td>
             {% endif %}
-            {% if app.user.preferences['index']['topic'] == true %}
+            {% if 'topic' in preferences.columns %}
                 <td class="clickable-row">{{ order.topic }}</td>
             {% endif %}
-            {% if app.user.preferences['index']['lang'] == true %}
+            {% if 'lang' in preferences.columns %}
                 <td class="clickable-row">{{ order.baseLang }}
                     ->
                     {{ order.targetLang }}</td>
             {% endif %}
-            {% if app.user.preferences['index']['deadline'] == true %}
+            {% if 'deadline' in preferences.columns %}
                 <td class="clickable-row">{{ order.deadline | date('d.m.Y H:i') }}</td>
             {% endif %}
-            {% if app.user.preferences['index']['staff'] == true %}
+            {% if 'staff' in preferences.columns %}
                 <td class="clickable-row">{{ order.staff }}</td>
             {% endif %}
             <td>
@@ -64,11 +72,11 @@
                     </select>
                 {% else %}
                     <select class="form-select" state="{{ order.state }}">
-                        <option value="przyjete" {% if order.state == "przyjete" %} selected {% endif %}>Przyjęte
-                        </option>
-                        <option value="wykonane" {% if order.state == "wykonane" %} selected {% endif %}>Wykonane
-                        </option>
-                        <option value="wyslane" {% if order.state == "wyslane" %} selected {% endif %}>Wysłane</option>
+                        {% for state in constant('App\\Entity\\Order::STATES') %}
+                            <option value="{{ state }}" {% if order.state == state %} selected {% endif %}>
+                                {{ state | trans | capitalize }}
+                            </option>
+                        {% endfor %}
                     </select>
                 {% endif %}
             </td>

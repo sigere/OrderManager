@@ -26,8 +26,6 @@
                         Filtruj
                     </header>
                     <div class="col-content" id="filters-content">
-
-                        <h6>Pokaż</h6>
                         {{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}}) }}
                         {% for row in filtersForm %}
                             {% if not loop.last %}
@@ -45,7 +43,11 @@
             <div class="col-lg-7" style=" height: 100%;">
                 <div class="column mid-col">
                     <header>
+                        <div class="icon" style="float: left;">
+                            {% include 'icons/archive.html' %}
+                        </div>
                         Archiwum
+                        <div style="clear: both;"></div>
                     </header>
                     <div class="col-content" style="width: auto">
                         <div class="table-container">

@@ -2,19 +2,20 @@
 
 {% block title %}
     {{ parent() }}
-    - Raporty
+    - Repertorium
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset("css/repertory.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/entity_table.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/index.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
-<script type="text/javascript" src="{{ asset("js/reports/reports.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/repertory/repertory.js") }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -27,7 +28,7 @@
                     </header>
                     <div class="col-content" id="reports-content" style="width: auto">
                         <div class="table-container">
-                            {% include 'repertory/filters.html.twig' %}
+{#                            {% include 'repertory/filters.html.twig' %}#}
                         </div>
                     </div>
 
@@ -36,11 +37,15 @@
             <div class="col-lg-7" style=" height: 100%;">
                 <div class="column mid-col">
                     <header>
-                        Dane i podgląd
+                        <div class="icon" style="float: left;">
+                            {% include 'icons/repertory_entry.html' %}
+                        </div>
+                        Wpisy
+                        <div style="clear: both;"></div>
                     </header>
-                    <div class="col-content" id="form-preview-content" style="">
+                    <div class="col-content" id="" style="width: auto;">
                         <div class="table-container">
-{#                            {% include 'repertory/orders_table.twig' %}#}
+                            {% include 'repertory/entries_table.twig' %}
                         </div>
                     </div>
                 </div>
@@ -48,10 +53,11 @@
             <div class="col-lg-3" style=" height: 100%;">
                 <div class="column right-col">
                     <header>
-                        Szczegóły raportu
+                        Szczegóły wpisu
+                        <i id="details-header-id"></i>
                     </header>
                     <div class="col-content" id="details-content" style="">
-                        <div class="alert alert-primary">Wybierz raport, aby wyświetlić jego szczegóły</div>
+                        <div class="alert alert-primary">Wybierz wpis, aby wyświetlić jego szczegóły</div>
                     </div>
                 </div>
             </div>

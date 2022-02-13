@@ -2,22 +2,22 @@
     <thead>
     <tr>
         <th>id</th>
-        {% if app.user.preferences['archives']['adoption'] == true %}
+        {% if 'adoption' in preferences.columns %}
             <th>Wprowadzono</th>
         {% endif %}
-        {% if app.user.preferences['archives']['client'] == true %}
+        {% if 'client' in preferences.columns %}
             <th>Klient</th>
         {% endif %}
-        {% if app.user.preferences['archives']['topic'] == true %}
+        {% if 'topic' in preferences.columns %}
             <th>Temat</th>
         {% endif %}
-        {% if app.user.preferences['archives']['lang'] == true %}
+        {% if 'lang' in preferences.columns %}
             <th>Język</th>
         {% endif %}
-        {% if app.user.preferences['archives']['deadline'] == true %}
+        {% if 'deadline' in preferences.columns %}
             <th>Termin</th>
         {% endif %}
-        {% if app.user.preferences['archives']['staff'] == true %}
+        {% if 'staff' in preferences.columns %}
             <th>Wykonawca</th>
         {% endif %}
 
@@ -30,24 +30,24 @@
             <td class="clickable-row" style="white-space: nowrap;">
                 {{ order.id }}
             </td>
-            {% if app.user.preferences['archives']['adoption'] == true %}
+            {% if 'adoption' in preferences.columns %}
                 <td class="clickable-row">{{ order.adoption | date('d.m.Y H:i') }}</td>
             {% endif %}
-            {% if app.user.preferences['archives']['client'] == true %}
+            {% if 'client' in preferences.columns %}
                 <td class="clickable-row">{{ order.client }}</td>
             {% endif %}
-            {% if app.user.preferences['archives']['topic'] == true %}
+            {% if 'topic' in preferences.columns %}
                 <td class="clickable-row">{{ order.topic }}</td>
             {% endif %}
-            {% if app.user.preferences['archives']['lang'] == true %}
+            {% if 'lang' in preferences.columns %}
                 <td class="clickable-row">{{ order.baseLang }}
                     ->
                     {{ order.targetLang }}</td>
             {% endif %}
-            {% if app.user.preferences['archives']['deadline'] == true %}
+            {% if 'deadline' in preferences.columns %}
                 <td class="clickable-row">{{ order.deadline | date('d.m.Y H:i') }}</td>
             {% endif %}
-            {% if app.user.preferences['archives']['staff'] == true %}
+            {% if 'staff' in preferences.columns %}
                 <td class="clickable-row">{{ order.staff }}</td>
             {% endif %}
             <td>

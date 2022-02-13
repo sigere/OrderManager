@@ -1,45 +1,45 @@
-.add-form-container {
+.entity-form-container {
     width: 600px;
 }
 
-.add-form-container h4 {
+.entity-form-container h4 {
     margin-left: 30px;
     margin-bottom: 18px;
 }
 
-.add-form-row {
+.entity-form-row {
     width: 550px;
     margin: 3px auto;
 }
 
-.add-form-label {
+.entity-form-label {
     padding: 5px;
     float: left;
     max-width: 200px;
     height: 20px;
 }
 
-.add-form-widget {
+.entity-form-widget {
     float: right;
     padding: 5px;
 }
 
-.add-form-submit-container {
+.entity-form-submit-container {
     float: right;
     margin-right: 30px;
     margin-top: 15px;
 }
 
-.add-form-container button {
+.entity-form-container button {
     width: 100px;
 }
 
-.add-form-widget input[type="text"], input[type="number"], input[type="email"],
+.entity-form-widget input[type="text"], input[type="number"], input[type="email"],
 select, textarea {
     width: 220px;
 }
 
-.add-form-container input, select, textarea {
+.entity-form-container input, select, textarea {
     background-color: rgb(80,80,80);
     color: white;
     border: none;

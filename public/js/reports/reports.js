@@ -108,6 +108,3 @@ class ReportsController {
 }
 
 let c = new ReportsController();
-
-
-

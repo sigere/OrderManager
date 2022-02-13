@@ -70,37 +70,6 @@ class User implements UserInterface
     {
         $this->createdAt = new DateTime();
         $this->deletedAt = null;
-        $this->preferences['index'] = [
-            'adoption' => false,
-            'client' => true,
-            'topic' => true,
-            'lang' => false,
-            'deadline' => true,
-            'staff' => true,
-            'przyjete' => true,
-            'wykonane' => true,
-            'wyslane' => true,
-            'usuniete' => false,
-            'select-client' => 1,
-            'select-staff' => null,
-            'date-type' => 'deadline',
-            'date-from' => null,
-            'date-to' => null,
-        ];
-        $this->preferences['archives'] = [
-            'adoption' => false,
-            'client' => true,
-            'topic' => true,
-            'lang' => false,
-            'deadline' => true,
-            'staff' => true,
-            'usuniete' => false,
-            'select-client' => null,
-            'select-staff' => null,
-            'date-type' => 'deadline',
-            'date-from' => null,
-            'date-to' => null,
-        ];
     }
 
     public function getId(): int

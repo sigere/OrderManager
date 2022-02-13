@@ -40,7 +40,7 @@
 
 <div class="property">
     <div class="name">Status</div>
-    <div class="value">{{ task.doneAt ? "Wykonane" : "Nie wykonane" }}</div>
+    <div class="value">{{ task.doneAt ? "done" | trans | capitalize : "not done" | trans | capitalize }}</div>
 </div>
 <div style="clear:both;"></div>
 

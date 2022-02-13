@@ -65,7 +65,7 @@
 
 <div class="property">
     <div class="name">Notatki</div>
-    <div class="value">{{ order.info|default('brak notatek') }}</div>
+    <div class="value">{{ order.info|default('brak notatek<') }}</div>
 </div>
 <div style="clear:both;"></div>
 
@@ -81,12 +81,21 @@
 </div>
 <div style="clear:both;"></div>
 
-
 <div class="property">
     <div class="name">Netto</div>
     <div class="value">{{ order.netto | number_format(2, ".", "") }} PLN</div>
 </div>
 <div style="clear:both;"></div>
+
+{% if order.repertoryEntry is not null %}
+    <div class="property">
+        <div class="name">Numer wpisu</div>
+        <div class="value">
+            {{ order.repertoryEntry.formattedNumber }}
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+{% endif %}
 
 <div class="logs">
     <table class="table table-dark">

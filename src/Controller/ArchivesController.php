@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Entity\Staff;
 use App\Form\ArchivesFiltersForm;
+use App\Repository\OrderRepository;
+use App\Service\UserPreferences\ArchivesPreferences;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +20,8 @@ class ArchivesController extends AbstractController
 
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private OrderRepository $orderRepository,
+        private ArchivesPreferences $preferences,
         RequestStack $request
     ) {
         $this->request = $request->getCurrentRequest();
@@ -30,71 +32,14 @@ class ArchivesController extends AbstractController
      */
     public function index(): Response
     {
-        $orders = $this->loadOrdersTable();
+        $orders = $this->orderRepository->getByArchivesPreferences($this->preferences);
         $form = $this->createForm(ArchivesFiltersForm::class);
 
         return $this->render('archives/index.html.twig', [
             'orders' => $orders,
             'filtersForm' => $form->createView(),
+            'preferences' => $this->preferences
         ]);
-    }
-
-    private function loadOrdersTable(): array
-    {
-        $repository = $this->entityManager->getRepository(Order::class);
-        $user = $this->getUser();
-        $preferences = $user->getPreferences();
-
-        //doctrine nie zapisuje obiektów w user->preferences['archives']['select-client'],
-        //więc mapuje na id przy zapisie i na obiekt przy odczycie
-        $staff = $this->entityManager->getRepository(Staff::class)->findOneBy(
-            ['id' => $preferences['archives']['select-staff']]
-        );
-
-        $orders = $repository->createQueryBuilder('o');
-
-        if ($preferences['archives']['usuniete']) {
-            $orders->andWhere('o.deletedAt is not null or o.settledAt is not null');
-        } else {
-            $orders->andWhere('o.settledAt is not null');
-        }
-
-        if ($preferences['archives']['select-staff']) {
-            $orders = $orders
-                ->andWhere('o.staff = :staff')
-                ->setParameter('staff', $staff ? $staff : $this->getUser());
-        }
-
-        $repository = $this->entityManager->getRepository(Client::class);
-        if ($preferences['archives']['select-client']) {
-            $orders = $orders
-                ->andWhere('o.client = :client')
-                ->setParameter('client', $repository->findOneBy(
-                    ['id' => $preferences['archives']['select-client']]
-                ));
-        }
-
-        $dateType = $preferences['archives']['date-type'];
-        if ($preferences['archives']['date-from']) {
-            $dateFrom = new \Datetime($preferences['archives']['date-from']['date']);
-            $orders
-                ->andWhere('o.' . $dateType . ' >= :dateFrom')
-                ->setParameter('dateFrom', $dateFrom);
-        }
-        if ($preferences['archives']['date-to']) {
-            $dateTo = new \Datetime($preferences['archives']['date-to']['date']);
-            $dateTo->setTime(23, 59);
-            $orders
-                ->andWhere('o.' . $dateType . ' <= :dateTo')
-                ->setParameter('dateTo', $dateTo);
-        }
-
-        $orders = $orders
-            ->setMaxResults(100)
-            ->orderBy('o.deadline', 'ASC')
-            ->getQuery();
-
-        return $orders->getResult();
     }
 
     /**
@@ -102,7 +47,7 @@ class ArchivesController extends AbstractController
      */
     public function reloadTable(): Response
     {
-        $orders = $this->loadOrdersTable();
+        $orders = $this->orderRepository->getByArchivesPreferences($this->preferences);
 
         return $this->render('archives/orders_table.twig', [
             'orders' => $orders,
@@ -129,24 +74,13 @@ class ArchivesController extends AbstractController
     {
         $form = $this->createForm(ArchivesFiltersForm::class);
         $form->handleRequest($this->request);
-        $user = $this->getUser();
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $preferences = $user->getPreferences();
-            $preferences['archives'] = $form->getData();
-            $preferences['archives']['select-staff'] = $preferences['archives']['select-staff'] ?
-                $preferences['archives']['select-staff']->getId() : null;
-            $preferences['archives']['select-client'] = $preferences['archives']['select-client'] ?
-                $preferences['archives']['select-client']->getId() : null;
-            $user->setPreferences($preferences);
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $this->preferences->applyForm($form->getData());
+            return new Response('Zastosowano filtry.', 200);
         }
 
-        return new Response(
-            '<div class="alert alert-success">Zaktualizowano preferencje</div>',
-            200
-        );
+        return new Response('Błędne dane.', 400);
     }
 
     /**
