@@ -33,9 +33,10 @@
         "symfony/yaml": "5.4.*"
     },
     "require-dev": {
+        "squizlabs/php_codesniffer": "^3.6",
         "symfony/debug-bundle": "5.4.*",
-        "symfony/maker-bundle": "^v1.36.4",
         "symfony/flex": "^v1.18.3",
+        "symfony/maker-bundle": "^v1.36.4",
         "symfony/var-dumper": "5.4.*",
         "symfony/web-profiler-bundle": "5.4.*"
     },

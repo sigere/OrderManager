@@ -92,7 +92,7 @@ class RepertoryEntry
 
     public function getAdditionalFee(): float
     {
-        return round($this->copyPrice * $this->copies,2);
+        return round($this->copyPrice * $this->copies, 2);
     }
 
     /**

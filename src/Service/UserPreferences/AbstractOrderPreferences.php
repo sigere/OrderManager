@@ -35,19 +35,19 @@ abstract class AbstractOrderPreferences
         KernelInterface $kernel
     ) {
         $this->user = $security->getUser();
+        $file = $kernel->getProjectDir() . '/config/default_' . $this->getArrayKey() . '_preferences.json';
         $config = $this->user->getPreferences()[$this->getArrayKey()]
             ?? json_decode(
-                file_get_contents(
-                    $kernel->getProjectDir() . '/config/default_' . $this->getArrayKey() . '_preferences.json'
-                ),
-                true);
+                file_get_contents($file),
+                true
+            );
         $this->load($config);
     }
 
     /**
      * @return string
      */
-    protected abstract function getArrayKey(): string;
+    abstract protected function getArrayKey(): string;
 
     /**
      * @return void

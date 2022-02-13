@@ -110,7 +110,7 @@ class IndexController extends AbstractController
         }
 
         $currentState = $order->getState();
-        if (!in_array($state,Order::STATES)) {
+        if (!in_array($state, Order::STATES)) {
             return new Response('given state not found', 404);
         }
 

@@ -49,14 +49,14 @@ class IndexPreferences extends AbstractOrderPreferences
     protected function encode(): array
     {
          return [
-            'states' => $this->states,
-            'columns' => $this->columns,
-            'date_from' => $this->dateFrom,
-            'date_to' => $this->dateTo,
-            'date_type' => $this->dateType,
-            'client' => $this->client?->getId(),
-            'staff' => $this->staff?->getId(),
-        ];
+             'states' => $this->states,
+             'columns' => $this->columns,
+             'date_from' => $this->dateFrom,
+             'date_to' => $this->dateTo,
+             'date_type' => $this->dateType,
+             'client' => $this->client?->getId(),
+             'staff' => $this->staff?->getId(),
+         ];
     }
 
     /**
