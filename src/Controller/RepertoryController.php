@@ -7,9 +7,10 @@ use App\Entity\Order;
 use App\Entity\RepertoryEntry;
 use App\Form\RepertoryEntryForm;
 use App\Form\RepertoryFiltersForm;
+use App\Repository\RepertoryEntryRepository;
+use App\Service\ResponseFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,23 +18,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class RepertoryController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private RepertoryEntryRepository $entryRepository,
+        private ResponseFormatter $formatter
     ) {
     }
 
     /**
      * @Route("/repertory", methods={"GET"}, name="repertory")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $filtersForm = $this->createForm(RepertoryFiltersForm::class);
         $entries = $this->entityManager
             ->getRepository(RepertoryEntry::class)
             ->findAll();
+        $entry = $this->entryRepository->findOneBy(['id' => $request->get('entry')]);
         
         return $this->render('repertory/index.html.twig', [
             'filtersForm' => $filtersForm->createView(),
-            'entries' => $entries
+            'entries' => $entries,
+            'details' => ['entry' => $entry]
         ]);
     }
 
@@ -68,6 +73,21 @@ class RepertoryController extends AbstractController
      */
     public function create(Request $request): Response
     {
+        $order = $this->entityManager->getRepository(Order::class)
+            ->findOneBy(['id' => $request->get('order')]);
+
+        if (!$order) {
+            return new Response($this->formatter->error("Nie znaleziono zlecenia."), 400);
+        }
+
+        if (!$order->getCertified()) {
+            return new Response($this->formatter->error("To zlecenie nie jest uwierzytelniane."), 406);
+        }
+
+        if ($order->getRepertoryEntry()) {
+            return new Response($this->formatter->error("To zlecenie ma już wpis."), 406);
+        }
+
         $form = $this->createForm(RepertoryEntryForm::class);
         $form->handleRequest($request);
 
@@ -76,7 +96,7 @@ class RepertoryController extends AbstractController
                 ->findOneBy(['id' => $request->get('order')]);
 
             if (!($order instanceof Order)) {
-                return new Response("Nie znaleziono zlecenia o podanym id.", 404);
+                return new Response($this->formatter->error("Nie znaleziono zlecenia o podanym id."), 404);
             }
 
             /** @var RepertoryEntry $entry */
@@ -96,7 +116,7 @@ class RepertoryController extends AbstractController
             $this->entityManager->flush();
 
             return new Response(
-                "Dodano nowy wpis",
+                $this->formatter->success("Dodano nowy wpis"),
                 201,
             );
         }
@@ -132,12 +152,5 @@ class RepertoryController extends AbstractController
             'repertory/entry_form.html.twig',
             ['entryForm' => $form->createView()]
         );
-    }
-
-    /**
-     * @Route("/repertory/entry/{id}", methods={"DELETE"}, name="repertory_entry_delete")
-     */
-    public function delete()
-    {
     }
 }

@@ -54,10 +54,18 @@
                 <div class="column right-col">
                     <header>
                         Szczegóły wpisu
-                        <i id="details-header-id"></i>
+                        <i id="details-header-id">
+                            {% if details['entry'] %}
+                                {{ details['entry'].id }}
+                            {% endif %}
+                        </i>
                     </header>
                     <div class="col-content" id="details-content" style="">
-                        <div class="alert alert-primary">Wybierz wpis, aby wyświetlić jego szczegóły</div>
+                        {% if details['entry'] %}
+                            {% include 'repertory/details.html.twig' with {'entry': details['entry']} %}
+                        {% else %}
+                            <div class="alert alert-primary">Wybierz wpis, aby wyświetlić jego szczegóły</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

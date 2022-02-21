@@ -33,7 +33,7 @@ class ArchivesPreferences extends AbstractOrderPreferences
         }
 
         $columns = [];
-        foreach (ArchivesFiltersForm::COLUMNS as $COLUMN) {
+        foreach (self::COLUMNS as $COLUMN) {
             if (array_key_exists($COLUMN, $data) && $data[$COLUMN] === true) {
                 $columns[] = $COLUMN;
             }
