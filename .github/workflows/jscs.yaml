@@ -23,9 +23,7 @@ jobs:
           echo '{"rules": {"semi": ["error", "always"],"quotes": ["error", "double"]}}' > ./.eslintrc
 
       - name: Install Node.js dependencies
-        run: |
-          npm install eslint
-          npm init @eslint/config
+        run: npm install eslint
 
       - name: Run linters
         run: ./node_modules/.bin/eslint ./public/js/*
