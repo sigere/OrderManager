@@ -19,6 +19,8 @@ jobs:
         run: |
           touch ./package.json
           echo '{"devDependencies": {"eslint": "^8.0.0"}}' > ./package.json
+          touch ./.eslintrc
+          echo '{"rules": {"semi": ["error", "always"],"quotes": ["error", "double"]}}' > ./.eslintrc
 
       - name: Install Node.js dependencies
         run: |
