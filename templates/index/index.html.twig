@@ -14,16 +14,22 @@
 
 {% block javascript %}
 {{ parent() }}
-<script type="text/javascript" src="{{ asset("js/index-popups.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
 <script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/index/index.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/index-controller.js") }}"></script>
+<script>
+    $(document).ready(function (){
+        window.controller = new Controller($(document));
+    });
+</script>
 {% endblock %}
 
 {% block content %}
     <div class="container-fluid" id="content" style="height: 100%;">
         <div class="row" style="height: 100%;">
             <div class="col-lg-2" style=" height: 100%;">
-                <div class="column left-col">
+                <div class="column left-col js-left-col">
                     <header>
                         Filtruj
                     </header>
@@ -43,33 +49,26 @@
                 </div>
             </div>
             <div class="col-lg-7" style=" height: 100%;">
-                <div class="column mid-col">
+                <div class="column mid-col js-mid-col">
                     <header>
                         <div class="icon" style="float: left;">
                             {% include 'icons/order.html' %}
                         </div>
                         Zlecenia
                         <div style="clear: both;"></div>
-                        <div id="rep" class="buttons clickable" value="{{ rep }}">
-                            {{ rep }}
-                        </div>
-                        <div id="add-button" class="buttons clickable">
-                            <svg width="20" height="20" viewbox="0 0 25 25" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M24.5029 9.58814C24.1713 9.25667 23.7686 9.09099 23.2953 9.09099H15.9089V1.70438C15.9089 1.23105 15.7431 0.828495 15.4117 0.497022C15.0803 0.165799 14.6781 0 14.2041 0H10.7953C10.3219 0 9.91943 0.165612 9.58795 0.497085C9.25648 0.828557 9.09081 1.23111 9.09081 1.70444V9.09106H1.70444C1.23111 9.09106 0.828557 9.25673 0.497085 9.5882C0.165612 9.91968 0 10.3219 0 10.7955V14.2047C0 14.6785 0.16555 15.0807 0.497022 15.4119C0.828495 15.7435 1.23105 15.909 1.70438 15.909H9.09075V23.2957C9.09075 23.7691 9.25642 24.1719 9.58789 24.5033C9.91936 24.8344 10.3219 25 10.7952 25H14.2043C14.678 25 15.0803 24.8344 15.4118 24.5033C15.7434 24.1718 15.9089 23.7691 15.9089 23.2957V15.909H23.2952C23.769 15.909 24.1714 15.7435 24.5028 15.4119C24.8342 15.0807 24.9999 14.6785 24.9999 14.2047V10.7955C24.9998 10.3219 24.8345 9.91943 24.5029 9.58814Z"
-                                      fill="white"/>
-                            </svg>
-                        </div>
+                        {% include 'burger.html.twig' with {'options': [
+                            {'label': "Add order", 'icon': 'add', 'class': 'js-add-order-link'}
+                        ]} %}
                     </header>
                     <div class="col-content" style="width: auto">
-                        <div class="table-container">
+                        <div class="table-container js-table-container">
                             {% include 'index/orders_table.twig' %}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3" style=" height: 100%;">
-                <div class="column right-col">
+                <div class="column right-col js-right-col">
                     <header>
                         Szczegóły zlecenia
                         <i id="details-header-id">
@@ -77,24 +76,8 @@
                                 {{ details['order'].id }}
                             {% endif %}
                         </i>
-                        <div id="repertory-button" class="buttons clickable" style="right: 96px; border-radius: 0;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-book" viewBox="0 0 16 16">
-                                <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
-                            </svg>
-                        </div>
-                        <div id="edit-button" class="buttons clickable" style="right: 48px; border-radius: 0;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
-                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                <path fill-rule="evenodd"
-                                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                            </svg>
-                        </div>
-                        <div id="delete-button" class="buttons clickable">
-                            <svg height="22" viewbox="0 0 27 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2.84375 2.0625C2.32989 2.0625 1.83708 2.2798 1.47373 2.66659C1.11038 3.05339 0.90625 3.57799 0.90625 4.125V6.1875C0.90625 6.73451 1.11038 7.25911 1.47373 7.64591C1.83708 8.0327 2.32989 8.25 2.84375 8.25H3.8125V26.8125C3.8125 27.9065 4.22076 28.9557 4.94746 29.7293C5.67416 30.5029 6.65979 30.9375 7.6875 30.9375H19.3125C20.3402 30.9375 21.3258 30.5029 22.0525 29.7293C22.7792 28.9557 23.1875 27.9065 23.1875 26.8125V8.25H24.1562C24.6701 8.25 25.1629 8.0327 25.5263 7.64591C25.8896 7.25911 26.0938 6.73451 26.0938 6.1875V4.125C26.0938 3.57799 25.8896 3.05339 25.5263 2.66659C25.1629 2.2798 24.6701 2.0625 24.1562 2.0625H17.375C17.375 1.51549 17.1709 0.990886 16.8075 0.604092C16.4442 0.217299 15.9514 0 15.4375 0L11.5625 0C11.0486 0 10.5558 0.217299 10.1925 0.604092C9.82913 0.990886 9.625 1.51549 9.625 2.0625H2.84375ZM8.65625 10.3125C8.91318 10.3125 9.15958 10.4211 9.34126 10.6145C9.52293 10.8079 9.625 11.0702 9.625 11.3438V25.7812C9.625 26.0548 9.52293 26.3171 9.34126 26.5105C9.15958 26.7039 8.91318 26.8125 8.65625 26.8125C8.39932 26.8125 8.15292 26.7039 7.97124 26.5105C7.78956 26.3171 7.6875 26.0548 7.6875 25.7812V11.3438C7.6875 11.0702 7.78956 10.8079 7.97124 10.6145C8.15292 10.4211 8.39932 10.3125 8.65625 10.3125ZM13.5 10.3125C13.7569 10.3125 14.0033 10.4211 14.185 10.6145C14.3667 10.8079 14.4688 11.0702 14.4688 11.3438V25.7812C14.4688 26.0548 14.3667 26.3171 14.185 26.5105C14.0033 26.7039 13.7569 26.8125 13.5 26.8125C13.2431 26.8125 12.9967 26.7039 12.815 26.5105C12.6333 26.3171 12.5312 26.0548 12.5312 25.7812V11.3438C12.5312 11.0702 12.6333 10.8079 12.815 10.6145C12.9967 10.4211 13.2431 10.3125 13.5 10.3125ZM19.3125 11.3438V25.7812C19.3125 26.0548 19.2104 26.3171 19.0288 26.5105C18.8471 26.7039 18.6007 26.8125 18.3438 26.8125C18.0868 26.8125 17.8404 26.7039 17.6587 26.5105C17.4771 26.3171 17.375 26.0548 17.375 25.7812V11.3438C17.375 11.0702 17.4771 10.8079 17.6587 10.6145C17.8404 10.4211 18.0868 10.3125 18.3438 10.3125C18.6007 10.3125 18.8471 10.4211 19.0288 10.6145C19.2104 10.8079 19.3125 11.0702 19.3125 11.3438Z"
-                                      fill="white"/>
-                            </svg>
+                        <div class="js-burger">
+                            {% include 'burger.html.twig' %}
                         </div>
                     </header>
                     <div class="col-content" id="details-content">
@@ -108,13 +91,9 @@
             </div>
         </div>
 
-        <div id="center-popup">
+        <div class="popup js-popup">
             <div id="center-popup-content">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                     fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                </svg>
+                {% include 'icons/loading.html' %}
             </div>
         </div>
     </div>

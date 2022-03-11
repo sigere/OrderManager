@@ -114,6 +114,12 @@ a {
   100% {opacity: 1;}
 }
 
+@keyframes fade-out-delayed {
+  0% {opacity: 1;}
+  30% {opacity: 1;}
+  100% {opacity: 0;}
+}
+
 #sidebar h6 {
   display: block;
   position: absolute;
@@ -179,22 +185,28 @@ a {
   height: 18px;
 }
 
+/*-- others --*/
+
+.alert {
+  font-size: 13px;
+}
+
 input[type="radio"] {
   margin-right: 5px;
 }
 
-[state="accepted"] {
+[data-state="accepted"] {
   background-color: rgba(254, 161, 57);
 }
-[state="done"] {
+[data-state="done"] {
   background-color: rgb(35, 105, 252);
 }
-[state="sent"] {
+[data-state="sent"] {
   background-color: rgb(7, 192, 107);
 }
-[state="settled"] {
+[data-state="settled"] {
   background-color: rgb(58, 58, 58);
 }
-[state="deleted"] {
+[data-deleted="true"] {
   background-color: rgb(251, 36, 80);
 }

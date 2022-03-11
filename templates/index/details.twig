@@ -1,4 +1,6 @@
-{% if order.getWarnings is not empty %}
+{% if order.deletedAt is not null %}
+    <div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}.</div>
+{% elseif order.getWarnings is not empty %}
     <div class="warning">
         <ul class="list-group">
             {% for w in order.getWarnings %}
@@ -6,8 +8,6 @@
             {% endfor %}
         </ul>
     </div>
-{% elseif order.deletedAt is not null %}
-    <div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}.</div>
 {% elseif order.state == "rozliczone" %}
     <div class="alert alert-success">Zlecenie zostało rozliczone.</div>
 {% endif %}
@@ -15,7 +15,7 @@
 
 <div class="property">
     <div class="name">Status</div>
-    <div class="value" state="{{ order.state }}">{{ order.state }}</div>
+    <div class="value" state="{{ order.state }}">{{ order.state | trans | capitalize }}</div>
 </div>
 <div style="clear:both;"></div>
 
@@ -65,7 +65,7 @@
 
 <div class="property">
     <div class="name">Notatki</div>
-    <div class="value">{{ order.info|default('brak notatek<') }}</div>
+    <div class="value">{{ order.info|default('brak notatek') }}</div>
 </div>
 <div style="clear:both;"></div>
 

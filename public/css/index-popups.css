@@ -1,4 +1,4 @@
-#overlay {
+.overlay {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -135,7 +135,7 @@
   text-align: center;
 }
 
-#center-popup {
+.popup {
   display: block;
   background-color: rgb(49, 49, 49);
   position: fixed;
@@ -151,22 +151,31 @@
   /* border: 1px solid blue; */
 }
 
-#center-popup.active {
+.popup.active {
   z-index: 2;
   opacity: 1;
+  display: block;
 }
 
-#center-popup-content {
+.popup-content {
   max-height: 70vh;
   overflow-y: scroll;
   /* border: 1px solid red; */
 }
 
-#center-popup-content::-webkit-scrollbar {
+.popup-content::-webkit-scrollbar {
   display: none; /* chrome, safari, opera*/
 }
 
-#center-popup-content {
+.popup-content {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.popup .alert {
+  margin: 0;
+}
+
+.popup form {
+  margin: 0;
 }

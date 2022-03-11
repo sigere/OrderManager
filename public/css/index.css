@@ -180,19 +180,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-
 /* --------mid-column-------------- */
-.mid-col .buttons {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background-color: rgb(73, 82, 91);
-    padding: 10px 15px;
-    width: 50px;
-    height: 40px;
-    border-top-right-radius: 10px;
-    /* border: 1px solid red; */
-}
 
 #rep {
     right: 100px;
@@ -267,17 +255,6 @@
     /* border: 1px solid red; */
 }
 
-.right-col .buttons {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background-color: rgb(73, 82, 91);
-    padding: 8px 8px;
-    width: 38px;
-    height: 40px;
-    border-top-right-radius: 10px;
-    /* border: 1px solid red; */
-}
 
 .right-col .warning {
     /* display: none; */

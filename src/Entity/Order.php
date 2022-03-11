@@ -121,11 +121,6 @@ class Order
         $this->settledAt = null;
     }
 
-    public function __toString(): string
-    {
-        return $this->getId();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -176,18 +171,6 @@ class Order
         }
 
         return $warnings;
-    }
-
-    public function nextState(): string
-    {
-        switch ($this->state) {
-            case self::ACCEPTED:
-                return self::DONE;
-            case self::DONE:
-                return self::SENT;
-            default:
-                return '';
-        }
     }
 
     public function getNetto(): float

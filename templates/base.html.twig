@@ -14,15 +14,15 @@
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset("css/base.css") }}"/>
+        <link rel="stylesheet" href="{{ asset("css/burger.css") }}"/>
         <link rel="stylesheet" href="{{ asset("css/entity_form.css") }}"/>
     {% endblock %}
 </head>
 {% block body %}
     <body style="overflow-x: hidden;">
-    <div id="debug"></div>
     {% block header %}
         <header class="navbar sticky-top flex-md-nowrap p-0 shadow" style="height: 55px">
-            <a onclick="openForm();" class="navbar-brand col-3" id="title" href="#">
+            <a class="navbar-brand col-3" id="title" href="{{ path('index') }}">
                 <embed src="{{ asset('img/logo.svg') }}" height="50px">
             </a>
             <ul class="navbar-nav px-3">
@@ -37,7 +37,7 @@
         </header>
     {% endblock %}
     <div class="wrapper">
-        <div onclick="closeAll();" id="overlay"></div>
+        <div class="overlay js-overlay"></div>
         {% block nav %}
             <nav id="sidebar" class="active">
                 <ul class="list-unstyled components">
@@ -140,12 +140,9 @@
     </body>
 {% endblock %}
 {% block javascript %}
-    <script
-        src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="{{ asset("js/base.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/jquery.tablesorter.min.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/jquery.query-object.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/lib/jquery.tablesorter.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/lib/jquery.query-object.js") }}"></script>
 {% endblock %}
 </html>

@@ -1,4 +1,4 @@
-<table id="main-table" class="table table-dark table-hover">
+<table class="table table-dark table-hover js-main-table">
     <thead>
     <tr>
         <th class="entity-table icon-col"></th>
@@ -28,7 +28,7 @@
     </thead>
     <tbody>
     {% for order in orders %}
-        <tr order-id="{{ order.id }}">
+        <tr data-subject-id="{{ order.id }}" data-subject-type="order">
             <td class="entity-table icon-col clickable-row" style="white-space: nowrap;">
                 {% if order.getWarnings is not empty %}
                     {% include 'icons/notice.html' %}
@@ -61,17 +61,17 @@
             {% if 'staff' in preferences.columns %}
                 <td class="clickable-row">{{ order.staff }}</td>
             {% endif %}
-            <td>
+            <td class="js-update-state-cell">
                 {% if order.deletedAt is not null %}
-                    <select class="form-select" state="usuniete" disabled style="background-color: #632435;">
+                    <select class="form-select" data-deleted="true" disabled style="background-color: #632435;">
                         <option>Usuniete</option>
                     </select>
                 {% elseif order.state == "rozliczone" %}
-                    <select class="form-select" state="{{ order.state }}" disabled>
+                    <select class="form-select" data-state="{{ order.state }}" disabled>
                         <option>Rozliczone</option>
                     </select>
                 {% else %}
-                    <select class="form-select" state="{{ order.state }}">
+                    <select class="form-select" data-state="{{ order.state }}">
                         {% for state in constant('App\\Entity\\Order::STATES') %}
                             <option value="{{ state }}" {% if order.state == state %} selected {% endif %}>
                                 {{ state | trans | capitalize }}

@@ -20,6 +20,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddOrderForm extends AbstractType
 {
+    public const DEFAULT_OPTIONS = [
+        'data_class' => Order::class,
+        'attr' => [
+            'name' => 'add_order_form',
+            'id' => 'add-form',
+            'data-url' => '/order',
+            'data-method' => 'POST'
+        ]
+    ];
+
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
@@ -114,8 +124,6 @@ class AddOrderForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Order::class,
-        ]);
+        $resolver->setDefaults( self::DEFAULT_OPTIONS);
     }
 }

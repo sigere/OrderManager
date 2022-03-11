@@ -6,14 +6,17 @@ use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Form\AddOrderForm;
+use App\Form\DeleteEntityFrom;
 use App\Form\IndexFiltersForm;
 use App\Repository\LogRepository;
 use App\Repository\OrderRepository;
+use App\Service\OptionsProviderFactory;
 use App\Service\ResponseFormatter;
 use App\Service\UserPreferences\IndexPreferences;
 use Datetime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +33,7 @@ class IndexController extends AbstractController
         private LogRepository $logRepository,
         private IndexPreferences $preferences,
         private ResponseFormatter $formatter,
+        private OptionsProviderFactory $optionsProviderFactory,
         RequestStack $request
     ) {
         $this->request = $request->getCurrentRequest();
@@ -49,7 +53,7 @@ class IndexController extends AbstractController
             100
         );
         $form = $this->createForm(IndexFiltersForm::class);
-        $rep = $this->company->getRep();
+        $options = $order ? $this->optionsProviderFactory->getOptions($order) : [];
 
         return $this->render('index/index.html.twig', [
             'orders' => $orders,
@@ -59,7 +63,7 @@ class IndexController extends AbstractController
             ],
             'filtersForm' => $form->createView(),
             'preferences' => $this->preferences,
-            'rep' => $rep,
+            'options' => $options
         ]);
     }
 
@@ -110,10 +114,19 @@ class IndexController extends AbstractController
             100
         );
 
-        return $this->render('index/details.twig', [
+        $options = $this->optionsProviderFactory->getOptions($order);
+
+        $result = [];
+        $result['details'] = $this->renderView('index/details.twig', [
             'order' => $order,
             'logs' => $logs,
         ]);
+
+        $result['burger'] = $this->renderView('burger.html.twig', [
+            'options' => $options
+        ]);
+
+        return new JsonResponse(json_encode($result));
     }
 
     /**
@@ -149,9 +162,19 @@ class IndexController extends AbstractController
      */
     public function updateOrder(Order $order): Response
     {
-        $form = $this->createForm(AddOrderForm::class, $order);
+        $attr = array_merge(AddOrderForm::DEFAULT_OPTIONS['attr'] ?? [], [
+            'data-url' => '/order/' . $order->getId(),
+            'data-method' => 'PUT'
+        ]);
+        $options = array_merge(AddOrderForm::DEFAULT_OPTIONS, [
+            'attr' => $attr,
+            'method' => 'PUT'
+        ]);
+
+        $form = $this->createForm(AddOrderForm::class, $order, $options);
 
         $form->handleRequest($this->request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $this->entityManager->persist($order);
@@ -176,6 +199,15 @@ class IndexController extends AbstractController
      */
     public function delete(Order $order): Response
     {
+        $attr = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS['attr'] ?? [], [
+            'data-url' => '/order/' . $order->getId(),
+        ]);
+        $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
+
+        $form = $this->createForm(DeleteEntityFrom::class, null, $options);
+
+        $form->handleRequest($this->request);
+
         if ($order->getDeletedAt()) {
             return new Response(
                 $this->formatter->notice('Zlecenie zostało już usunięte'),
@@ -183,14 +215,20 @@ class IndexController extends AbstractController
             );
         }
 
-        $order->setDeletedAt(new Datetime());
-        $this->entityManager->persist($order);
-        $this->entityManager->persist(new Log($this->getUser(), 'Usunięto zlecenie', $order));
-        $this->entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order->setDeletedAt(new Datetime());
+            $this->entityManager->persist($order);
+            $this->entityManager->persist(new Log($this->getUser(), 'Usunięto zlecenie', $order));
+            $this->entityManager->flush();
 
-        return new Response(
-            $this->formatter->success('Zlecenie usunięte'),
-            200
-        );
+            return new Response(
+                $this->formatter->success('Zlecenie usunięte'),
+                200
+            );
+        }
+
+        return $this->render('delete_entity_form.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }
