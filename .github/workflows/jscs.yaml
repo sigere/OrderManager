@@ -15,6 +15,11 @@ jobs:
         with:
           node-version: 12
 
+      - name: Create config
+        run: |
+          touch ./package.json
+          echo "{"devDependencies": {"eslint": "^8.0.0"}}" > ./package.json
+
       - name: Install Node.js dependencies
         run: |
           npm install eslint
