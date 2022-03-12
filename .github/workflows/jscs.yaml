@@ -26,4 +26,4 @@ jobs:
         run: npm install eslint
 
       - name: Run linters
-        run: ./node_modules/.bin/eslint ./public/js/*
+        run: ./node_modules/.bin/eslint ./public/js -c ./dev/eslint/.eslintrc.json --ignore-path ./dev/eslint/.eslintignore
