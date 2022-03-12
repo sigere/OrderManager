@@ -2,15 +2,15 @@
 let detailsController;
 window.onload = function () {
     detailsController = new DetailsController (
-        $('#details-header-id')[0],
-        $('#details-content')[0],
-        'order',
+        $("#details-header-id")[0],
+        $("#details-content")[0],
+        "order",
         function () {
-            console.log("OnUpdate triggered.")
+            console.log("OnUpdate triggered.");
         }
-    )
+    );
     window.onpopstate = detailsController.popState.bind(detailsController);
-}
+};
 
 // window.onload = function () {}
 

@@ -1,39 +1,39 @@
-'use strict';
+"use strict";
 
 (function (window, $) {
     window.DetailsController = function ($wrapper, controller) {
         this.$wrapper = $wrapper;
         this.controller = controller;
-        this.$element = this.$wrapper.find('.col-content');
+        this.$element = this.$wrapper.find(".col-content");
         this.defaultContent = this.$element.html();
     };
 
     $.extend(window.DetailsController.prototype, {
         reload: function (subject) {
-            let $burger = this.$wrapper.find('.js-burger')
+            let $burger = this.$wrapper.find(".js-burger");
             let self = this;
 
             if (!subject) {
-                this.$element.addClass('hidden');
+                this.$element.addClass("hidden");
                 executeAfter(function () {
-                    $burger.html('');
+                    $burger.html("");
                     self.$element.html(self.defaultContent);
-                    self.$element.removeClass('hidden');
+                    self.$element.removeClass("hidden");
                 }, Date.now() + 400);
                 return;
             }
 
             let stamp = Date.now() + 400;
-            this.$element.addClass('hidden');
+            this.$element.addClass("hidden");
             $.ajax({
-                url: '/order/' + subject.id,
-                method: 'GET',
+                url: "/order/" + subject.id,
+                method: "GET",
                 success: function (data) {
                     let parsed = JSON.parse(data);
                     executeAfter(function () {
                         self.$element.html(parsed.details);
                         $burger.html(parsed.burger);
-                        self.$element.removeClass('hidden');
+                        self.$element.removeClass("hidden");
                     }, stamp);
                 },
                 error: function (jqXHR) {
@@ -41,7 +41,7 @@
                 }
             });
         }
-    })
+    });
 
 })(window, jQuery);
 
