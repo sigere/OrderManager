@@ -87,6 +87,7 @@
             let $row = $(e.currentTarget).closest("tr");
             let id = $row.data("subject-id");
             let type = $row.data("subject-type");
+            let currentSubject = this.controller.currentSubject;
 
             $.ajax({
                 url: "/api/" + type + "/" + id + "/state",
@@ -94,9 +95,9 @@
                 data: {state: $select.val()},
                 success: function (data) {
                     $select.attr("data-state", $select.val());
-                    if (type === self.currentSubject.type &&
-                        id === self.currentSubject.id) {
-                        self.controller.detailsController.reload(self.currentSubject);
+                    if (type === currentSubject.type &&
+                        id === currentSubject.id) {
+                        self.controller.detailsController.reload(currentSubject);
                     }
                 },
                 error: function (jqXHR) {
