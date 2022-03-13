@@ -132,6 +132,9 @@ class InstallSampleDataCommand extends Command
             ->setCopyPrice(10)
             ->setDocumentDate(new \DateTime())
             ->setOrder($order);
+        $this->entityManager
+            ->getRepository(RepertoryEntry::class)
+            ->configureEntry($repertoryEntry, $order);
         $this->entityManager->persist($repertoryEntry);
         $io->info('Created sample certified order.');
 
