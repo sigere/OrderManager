@@ -27,75 +27,73 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid" id="content" style="height: 100%;">
-        <div class="row" style="height: 100%;">
-            <div class="col-lg-2" style=" height: 100%;">
-                <div class="column left-col js-left-col">
-                    <header>
-                        Filtruj
-                    </header>
-                    <div class="col-content" id="filters-content">
-                        {{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}}) }}
-                        {% for row in filtersForm %}
-                            {% if not loop.last %}
+    <div class="row" style="height: 100%;">
+        <div class="col-lg-2" style=" height: 100%;">
+            <div class="column left-col js-left-col">
+                <header>
+                    Filtruj
+                </header>
+                <div class="col-content" id="filters-content">
+                    {{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}}) }}
+                    {% for row in filtersForm %}
+                        {% if not loop.last %}
 
-                                {{ form_widget(row,{'attr': {}}) }}
-                                {{ form_label(row, null, {'label_attr': {'state': row.vars.name |lower}}) }}
+                            {{ form_widget(row,{'attr': {}}) }}
+                            {{ form_label(row, null, {'label_attr': {'state': row.vars.name |lower}}) }}
 
-                            {% endif %}
-                        {% endfor %}
-                        <button type="submit" class="btn btn-primary">Wykonaj</button>
-                        {{ form_end(filtersForm) }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-7" style=" height: 100%;">
-                <div class="column mid-col js-mid-col">
-                    <header>
-                        <div class="icon" style="float: left;">
-                            {% include 'icons/order.html' %}
-                        </div>
-                        Zlecenia
-                        <div style="clear: both;"></div>
-                        {% include 'burger.html.twig' with {'options': [
-                            {'label': "Add order", 'icon': 'add', 'class': 'js-add-order-link'}
-                        ]} %}
-                    </header>
-                    <div class="col-content" style="width: auto">
-                        <div class="table-container js-table-container">
-                            {% include 'index/orders_table.twig' %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3" style=" height: 100%;">
-                <div class="column right-col js-right-col">
-                    <header>
-                        Szczegóły zlecenia
-                        <span class="js-subject-id">
-                            {% if details['order'] %}
-                                {{ details['order'].id }}
-                            {% endif %}
-                        </span>
-                        <div class="js-burger">
-                            {% include 'burger.html.twig' %}
-                        </div>
-                    </header>
-                    <div class="col-content" id="details-content">
-                        {% if details['order'] %}
-                            {% include 'index/details.twig' with {'order': details['order'], 'logs': details['logs']} %}
-                        {% else %}
-                            <div class="alert alert-primary">Wybierz zlecenie, aby wyświetlić jego szczegóły</div>
                         {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Wykonaj</button>
+                    {{ form_end(filtersForm) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7" style=" height: 100%;">
+            <div class="column mid-col js-mid-col">
+                <header>
+                    <div class="icon" style="float: left;">
+                        {% include 'icons/order.html' %}
+                    </div>
+                    Zlecenia
+                    <div style="clear: both;"></div>
+                    {% include 'burger.html.twig' with {'options': [
+                        {'label': "Add order", 'icon': 'add', 'class': 'js-add-order-link'}
+                    ]} %}
+                </header>
+                <div class="col-content" style="width: auto">
+                    <div class="table-container js-table-container">
+                        {% include 'index/orders_table.twig' %}
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="popup js-popup">
-            <div id="center-popup-content">
-                {% include 'icons/loading.html' %}
+        <div class="col-lg-3" style=" height: 100%;">
+            <div class="column right-col js-right-col">
+                <header>
+                    Szczegóły zlecenia
+                    <span class="js-subject-id">
+                            {% if details['order'] %}
+                                {{ details['order'].id }}
+                            {% endif %}
+                        </span>
+                    <div class="js-burger">
+                        {% include 'burger.html.twig' %}
+                    </div>
+                </header>
+                <div class="col-content" id="details-content">
+                    {% if details['order'] %}
+                        {% include 'index/details.twig' with {'order': details['order'], 'logs': details['logs']} %}
+                    {% else %}
+                        <div class="alert alert-primary">Wybierz zlecenie, aby wyświetlić jego szczegóły</div>
+                    {% endif %}
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="popup js-popup">
+        <div id="center-popup-content">
+            {% include 'icons/loading.html' %}
         </div>
     </div>
 {% endblock %}

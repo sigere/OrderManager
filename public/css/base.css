@@ -8,6 +8,7 @@ body {
 /* -----top-nav------- */
 
 .navbar {
+  height: 45px;
   background: linear-gradient(
           90deg,
           rgba(35, 105, 252, 1) 0%,
@@ -16,7 +17,21 @@ body {
           rgba(239, 83, 96, 1) 100%
   );
   background-size: 150% 100%;
-  animation: gradient 5s ease infinite;
+  animation: gradient 20s ease infinite;
+}
+
+.navbar-brand {
+  padding: 0;
+  font-size: 22px;
+  margin: 0 0 0 25px;
+}
+
+.navbar-brand:hover {
+  color: white;
+}
+
+.navbar-brand img {
+  height: 40px;
 }
 
 @keyframes gradient {
@@ -55,21 +70,12 @@ a {
   text-decoration: none;
 }
 
-#title {
-  padding: 10px;
-  font-size: 22px;
-  margin-left: 25px;
-}
-#title:hover {
-  color: white;
-}
-
 /* -----side-nav------- */
 
 .wrapper {
   display: flex;
   align-items: stretch;
-  height: calc(100% - 55px);
+  height: calc(100% - 45px);
 }
 
 #sidebar {
@@ -169,6 +175,13 @@ a {
   transform: translateY(-50%);
 }
 
+.container-fluid {
+  height: 100%;
+  padding: 0 25px 0 18px;
+  width: 100%;
+  transition: all 0.3s;
+}
+
 .column header {
   position: relative;
   font-size: 20px;
@@ -209,4 +222,8 @@ input[type="radio"] {
 }
 [data-deleted="true"] {
   background-color: rgb(251, 36, 80);
+}
+
+.row {
+  --bs-gutter-x: 1.2rem;
 }

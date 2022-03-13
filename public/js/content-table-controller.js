@@ -115,6 +115,7 @@
                     self.$tableContainer.addClass("hidden");
                     executeAfter(function () {
                         self.$tableContainer.html(data);
+                        self.$table = self.$wrapper.find(".js-main-table");
                         self.setAndHighlightCurrent();
                         self.$tableContainer.removeClass("hidden");
                         self.applyTableSorter();
