@@ -344,6 +344,30 @@
     font-size: 12px;
 }
 
+.right-col .expandable .body {
+    display: none;
+}
+
+.right-col .expandable .body .value {
+    background-color: rgb(40, 45, 50);
+    color: rgb(200,200,200);
+}
+.right-col .expandable .body.active {
+    display: block;
+}
+
+.right-col .expandable .trigger .value{
+    cursor: pointer;
+}
+
+.right-col .expandable svg {
+    position: absolute;
+    right: 18px;
+    top: 13px;
+}
+
+/*-- others --*/
+
 .clickable {
     cursor: pointer;
 }

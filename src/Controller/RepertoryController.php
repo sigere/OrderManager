@@ -11,6 +11,7 @@ use App\Repository\RepertoryEntryRepository;
 use App\Service\ResponseFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -73,8 +74,9 @@ class RepertoryController extends AbstractController
      */
     public function create(Request $request): Response
     {
+        $id = $request->get('order') ?? $request->get('repertory_entry_form')['order'] ?? null;
         $order = $this->entityManager->getRepository(Order::class)
-            ->findOneBy(['id' => $request->get('order')]);
+            ->findOneBy(['id' => $id]);
 
         if (!$order) {
             return new Response($this->formatter->error("Nie znaleziono zlecenia."), 400);
@@ -92,9 +94,6 @@ class RepertoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $order = $this->entityManager->getRepository(Order::class)
-                ->findOneBy(['id' => $request->get('order')]);
-
             if (!($order instanceof Order)) {
                 return new Response($this->formatter->error("Nie znaleziono zlecenia o podanym id."), 404);
             }
@@ -119,6 +118,8 @@ class RepertoryController extends AbstractController
                 $this->formatter->success("Dodano nowy wpis"),
                 201,
             );
+        } else if (!$form->isSubmitted()) {
+            $form->add('order', HiddenType::class, ['data' => $order->getId()]);
         }
 
         return $this->render(

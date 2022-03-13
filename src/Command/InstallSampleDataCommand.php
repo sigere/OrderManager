@@ -124,10 +124,7 @@ class InstallSampleDataCommand extends Command
         $this->entityManager->persist($order);
         $io->info('Created sample order.');
 
-        $repertoryEntry = new RepertoryEntry(
-            $this->entityManager->getRepository(RepertoryEntry::class),
-            $order
-        );
+        $repertoryEntry = new RepertoryEntry();
 
         $repertoryEntry = $repertoryEntry
             ->setComments("Comments")

@@ -18,18 +18,19 @@
         });
 
         if (subjectType && subjectId) {
+            let row = this.$table.find(
+                "[data-subject-id=\"" + subjectId + "\"][data-subject-type=\"" + subjectType + "\"]"
+            );
+            row = row.length === 1 ? row : null;
+
             this._setCurrentSubject({
                 id: subjectId,
                 type: subjectType,
-                row: this.$table.find(
-                    "[data-subject-id=\"" + subjectId + "\"][data-subject-type=\"" + subjectType + "\"]"
-                )
+                row: row
             });
         }
 
-        this.$table.tablesorter({
-            dateFormat: "ddmmyyyy"
-        });
+        this.applyTableSorter();
 
         this.$wrapper.on(
             "click",
@@ -51,13 +52,19 @@
     };
 
     $.extend(window.ContentTableController.prototype, {
-        _setCurrentSubject: function (currentSubject) {
-            if (this.currentSubject && this.currentSubject.row) {
-                this.currentSubject.row.removeClass("active-row");
-            }
+        _setCurrentSubject: function (subject) {
+            this.$table.find('.active-row').removeClass('active-row');
 
-            this.currentSubject = currentSubject;
-            this.currentSubject.row.addClass("active-row");
+            this.controller.currentSubject = subject;
+            if (subject.row) {
+                subject.row.addClass("active-row");
+            }
+        },
+
+        applyTableSorter: function () {
+            this.$tableContainer.find(".js-main-table").tablesorter({
+                dateFormat: "ddmmyyyy"
+            });
         },
 
         updateCurrentRow: function (e) {
@@ -106,25 +113,32 @@
                 success: function (data) {
                     self.$tableContainer.addClass("hidden");
                     executeAfter(function () {
-                        self.$table.html(data);
+                        self.$tableContainer.html(data);
                         self.setAndHighlightCurrent();
                         self.$tableContainer.removeClass("hidden");
+                        self.applyTableSorter();
                     }, Date.now() + 400);
                 },
                 error: function (jqXHR) {
                     self.controller.popupManager.display(jqXHR.responseText);
                 }
             });
-            this.controller.detailsController.reload(this.currentSubject);
+            this.controller.detailsController.reload(this.controller.currentSubject);
         },
 
         setAndHighlightCurrent: function (subject) {
             if (subject === null) {
-                this.currentSubject = subject;
+                this.controller.currentSubject = subject;
                 this.$table.find(".active-row").removeClass("active-row");
                 return;
-            } else if (subject === undefined) {
-                subject = this.currentSubject;
+            }
+            if (subject === undefined) {
+                subject = this.controller.currentSubject;
+            }
+
+            if (subject === undefined) {
+                this.$table.find(".active-row").removeClass("active-row");
+                return;
             }
 
             this.$table.find(".active-row").removeClass("active-row");

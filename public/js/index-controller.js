@@ -4,6 +4,12 @@
     window.Controller = function ($wrapper) {
         this.$wrapper = $wrapper;
         this.$popup = $wrapper.find(".js-popup");
+        this.currentSubject = null;
+
+        this.filtersController = new FiltersController(
+          $(".js-left-col"),
+          this
+        );
 
         this.contentTableController = new ContentTableController(
             $(".js-mid-col"),
@@ -42,6 +48,12 @@
             ".js-burger .js-delete-link",
             this.delete.bind(this)
         );
+
+        this.$wrapper.on(
+            "click",
+            ".js-burger .js-restore-link",
+            this.restore.bind(this)
+        );
     };
 
     $.extend(window.Controller.prototype, {
@@ -72,7 +84,7 @@
 
         edit: function () {
             this.popupManager.open();
-            let currentSubject = this.contentTableController.currentSubject;
+            let currentSubject = this.currentSubject;
 
             let self = this;
             $.ajax({
@@ -97,18 +109,71 @@
         },
 
         addRepertoryEntry: function () {
-            console.log("addRepertoryEntry");
+            this.popupManager.open();
+            let currentSubject = this.currentSubject;
+            let data = new FormData();
+            data.append("order", currentSubject.id);
+
+            let self = this;
+            $.ajax({
+                url: "/repertory/entry",
+                method: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function (data) {
+                    executeAfter( function () {
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(self)
+                        );
+                    }, Date.now() + 400);
+                },
+                error: function (jqXHR) {
+                    self.popupManager.display(jqXHR.responseText);
+                }
+            });
         },
 
         delete: function () {
-            console.log("delete");
             this.popupManager.open();
-            let currentSubject = this.contentTableController.currentSubject;
+            let currentSubject = this.currentSubject;
 
             let self = this;
             $.ajax({
                 url: "/" + currentSubject.type + "/" + currentSubject.id,
                 method: "DELETE",
+                success: function (data) {
+                    executeAfter( function () {
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(self)
+                        );
+                    }, Date.now() + 400);
+                },
+                error: function (jqXHR) {
+                    console.log(jqXHR);
+                    self.popupManager.display(jqXHR.responseText);
+                }
+            });
+        },
+
+        restore: function () {
+            this.popupManager.open();
+            let currentSubject = this.currentSubject;
+
+            let self = this;
+            $.ajax({
+                url: "/" + currentSubject.type + "/" + currentSubject.id + "/restore",
+                method: "POST",
                 success: function (data) {
                     executeAfter( function () {
                         let $handle = self.popupManager.display(data);
@@ -148,7 +213,14 @@
                 success: function (data) {
                     self.reloadTable();
                     executeAfter(function () {
-                        self.popupManager.display(data);
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(self)
+                        );
                     }, Date.now() + 400);
                 },
                 error: function (jqXHR) {

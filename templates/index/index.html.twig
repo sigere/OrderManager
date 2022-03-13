@@ -14,9 +14,10 @@
 
 {% block javascript %}
 {{ parent() }}
-<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
 <script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
 <script type="text/javascript" src="{{ asset("js/index-controller.js") }}"></script>
 <script>
     $(document).ready(function (){
@@ -71,11 +72,11 @@
                 <div class="column right-col js-right-col">
                     <header>
                         Szczegóły zlecenia
-                        <i id="details-header-id">
+                        <span class="js-subject-id">
                             {% if details['order'] %}
                                 {{ details['order'].id }}
                             {% endif %}
-                        </i>
+                        </span>
                         <div class="js-burger">
                             {% include 'burger.html.twig' %}
                         </div>

@@ -7,6 +7,8 @@ use App\Entity\Order;
 class IndexPreferences extends AbstractOrderPreferences
 {
     private array $states;
+    private bool $deleted;
+    private bool $settled;
 
     protected function getArrayKey(): string
     {
@@ -35,8 +37,11 @@ class IndexPreferences extends AbstractOrderPreferences
                 $columns[] = $COLUMN;
             }
         }
-
         $this->setColumns($columns);
+
+        $this->setDeleted($data['deleted'] ?? null);
+        $this->setSettled($data['settled'] ?? null);
+
         $this->save();
     }
 
@@ -44,12 +49,16 @@ class IndexPreferences extends AbstractOrderPreferences
     {
         parent::load($config);
         $this->states = $config['states'] ?? [];
+        $this->deleted = $config['deleted'];
+        $this->settled = $config['settled'];
     }
 
     protected function encode(): array
     {
          return [
              'states' => $this->states,
+             'deleted' => $this->deleted,
+             'settled' => $this->settled,
              'columns' => $this->columns,
              'date_from' => $this->dateFrom,
              'date_to' => $this->dateTo,
@@ -74,6 +83,42 @@ class IndexPreferences extends AbstractOrderPreferences
     public function setStates(array $states): IndexPreferences
     {
         $this->states = $states;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool $deleted
+     * @return IndexPreferences
+     */
+    public function setDeleted(bool $deleted): IndexPreferences
+    {
+        $this->deleted = $deleted;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSettled(): bool
+    {
+        return $this->settled;
+    }
+
+    /**
+     * @param bool $settled
+     * @return IndexPreferences
+     */
+    public function setSettled(bool $settled): IndexPreferences
+    {
+        $this->settled = $settled;
         return $this;
     }
 }

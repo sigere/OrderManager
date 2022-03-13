@@ -6,6 +6,8 @@
     "done",
     "sent"
   ],
+  "deleted": false,
+  "settled": false,
   "columns": [
     "adoption",
     "client",

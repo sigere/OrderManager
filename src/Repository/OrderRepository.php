@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Order;
 use App\Service\UserPreferences\AbstractOrderPreferences;
-use App\Service\UserPreferences\ArchivesPreferences;
 use App\Service\UserPreferences\IndexPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -39,33 +38,19 @@ class OrderRepository extends ServiceEntityRepository
 
         $orders = $this->getQueryBuilderForAbstractOrderPreferences($preferences);
 
-        foreach ($states as $key => $state) {
-            $orders = $orders
-                ->orWhere('o.state = :state' . $key)
-                ->setParameter('state' . $key, $state);
+        if (!$preferences->getDeleted()) {
+            $orders
+                ->andWhere('o.deletedAt is null');
         }
 
-        return $orders
-            ->andWhere('o.settledAt is null')
-            ->andWhere('o.deletedAt is null')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param ArchivesPreferences $preferences
-     * @return Order[]
-     */
-    public function getByArchivesPreferences(ArchivesPreferences $preferences): array
-    {
-        $orders = $this->getQueryBuilderForAbstractOrderPreferences($preferences);
-
-        $orders
-            ->andWhere('o.settledAt is not null');
-
-        if ($preferences->getDeleted() == true) {
-            $orders->orWhere('o.deletedAt is not null');
+        if (!$preferences->getSettled()) {
+            $orders
+                ->andWhere('o.settledAt is null');
         }
+
+        $orders = $orders
+            ->andWhere('o.state in (:states)')
+            ->setParameter('states', $states);
 
         return $orders
             ->getQuery()

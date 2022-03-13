@@ -6,11 +6,18 @@
         this.controller = controller;
         this.$element = this.$wrapper.find(".col-content");
         this.defaultContent = this.$element.html();
+
+        this.$element.on(
+            'click',
+            '.expandable .trigger .property .value',
+            this.manageExpandable.bind(this)
+        );
     };
 
     $.extend(window.DetailsController.prototype, {
         reload: function (subject) {
             let $burger = this.$wrapper.find(".js-burger");
+            let $subjectId = this.$wrapper.find(".js-subject-id");
             let self = this;
 
             if (!subject) {
@@ -33,6 +40,7 @@
                     executeAfter(function () {
                         self.$element.html(parsed.details);
                         $burger.html(parsed.burger);
+                        $subjectId.html(subject.id);
                         self.$element.removeClass("hidden");
                     }, stamp);
                 },
@@ -40,6 +48,18 @@
                     self.$element.html(jqXHR.responseText);
                 }
             });
+        },
+
+        manageExpandable: function (e) {
+            let $svg = this.$element.find('.expandable .trigger .property svg');
+            let $body = this.$element.find('.expandable .body');
+            if ($body.hasClass('active')) {
+                $svg.css("rotate", "none");
+                $body.removeClass('active');
+            } else {
+                $svg.css("rotate", "90deg");
+                $body.addClass('active');
+            }
         }
     });
 

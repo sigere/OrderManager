@@ -6,9 +6,8 @@
     {% endif %}
     {{ form_start(entryForm, {'attr':{'id': '', 'class': ''}}) }}
     {% for row in entryForm %}
-        {% if not loop.last %}
+        {% if 'hidden' not in row.vars['block_prefixes'] %}
             <div class="entity-form-row">
-                <span style="color: red;">{{ form_errors(row) }}</span>
                 <div class="entity-form-label">
                     {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
                     {% if row.vars.required %}*{% endif %}
@@ -17,6 +16,7 @@
                     {{ form_widget(row,{'attr': {}}) }}
                 </div>
                 <div style="clear: both;"></div>
+                <span class="error">{{ form_errors(row) }}</span>
             </div>
         {% endif %}
     {% endfor %}

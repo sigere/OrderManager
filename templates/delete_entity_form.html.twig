@@ -1,6 +1,10 @@
 {{ form_start(form) }}
 <div class="">
     <span style="margin-right: 10px;">{{ 'Are you sure?' | trans }}</span>
-    <button type="submit" class="btn btn-danger">{{ 'Delete' | trans }}</button>
+    {% if restore is defined and restore == true %}
+        <button type="submit" class="btn btn-success">{{ 'Restore' | trans }}</button>
+    {% else %}
+        <button type="submit" class="btn btn-danger">{{ 'Delete' | trans }}</button>
+    {% endif %}
 </div>
 {{ form_end(form) }}

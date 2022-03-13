@@ -15,10 +15,17 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexFiltersForm extends AbstractType
 {
+    public const DEFAULT_OPTIONS = [
+        'attr' => [
+            'name' => 'index_filters_form',
+            'data-url' => '/index/filters',
+            'data-method' => 'POST'
+        ]
+    ];
+
     public function __construct(
         private IndexPreferences $preferences,
         private EntityManagerInterface $entityManager
@@ -37,6 +44,20 @@ class IndexFiltersForm extends AbstractType
                     'required' => false,
                 ]);
         }
+
+        $builder->add('deleted', CheckboxType::class, [
+            'label' => 'Deleted',
+            'attr' => $this->preferences->getDeleted() ? ['checked' => 'checked'] : [],
+            'label_attr' => ['class' => 'filter-state-label', 'state' => 'deleted'],
+            'required' => false,
+        ]);
+
+        $builder->add('settled', CheckboxType::class, [
+            'label' => 'Settled',
+            'attr' => $this->preferences->getSettled() ? ['checked' => 'checked'] : [],
+            'label_attr' => ['class' => 'filter-state-label', 'state' => 'settled'],
+            'required' => false,
+        ]);
 
         $columns = $this->preferences->getColumns();
         $class = 'filter-columns-label';
@@ -112,6 +133,6 @@ class IndexFiltersForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }

@@ -199,15 +199,6 @@ class IndexController extends AbstractController
      */
     public function delete(Order $order): Response
     {
-        $attr = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS['attr'] ?? [], [
-            'data-url' => '/order/' . $order->getId(),
-        ]);
-        $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
-
-        $form = $this->createForm(DeleteEntityFrom::class, null, $options);
-
-        $form->handleRequest($this->request);
-
         if ($order->getDeletedAt()) {
             return new Response(
                 $this->formatter->notice('Zlecenie zostało już usunięte'),
@@ -215,6 +206,13 @@ class IndexController extends AbstractController
             );
         }
 
+        $attr = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS['attr'] ?? [], [
+            'data-url' => '/order/' . $order->getId(),
+        ]);
+        $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
+        $form = $this->createForm(DeleteEntityFrom::class, null, $options);
+
+        $form->handleRequest($this->request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order->setDeletedAt(new Datetime());
             $this->entityManager->persist($order);
@@ -229,6 +227,47 @@ class IndexController extends AbstractController
 
         return $this->render('delete_entity_form.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/order/{id}/restore", methods={"POST"}, name="order_restore")
+     */
+    public function restore(Order $order): Response
+    {
+        if (!$order->getDeletedAt()) {
+            return new Response(
+                $this->formatter->notice('Zlecenie nie jest usunięte'),
+                406
+            );
+        }
+
+        $options = [
+            'method' => 'POST',
+            'attr' => [
+                'method' => null,
+                'data-method' => 'POST',
+                'data-url' => '/order/' . $order->getId() . '/restore'
+            ]
+        ];
+        $form = $this->createForm(DeleteEntityFrom::class, null, $options);
+        $form->handleRequest($this->request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order->setDeletedAt(null);
+            $this->entityManager->persist($order);
+            $this->entityManager->persist(new Log($this->getUser(), 'Przywrócono zlecenie', $order));
+            $this->entityManager->flush();
+
+            return new Response(
+                $this->formatter->success('Zlecenie przywrócone'),
+                200
+            );
+        }
+
+        return $this->render('delete_entity_form.html.twig', [
+            'form' => $form->createView(),
+            'restore' => true
         ]);
     }
 }

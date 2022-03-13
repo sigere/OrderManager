@@ -88,13 +88,21 @@
 <div style="clear:both;"></div>
 
 {% if order.repertoryEntry is not null %}
-    <div class="property">
-        <div class="name">Numer wpisu</div>
-        <div class="value">
-            {{ order.repertoryEntry.formattedNumber }}
+    <div class="expandable">
+        <div class="trigger">
+            <div class="property">
+                <div class="name">Numer wpisu</div>
+                <div class="value">
+                    {{ order.repertoryEntry.formattedNumber }}
+                    {% include 'icons/expand.html' %}
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <div class="body">
+            {% include 'index/entry_summary.html.twig' with {"entry": order.repertoryEntry} %}
         </div>
     </div>
-    <div style="clear:both;"></div>
 {% endif %}
 
 <div class="logs">

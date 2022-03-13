@@ -11,6 +11,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RepertoryEntryForm extends AbstractType
 {
+    public const DEFAULT_OPTIONS = [
+        'data_class' => RepertoryEntry::class,
+        'allow_extra_fields' => true,
+        'attr' => [
+            'name' => 'repertory_entry_form',
+            'data-url' => '/repertory/entry',
+            'data-method' => 'POST'
+        ]
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -40,8 +50,6 @@ class RepertoryEntryForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => RepertoryEntry::class
-        ]);
+        $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }

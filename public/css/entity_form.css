@@ -40,9 +40,15 @@ select, textarea {
 }
 
 .entity-form-container input, select, textarea {
-    background-color: rgb(80,80,80);
+    background-color: rgb(80, 80, 80);
     color: white;
     border: none;
     padding: 2px;
     border-radius: 5px;
+}
+
+.entity-form-row .error li{
+    color: red;
+    text-align: left;
+    list-style-type: none
 }
