@@ -130,8 +130,7 @@ class InstallSampleDataCommand extends Command
             ->setComments("Comments")
             ->setCopies(2)
             ->setCopyPrice(10)
-            ->setDocumentDate(new \DateTime())
-            ->setOrder($order);
+            ->setDocumentDate(new \DateTime());
         $this->entityManager
             ->getRepository(RepertoryEntry::class)
             ->configureEntry($repertoryEntry, $order);
