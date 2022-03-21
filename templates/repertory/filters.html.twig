@@ -1,8 +1,6 @@
-<div class="">
-    {{ form_start(filtersForm, {'attr':{'id': 'filter', 'class': 'filter'}}) }}
+{{ form_start(filtersForm) }}
     {% for row in filtersForm %}
-            {{ form_widget(row,{'attr': {}}) }}
+        {{ form_widget(row) }}
     {% endfor %}
-    <button type="submit" class="btn btn-primary">Wykonaj</button>
-    {{ form_end(filtersForm) }}
-</div>
+<button type="submit" class="btn btn-primary">Wykonaj</button>
+{{ form_end(filtersForm) }}

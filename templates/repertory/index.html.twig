@@ -9,74 +9,73 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset("css/repertory.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/entity_table.css") }}"/>
-    <link rel="stylesheet" href="{{ asset("css/index.css") }}"/>
-    <link rel="stylesheet" href="{{ asset("css/index-popups.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/popups.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/filters-form.css") }}"/>
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
-<script type="text/javascript" src="{{ asset("js/repertory/repertory.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/repertory-controller.js") }}"></script>
+<script>
+    $(document).ready(function (){
+        window.controller = new Controller($(document));
+    });
+</script>
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid" id="content" style="height: 100%;">
-        <div class="row" style="height: 100%;">
-            <div class="col-lg-2" style=" height: 100%;">
-                <div class="column left-col">
-                    <header>
-                        Filtruj
-                    </header>
-                    <div class="col-content" id="reports-content" style="width: auto">
-                        <div class="table-container">
-{#                            {% include 'repertory/filters.html.twig' %}#}
-                        </div>
-                    </div>
+    <div class="row">
+        <div class="col-lg-2" style=" height: 100%;">
+            <div class="column left-col js-left-col">
+                <header>
+                    Filtruj
+                </header>
+                <div class="col-content" id="reports-content">
+                    {% include 'repertory/filters.html.twig' %}
+                </div>
 
-                </div>
             </div>
-            <div class="col-lg-7" style=" height: 100%;">
-                <div class="column mid-col">
-                    <header>
-                        <div class="icon" style="float: left;">
-                            {% include 'icons/repertory_entry.html' %}
-                        </div>
-                        Wpisy
-                        <div style="clear: both;"></div>
-                    </header>
-                    <div class="col-content" id="" style="width: auto;">
-                        <div class="table-container">
-                            {% include 'repertory/entries_table.twig' %}
-                        </div>
+        </div>
+        <div class="col-lg-7" style=" height: 100%;">
+            <div class="column mid-col js-mid-col">
+                <header>
+                    <div class="icon" style="float: left;">
+                        {% include 'icons/repertory_entry.html' %}
                     </div>
-                </div>
-            </div>
-            <div class="col-lg-3" style=" height: 100%;">
-                <div class="column right-col">
-                    <header>
-                        Szczegóły wpisu
-                        <i id="details-header-id">
-                            {% if details['entry'] %}
-                                {{ details['entry'].id }}
-                            {% endif %}
-                        </i>
-                    </header>
-                    <div class="col-content" id="details-content" style="">
-                        {% if details['entry'] %}
-                            {% include 'repertory/details.html.twig' with {'entry': details['entry']} %}
-                        {% else %}
-                            <div class="alert alert-primary">Wybierz wpis, aby wyświetlić jego szczegóły</div>
-                        {% endif %}
+                    Wpisy
+                    <div style="clear: both;"></div>
+                </header>
+                <div class="col-content" id="" style="width: auto;">
+                    <div class="table-container js-table-container">
+                        {% include 'repertory/entries_table.twig' %}
                     </div>
                 </div>
             </div>
         </div>
-        <div id="center-popup">
-            <div id="center-popup-content">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                     fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                </svg>
+        <div class="col-lg-3" style=" height: 100%;">
+            <div class="column right-col js-right-col">
+                <header>
+                    Szczegóły wpisu
+                    <span class="js-subject-id">
+                            {% if details['entry'] %}
+                                {{ details['entry'].id }}
+                            {% endif %}
+                        </span>
+                    <div class="js-burger">
+                        {% include 'burger.html.twig' %}
+                    </div>
+                </header>
+                <div class="col-content" id="details-content" style="">
+                    {% if details['entry'] %}
+                        {% include 'repertory/details.html.twig' with {'entry': details['entry']} %}
+                    {% else %}
+                        <div class="alert alert-primary">{{ "Select entry to display details." | trans }}</div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

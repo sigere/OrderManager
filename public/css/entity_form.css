@@ -34,12 +34,17 @@
     width: 100px;
 }
 
-.entity-form-widget input[type="text"], input[type="number"], input[type="email"],
-select, textarea {
+.entity-form-widget input[type="text"],
+.entity-form-widget input[type="number"],
+.entity-form-widget input[type="email"],
+.entity-form-widget select,
+.entity-form-widget textarea {
     width: 220px;
 }
 
-.entity-form-container input, select, textarea {
+.entity-form-container input,
+.entity-form-container select,
+.entity-form-container textarea {
     background-color: rgb(80, 80, 80);
     color: white;
     border: none;

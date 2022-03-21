@@ -19,6 +19,7 @@ class OptionsProviderFactory extends ServiceLocator
 
             return $service->getOptions($object);
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            dump($e->getMessage());
             return [];
         }
     }

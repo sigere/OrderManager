@@ -4,6 +4,7 @@
     window.FiltersController = function ($wrapper, controller) {
         this.$wrapper = $wrapper;
         this.controller = controller;
+        console.log($wrapper);
 
         this.$wrapper.on(
             'submit',
@@ -23,8 +24,6 @@
                 data.append("_method", method);
             }
 
-            let popupManager = this.controller.popupManager;
-            popupManager.default();
             $.ajax({
                 url: url,
                 method: "POST",

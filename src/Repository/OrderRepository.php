@@ -3,10 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Order;
-use App\Service\UserPreferences\AbstractOrderPreferences;
 use App\Service\UserPreferences\IndexPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -30,65 +28,64 @@ class OrderRepository extends ServiceEntityRepository
      */
     public function getByIndexPreferences(IndexPreferences $preferences): array
     {
-        $states = $preferences->getStates();
+        $orders = $this->createQueryBuilder('o');
 
-        if (empty($states)) {
+        $states = $preferences->getStates();
+        if(empty($states) && !$preferences->getSettled() && !$preferences->getDeleted()){
             return [];
         }
 
-        $orders = $this->getQueryBuilderForAbstractOrderPreferences($preferences);
+        $states = empty($states) ? ["invalid-state"] : $states;
+        $statement = "o.state in (:states)";
+        $orders->setParameter("states", $states);
 
-        if (!$preferences->getDeleted()) {
-            $orders
-                ->andWhere('o.deletedAt is null');
+        if ($preferences->getSettled()) {
+            $statement .= " or o.settledAt is not null";
+        } else {
+            $orders = $orders
+                ->andWhere("o.settledAt is null");
         }
 
-        if (!$preferences->getSettled()) {
-            $orders
-                ->andWhere('o.settledAt is null');
+        if ($preferences->getDeleted()) {
+            $statement .= " or o.deletedAt is not null";
+        } else {
+            $orders = $orders
+                ->andWhere("o.deletedAt is null");
         }
 
         $orders = $orders
-            ->andWhere('o.state in (:states)')
-            ->setParameter('states', $states);
-
-        return $orders
-            ->getQuery()
-            ->getResult();
-    }
-
-    private function getQueryBuilderForAbstractOrderPreferences(AbstractOrderPreferences $preferences): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('o');
+            ->andWhere($statement);
 
         if ($staff = $preferences->getStaff()) {
-            $queryBuilder = $queryBuilder
+            $orders = $orders
                 ->andWhere('o.staff = :staff')
                 ->setParameter('staff', $staff);
         }
 
         if ($client = $preferences->getClient()) {
-            $queryBuilder = $queryBuilder
+            $orders = $orders
                 ->andWhere('o.client = :client')
                 ->setParameter('client', $client);
         }
 
         $dateType = $preferences->getDateType();
         if ($dateFrom = $preferences->getDateFrom()) {
-            $queryBuilder
+            $orders
                 ->andWhere('o.' . $dateType . ' >= :dateFrom')
                 ->setParameter('dateFrom', $dateFrom);
         }
 
         if ($dateTo = $preferences->getDateTo()) {
             $dateTo->setTime(23, 59);
-            $queryBuilder
+            $orders
                 ->andWhere('o.' . $dateType . ' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);
         }
 
-        return $queryBuilder
+        return $orders
             ->setMaxResults(self::LIMIT)
-            ->orderBy('o.deadline', 'ASC');
+            ->orderBy('o.deadline', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -8,7 +8,7 @@
             {% endfor %}
         </ul>
     </div>
-{% elseif order.state == "rozliczone" %}
+{% elseif order.settledAt is not null %}
     <div class="alert alert-success">Zlecenie zostało rozliczone.</div>
 {% endif %}
 
@@ -90,7 +90,7 @@
 {% if order.repertoryEntry is not null %}
     <div class="expandable">
         <div class="trigger">
-            <div class="property">
+            <div class="property js-repertory-entry-number" data-entry="{{ order.repertoryEntry.id }}">
                 <div class="name">Numer wpisu</div>
                 <div class="value">
                     {{ order.repertoryEntry.formattedNumber }}

@@ -25,35 +25,8 @@
             $("body")
         );
 
-        this.$wrapper.on(
-            "click",
-            "header .js-add-order-link",
-            this.addOrder.bind(this)
-        );
-
-        this.$wrapper.on(
-            "click",
-            ".js-burger .js-edit-link",
-            this.edit.bind(this)
-        );
-
-        this.$wrapper.on(
-            "click",
-            ".js-burger .js-repertory-entry-link",
-            this.addRepertoryEntry.bind(this)
-        );
-
-        this.$wrapper.on(
-            "click",
-            ".js-burger .js-delete-link",
-            this.delete.bind(this)
-        );
-
-        this.$wrapper.on(
-            "click",
-            ".js-burger .js-restore-link",
-            this.restore.bind(this)
-        );
+        this._initListeners.bind(this)();
+        window.onpopstate = _onPopState.bind(this);
     };
 
     $.extend(window.Controller.prototype, {
@@ -74,7 +47,7 @@
                             "submit",
                             self.formSubmit.bind(self)
                         );
-                    }, Date.now() + 400);
+                    });
                 },
                 error: function (jqXHR) {
                     self.popupManager.display(jqXHR.responseText);
@@ -82,30 +55,13 @@
             });
         },
 
-        edit: function () {
-            this.popupManager.open();
-            let currentSubject = this.currentSubject;
+        editEntry: function () {
+            let subject = {
+                id: this.$wrapper.find('.js-repertory-entry-number').data('entry'),
+                type: "entry"
+            }
 
-            let self = this;
-            $.ajax({
-                url: "/" + currentSubject.type + "/" + currentSubject.id,
-                method: "PUT",
-                success: function (data) {
-                    executeAfter( function () {
-                        let $handle = self.popupManager.display(data);
-                        if (!$handle) {
-                            return;
-                        }
-                        $handle.find("form").on(
-                            "submit",
-                            self.formSubmit.bind(self)
-                        );
-                    }, Date.now() + 400);
-                },
-                error: function (jqXHR) {
-                    self.popupManager.display(jqXHR.responseText);
-                }
-            });
+            this.detailsController.edit(subject);
         },
 
         addRepertoryEntry: function () {
@@ -131,7 +87,7 @@
                             "submit",
                             self.formSubmit.bind(self)
                         );
-                    }, Date.now() + 400);
+                    });
                 },
                 error: function (jqXHR) {
                     self.popupManager.display(jqXHR.responseText);
@@ -157,7 +113,7 @@
                             "submit",
                             self.formSubmit.bind(self)
                         );
-                    }, Date.now() + 400);
+                    });
                 },
                 error: function (jqXHR) {
                     console.log(jqXHR);
@@ -184,7 +140,7 @@
                             "submit",
                             self.formSubmit.bind(self)
                         );
-                    }, Date.now() + 400);
+                    });
                 },
                 error: function (jqXHR) {
                     console.log(jqXHR);
@@ -221,7 +177,7 @@
                             "submit",
                             self.formSubmit.bind(self)
                         );
-                    }, Date.now() + 400);
+                    });
                 },
                 error: function (jqXHR) {
                     console.log(jqXHR);
@@ -236,6 +192,48 @@
 
         reloadTable: function () {
             this.contentTableController.reload();
+        },
+
+        _initListeners: function () {
+            this.$wrapper.on(
+                "click",
+                ".js-burger .js-edit-link",
+                function () {
+                    this.detailsController.edit(this.currentSubject);
+                }.bind(this)
+            );
+
+            this.$wrapper.on(
+                "click",
+                ".js-burger .js-edit-entry-link",
+                this.editEntry.bind(this)
+            );
+
+            this.$wrapper.on(
+                "click",
+                ".js-burger .js-repertory-entry-link",
+                this.addRepertoryEntry.bind(this)
+            );
+
+            this.$wrapper.on(
+                "click",
+                ".js-burger .js-delete-link",
+                this.delete.bind(this)
+            );
+
+            this.$wrapper.on(
+                "click",
+                ".js-burger .js-restore-link",
+                this.restore.bind(this)
+            );
+
+            this.$wrapper.on(
+                "click",
+                ".js-burger .js-share-link",
+                function (e) {
+                    this.detailsController.share(e);
+                }.bind(this)
+            );
         }
     });
 })(window, jQuery);

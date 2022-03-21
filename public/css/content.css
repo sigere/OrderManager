@@ -1,0 +1,205 @@
+.column {
+    min-width: min-content;
+    width: 100%;
+    height: calc(100% - 40px);
+    margin: 25px 5px 5px;
+    border-radius: 10px;
+    background: linear-gradient(
+            180deg,
+            rgb(57, 64, 70) 0%,
+            rgb(57, 64, 70) 40px,
+            rgb(33, 37, 41) 40px,
+            rgb(33, 37, 41) 100%
+    );
+}
+
+.col-content {
+    padding: 15px 20px 0;
+    font-size: 12px;
+    width: min-content;
+    margin: auto;
+    height: calc(100% - 75px);
+    /* border: 1px red solid; */
+}
+
+.col-content h6 {
+    margin-left: 12px;
+}
+
+/* --------left-column-------------- */
+
+.left-col .col-content {
+    overflow-y: scroll;
+    padding-top: 5px;
+}
+
+.left-col .col-content::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.left-col .col-content {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.mid-col table {
+    font-size: 13px;
+}
+
+.mid-col table thead th {
+    position: sticky;
+    top: 0;
+}
+
+.mid-col .table-container {
+    height: 100%;
+    overflow-y: scroll;
+    opacity: 1;
+    transition: all 0.3s;
+    /* border: 1px solid red; */
+}
+
+.mid-col .table-container.hidden {
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.mid-col .table-container::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.mid-col .table-container {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.mid-col .clickable-row {
+    cursor: pointer;
+}
+
+.mid-col table select {
+    font-size: 12px;
+    padding: 0 20px 2px 11px;
+    border-radius: 15px;
+    color: white;
+    border: none;
+    width: 110px;
+}
+
+.mid-col table select:disabled {
+    background-color: rgb(58, 58, 58);
+}
+
+.active-row {
+    background: rgb(255, 255, 255);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.20211834733893552) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%);
+}
+
+.active-row td {
+    background: none;
+}
+
+.right-col .warning {
+    /* display: none; */
+    padding: 15px 15px 15px 20px;
+    text-align: justify;
+    background-color: rgba(191, 170, 36);
+    color: black;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.right-col .warning li {
+    font-size: 14px;
+    margin: 2px;
+}
+
+.right-col .col-content {
+    overflow-y: scroll;
+    width: 100%;
+    opacity: 1;
+    transition: all 0.3s;
+    /* height: 100%; */
+}
+
+.right-col .col-content.hidden {
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.right-col .col-content::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.right-col .col-content {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.right-col .property {
+    position: relative;
+    font-size: 14px;
+    color: rgb(136, 137, 139);
+    width: 330px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    margin: 5px auto 10px;
+    /* height: auto; */
+    /* border: solid 1px yellow; */
+    display: block;
+    overflow: auto;
+}
+
+.right-col .property .name {
+    position: absolute;
+    top: 12px;
+    left: 0;
+}
+
+.right-col .property .value {
+    color: white;
+    background-color: rgb(45, 50, 55);
+    font-size: 15px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); */
+    float: right;
+    margin-left: 20px;
+    white-space: normal;
+    overflow-wrap: break-word;
+    width: 200px;
+    text-align: left;
+    /* border: solid 1px red; */
+}
+
+
+.right-col .logs thead {
+    font-size: 12px;
+    color: rgb(185, 185, 185);
+}
+
+.right-col .logs tbody {
+    font-size: 12px;
+}
+
+.right-col .expandable .body {
+    display: none;
+}
+
+.right-col .expandable .body .value {
+    background-color: rgb(40, 45, 50);
+    color: rgb(200,200,200);
+}
+.right-col .expandable .body.active {
+    display: block;
+}
+
+.right-col .expandable .trigger .value{
+    cursor: pointer;
+}
+
+.right-col .expandable svg {
+    position: absolute;
+    right: 18px;
+    top: 13px;
+}

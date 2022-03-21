@@ -8,10 +8,13 @@ use App\Entity\RepertoryEntry;
 use App\Form\RepertoryEntryForm;
 use App\Form\RepertoryFiltersForm;
 use App\Repository\RepertoryEntryRepository;
+use App\Service\OptionsProviderFactory;
 use App\Service\ResponseFormatter;
+use App\Service\UserPreferences\RepertoryPreferences;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +24,9 @@ class RepertoryController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private RepertoryEntryRepository $entryRepository,
-        private ResponseFormatter $formatter
+        private RepertoryPreferences $preferences,
+        private ResponseFormatter $formatter,
+        private OptionsProviderFactory $optionsProviderFactory,
     ) {
     }
 
@@ -31,16 +36,42 @@ class RepertoryController extends AbstractController
     public function index(Request $request): Response
     {
         $filtersForm = $this->createForm(RepertoryFiltersForm::class);
-        $entries = $this->entityManager
-            ->getRepository(RepertoryEntry::class)
-            ->findAll();
+        $entries = $this->entryRepository->getByRepertoryPreferences($this->preferences);
         $entry = $this->entryRepository->findOneBy(['id' => $request->get('entry')]);
-        
+        $options = $entry ? $this->optionsProviderFactory->getOptions($entry) : [];
+
         return $this->render('repertory/index.html.twig', [
             'filtersForm' => $filtersForm->createView(),
             'entries' => $entries,
-            'details' => ['entry' => $entry]
+            'details' => [
+                'entry' => $entry
+            ],
+            'options' => $options,
+            'dataSourceUrl' => '/repertory/entry'
         ]);
+    }
+
+    /**
+     * @Route("/repertory/filters", methods={"POST"}, name="repertory_filters")
+     */
+    public function filters(Request $request): Response
+    {
+        $form = $this->createForm(RepertoryFiltersForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->preferences->applyForm($form->getData());
+
+            return new Response(
+                $this->formatter->success('Zastosowano filtry.'),
+                200
+            );
+        }
+
+        return new Response(
+            $this->formatter->error('Błędne dane.'),
+            400
+        );
     }
 
     /**
@@ -48,14 +79,12 @@ class RepertoryController extends AbstractController
      */
     public function getEntries(): Response
     {
-        $entries = $this->entityManager
-            ->getRepository(RepertoryEntry::class)
-            ->findAll();
+        $entries = $this->entryRepository->getByRepertoryPreferences($this->preferences);
 
-        return $this->render(
-            'repertory/entries_table.twig',
-            ['entries' => $entries]
-        );
+        return $this->render('repertory/entries_table.twig', [
+            'entries' => $entries,
+            'dataSourceUrl' => '/repertory/entry'
+        ]);
     }
 
     /**
@@ -63,10 +92,19 @@ class RepertoryController extends AbstractController
      */
     public function getEntry(RepertoryEntry $entry): Response
     {
-        return $this->render(
-            'repertory/details.html.twig',
-            ['entry' => $entry]
-        );
+        $result = [];
+        $result['details'] = $this->renderView('repertory/details.html.twig', [
+            'entry' => $entry
+        ]);
+
+        $options = $this->optionsProviderFactory->getOptions($entry);
+        dump($options);
+
+        $result['burger'] = $this->renderView('burger.html.twig', [
+            'options' => $options
+        ]);
+
+        return new JsonResponse(json_encode($result));
     }
 
     /**
@@ -129,11 +167,19 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory/entry1/{id}", methods={"PUT"}, name="repertory_entry_put")
+     * @Route("/repertory/entry/{id}", methods={"PUT"}, name="repertory_entry_put")
      */
     public function update(RepertoryEntry $entry, Request $request): Response
     {
-        $form = $this->createForm(RepertoryEntryForm::class, $entry, ['method' => "PUT"]);
+        $attr = array_merge(RepertoryEntryForm::DEFAULT_OPTIONS['attr'] ?? [], [
+            'data-url' => '/repertory/entry/' . $entry->getId(),
+            'data-method' => 'PUT'
+        ]);
+        $options = array_merge(RepertoryEntryForm::DEFAULT_OPTIONS, [
+            'attr' => $attr,
+            'method' => 'PUT'
+        ]);
+        $form = $this->createForm(RepertoryEntryForm::class, $entry, $options);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -144,14 +190,14 @@ class RepertoryController extends AbstractController
             $this->entityManager->flush();
 
             return new Response(
-                "Zaktualizowano wpis",
+                $this->formatter->success("Zaktualizowano wpis"),
                 201,
             );
         }
 
-        return $this->render(
-            'repertory/entry_form.html.twig',
-            ['entryForm' => $form->createView()]
-        );
+        return $this->render('repertory/entry_form.html.twig', [
+            'entryForm' => $form->createView(),
+            'update' => true
+        ]);
     }
 }

@@ -75,9 +75,8 @@
                 $row,
                 null
             );
-
-            this._setCurrentSubject(subject);
             this.controller.reloadDetails(subject);
+            this._setCurrentSubject(subject);
         },
 
         updateState: function (e) {
@@ -108,8 +107,9 @@
 
         reload: function () {
             let self = this;
+            let url = this.$table.data('source-url');
             $.ajax({
-                url: "/order",
+                url: url,
                 method: "GET",
                 success: function (data) {
                     self.$tableContainer.addClass("hidden");
@@ -119,7 +119,7 @@
                         self.setAndHighlightCurrent();
                         self.$tableContainer.removeClass("hidden");
                         self.applyTableSorter();
-                    }, Date.now() + 400);
+                    });
                 },
                 error: function (jqXHR) {
                     self.controller.popupManager.display(jqXHR.responseText);
@@ -138,7 +138,7 @@
                 subject = this.controller.currentSubject;
             }
 
-            if (subject === undefined) {
+            if (subject === undefined || subject === null) {
                 this.$table.find(".active-row").removeClass("active-row");
                 return;
             }

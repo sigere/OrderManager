@@ -39,6 +39,20 @@
   padding: 20px;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=time] {
+  margin-left: 10px;
+}
+
 .popup-settings input[type="checkbox"] {
   display: none;
 }

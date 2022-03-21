@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\Client;
 use App\Entity\Order;
 use App\Entity\Staff;
-use App\Service\UserPreferences\AbstractOrderPreferences;
 use App\Service\UserPreferences\IndexPreferences;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -20,6 +19,7 @@ class IndexFiltersForm extends AbstractType
 {
     public const DEFAULT_OPTIONS = [
         'attr' => [
+            'class' => "filters-form",
             'name' => 'index_filters_form',
             'data-url' => '/index/filters',
             'data-method' => 'POST'
@@ -46,14 +46,12 @@ class IndexFiltersForm extends AbstractType
         }
 
         $builder->add('deleted', CheckboxType::class, [
-            'label' => 'Deleted',
             'attr' => $this->preferences->getDeleted() ? ['checked' => 'checked'] : [],
             'label_attr' => ['class' => 'filter-state-label', 'state' => 'deleted'],
             'required' => false,
         ]);
 
         $builder->add('settled', CheckboxType::class, [
-            'label' => 'Settled',
             'attr' => $this->preferences->getSettled() ? ['checked' => 'checked'] : [],
             'label_attr' => ['class' => 'filter-state-label', 'state' => 'settled'],
             'required' => false,
@@ -61,8 +59,8 @@ class IndexFiltersForm extends AbstractType
 
         $columns = $this->preferences->getColumns();
         $class = 'filter-columns-label';
-        foreach (AbstractOrderPreferences::COLUMNS as $key => $COLUMN) {
-            $first = array_key_first(AbstractOrderPreferences::COLUMNS) == $key;
+        foreach (IndexPreferences::COLUMNS as $key => $COLUMN) {
+            $first = array_key_first(IndexPreferences::COLUMNS) == $key;
             $builder
                 ->add($COLUMN, CheckboxType::class, [
                     'label' => ucfirst($COLUMN),
@@ -80,7 +78,7 @@ class IndexFiltersForm extends AbstractType
                     ->andWhere('c.deletedAt is null')
                     ->orderBy('c.alias', 'ASC'),
                 'label' => 'Client',
-                'attr' => ['class' => 'form-select filter-client first'],
+                'attr' => ['class' => 'form-select'],
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
                 'placeholder' => 'All clients',
@@ -89,7 +87,7 @@ class IndexFiltersForm extends AbstractType
             ->add('select-staff', EntityType::class, [
                 'class' => Staff::class,
                 'label' => 'Staff',
-                'attr' => ['class' => 'form-select filter-client'],
+                'attr' => ['class' => 'form-select'],
                 'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
                 'placeholder' => 'All staff',
@@ -102,22 +100,19 @@ class IndexFiltersForm extends AbstractType
             ])
             ->add('date-type', ChoiceType::class, [
                 'choices' => [
-                    'Adoption' => AbstractOrderPreferences::DATE_TYPE_ADOPTION,
-                    'Deadline' => AbstractOrderPreferences::DATE_TYPE_DEADLINE,
+                    'Adoption' => IndexPreferences::DATE_TYPE_ADOPTION,
+                    'Deadline' => IndexPreferences::DATE_TYPE_DEADLINE,
                 ],
-                'label_attr' => ['class' => 'filter-date-type-label'],
                 'attr' => ['class' => 'filter-date-type'],
                 'expanded' => true,
                 'multiple' => false,
                 'label' => false,
                 'data' => $this->preferences->getDateType(),
-//                'choice_attr' => ['Deadline' => ['style' => 'margin-left: 10px;']],
             ])
             ->add('date-from', DateType::class, [
                 'label' => 'Date from',
                 'widget' => 'single_text',
                 'required' => false,
-                'attr' => ['class' => 'filter-date-from'],
                 'data' => $this->preferences->getDateFrom(),
                 'label_attr' => ['style' => 'display: block;'],
             ])
@@ -125,7 +120,6 @@ class IndexFiltersForm extends AbstractType
                 'label' => 'Date to',
                 'widget' => 'single_text',
                 'required' => false,
-                'attr' => ['class' => 'filter-date-to'],
                 'data' => $this->preferences->getDateTo(),
                 'label_attr' => ['style' => 'display: block;'],
             ]);

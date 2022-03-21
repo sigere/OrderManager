@@ -1,0 +1,89 @@
+.filters-form {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.filters-form input {
+    cursor: pointer;
+}
+
+.filters-form input[type="checkbox"] {
+    display: none;
+}
+
+.filters-form select {
+    width: 150px;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 15px;
+    background-color: rgb(39, 39, 39);
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.filters-form input[type="date"] {
+    width: 150px;
+    color: white;
+    background-color: rgb(39, 39, 39);
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
+.filters-form label[state="accepted"] {
+    background-color: rgba(254, 161, 57, 0.3);
+}
+
+.filters-form input[type="checkbox"]:checked + label[state="accepted"] {
+    background-color: rgba(254, 161, 57, 1);
+}
+
+.filters-form label[state="done"] {
+    background-color: rgba(35, 105, 252, 0.3);
+}
+
+.filters-form input[type="checkbox"]:checked + label[state="done"] {
+    background-color: rgba(35, 105, 252, 1);
+}
+
+.filters-form label[state="sent"] {
+    background-color: rgba(7, 192, 107, 0.3);
+}
+
+.filters-form input[type="checkbox"]:checked + label[state="sent"] {
+    background-color: rgba(7, 192, 107, 1);
+}
+
+.filters-form label[state="settled"] {
+    background-color: rgba(58, 58, 58, 0.3);
+}
+
+.filters-form input[type="checkbox"]:checked + label[state="settled"] {
+    background-color: rgba(58, 58, 58, 1);
+}
+
+.filters-form label[state="deleted"] {
+    background-color: rgba(251, 36, 80, 0.3);
+}
+
+.filters-form input[type="checkbox"]:checked + label[state="deleted"] {
+    background-color: rgba(251, 36, 80, 1);
+}
+
+.filters-form input[type="checkbox"]:checked + label {
+    background-color: rgb(35, 105, 252);
+}
+
+.filters-form button {
+    margin-top: 20px;
+    margin-left: 30px;
+    width: 90px;
+}

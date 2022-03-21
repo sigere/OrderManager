@@ -63,7 +63,8 @@ class IndexController extends AbstractController
             ],
             'filtersForm' => $form->createView(),
             'preferences' => $this->preferences,
-            'options' => $options
+            'options' => $options,
+            'dataSourceUrl' => '/order'
         ]);
     }
 
@@ -99,7 +100,8 @@ class IndexController extends AbstractController
 
         return $this->render('index/orders_table.twig', [
             'orders' => $orders,
-            'preferences' => $this->preferences
+            'preferences' => $this->preferences,
+            'dataSourceUrl' => '/order'
         ]);
     }
 

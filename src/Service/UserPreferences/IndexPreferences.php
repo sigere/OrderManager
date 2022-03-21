@@ -2,18 +2,33 @@
 
 namespace App\Service\UserPreferences;
 
+use App\Entity\Client;
 use App\Entity\Order;
+use App\Entity\Staff;
 
-class IndexPreferences extends AbstractOrderPreferences
+class IndexPreferences extends AbstractPreferences
 {
+    public const COLUMNS = [
+        'adoption',
+        'client',
+        'topic',
+        'lang',
+        'deadline',
+        'staff'
+    ];
+
+    public const DATE_TYPE_DEADLINE = "deadline";
+    public const DATE_TYPE_ADOPTION = "adoption";
+
     private array $states;
     private bool $deleted;
     private bool $settled;
-
-    protected function getArrayKey(): string
-    {
-        return "index";
-    }
+    protected array $columns;
+    protected ?Client $client;
+    protected ?Staff $staff;
+    protected string $dateType;
+    protected ?\DateTime $dateFrom;
+    protected ?\DateTime $dateTo;
 
     /**
      * @param mixed $data
@@ -21,7 +36,19 @@ class IndexPreferences extends AbstractOrderPreferences
      */
     public function applyForm(mixed $data): void
     {
-        parent::applyForm($data);
+        $this->setDateFrom($data['date-from'] ?? null);
+        $this->setDateTo($data['date-to'] ?? null);
+        $this->setStaff($data['select-staff'] ?? null);
+        $this->setClient($data['select-client'] ?? null);
+
+        if (isset($data['date-type']) &&
+            in_array(
+                $data['date-type'],
+                [self::DATE_TYPE_DEADLINE, self::DATE_TYPE_ADOPTION]
+            )
+        ) {
+            $this->setDateType($data['date-type']);
+        }
 
         $states = [];
         foreach (Order::STATES as $STATE) {
@@ -45,9 +72,28 @@ class IndexPreferences extends AbstractOrderPreferences
         $this->save();
     }
 
-    protected function load(array $config): void
+    protected function decode(array $config): void
     {
-        parent::load($config);
+        $this->columns = $config['columns'] ?? [];
+
+        $this->dateFrom = isset($config['date_from']) ? new \DateTime($config['date_from']['date']) : null;
+        $this->dateTo= isset($config['date_to']) ? new \DateTime($config['date_to']['date']) : null;
+
+        $this->dateType = ($config['date_type'] ?? "") == self::DATE_TYPE_ADOPTION
+            ? self::DATE_TYPE_ADOPTION : self::DATE_TYPE_DEADLINE;
+
+        $this->client = $this->entityManager
+            ->getRepository(Client::class)
+            ->findOneBy([
+                'id' => ($config['client'] ?? 0)
+            ]);
+
+        $this->staff = $this->entityManager
+            ->getRepository(Staff::class)
+            ->findOneBy([
+                'id' => ($config['staff'] ?? 0)
+            ]);
+
         $this->states = $config['states'] ?? [];
         $this->deleted = $config['deleted'];
         $this->settled = $config['settled'];
@@ -66,6 +112,42 @@ class IndexPreferences extends AbstractOrderPreferences
              'client' => $this->client?->getId(),
              'staff' => $this->staff?->getId(),
          ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumns(): array
+    {
+        return $this->columns;
+    }
+
+    /**
+     * @param array $columns
+     * @return IndexPreferences
+     */
+    public function setColumns(array $columns): IndexPreferences
+    {
+        $this->columns = $columns;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateType(): string
+    {
+        return $this->dateType;
+    }
+
+    /**
+     * @param string $dateType
+     * @return IndexPreferences
+     */
+    public function setDateType(string $dateType): IndexPreferences
+    {
+        $this->dateType = $dateType;
+        return $this;
     }
 
     /**
@@ -120,5 +202,82 @@ class IndexPreferences extends AbstractOrderPreferences
     {
         $this->settled = $settled;
         return $this;
+    }
+
+    /**
+     * @return Client|null
+     */
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param Client|null $client
+     * @return IndexPreferences
+     */
+    public function setClient(?Client $client): IndexPreferences
+    {
+        $this->client = $client;
+        return $this;
+    }
+
+    /**
+     * @return Staff|null
+     */
+    public function getStaff(): ?Staff
+    {
+        return $this->staff;
+    }
+
+    /**
+     * @param Staff|null $staff
+     * @return IndexPreferences
+     */
+    public function setStaff(?Staff $staff): IndexPreferences
+    {
+        $this->staff = $staff;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateFrom(): ?\DateTime
+    {
+        return $this->dateFrom;
+    }
+
+    /**
+     * @param \DateTime|null $dateFrom
+     * @return IndexPreferences
+     */
+    public function setDateFrom(?\DateTime $dateFrom): IndexPreferences
+    {
+        $this->dateFrom = $dateFrom;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateTo(): ?\DateTime
+    {
+        return $this->dateTo;
+    }
+
+    /**
+     * @param \DateTime|null $dateTo
+     * @return IndexPreferences
+     */
+    public function setDateTo(?\DateTime $dateTo): IndexPreferences
+    {
+        $this->dateTo = $dateTo;
+        return $this;
+    }
+
+    protected function getArrayKey(): string
+    {
+        return "index";
     }
 }

@@ -1,4 +1,4 @@
-<table class="table table-dark table-hover js-main-table">
+<table class="table table-dark table-hover js-main-table" data-source-url="{{ dataSourceUrl }}">
     <thead>
     <tr>
         <th class="entity-table icon-col"></th>
@@ -66,7 +66,7 @@
                     <select class="form-select" data-deleted="true" disabled style="background-color: #632435;">
                         <option>Usuniete</option>
                     </select>
-                {% elseif order.state == "rozliczone" %}
+                {% elseif order.settledAt is not null %}
                     <select class="form-select" data-state="{{ order.state }}" disabled>
                         <option>Rozliczone</option>
                     </select>
@@ -84,3 +84,6 @@
     {% endfor %}
     </tbody>
 </table>
+{% if orders is empty %}
+    <div class="alert alert-primary">{{ "No results - check filters." | trans }}</div>
+{% endif %}

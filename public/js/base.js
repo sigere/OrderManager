@@ -5,11 +5,6 @@ $(document).ready(function () {
     $("#sidebar").mouseout(function () {
         $("#sidebar").toggleClass("active", true);
     });
-    window.subjectTypes = [
-        "order",
-        "log",
-        "entry" //todo
-    ];
 });
 
 window.reloadIcon =
@@ -17,6 +12,8 @@ window.reloadIcon =
     "<path fill-rule=\"evenodd\" d=\"M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z\"/>" +
     "<path d=\"M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z\"/>" +
     "</svg>";
+
+window.ajaxDelay = 300;
 
 class Subject {
     constructor(id, type, row, content) {
@@ -27,9 +24,55 @@ class Subject {
     }
 }
 
+window.subjectTypes = [
+    "order",
+    "log",
+    "entry" //todo
+];
+
+function getUrlForSubject(subject) {
+    let result;
+    switch (subject.type) {
+        case "order":
+            result = "/order/";
+            break;
+        case "entry":
+            result = "/repertory/entry/";
+            break;
+        default:
+            return undefined;
+    }
+    return result + subject.id;
+}
+
 function executeAfter(executable, stamp) {
+    if (stamp === undefined) {
+        stamp = Date.now() + window.ajaxDelay;
+    }
     setTimeout(
         executable,
         (stamp - Date.now()) > 0 ? (stamp - Date.now()) : 0
     );
+}
+
+function _onPopState(e) {
+    console.log(this, e);
+    let subject = e.state;
+    if (subject === null) {
+        this.detailsController.loadDefaultContent();
+        return;
+    }
+    if (
+        subject &&
+        window.subjectTypes.indexOf(subject.type) > -1 &&
+        subject.content &&
+        subject.id &&
+        subject.type &&
+        subject.content.burger &&
+        subject.content.details
+    ) {
+        this.detailsController.insertHTML(subject);
+    } else {
+        console.log("Error onpopstate. Subject:", subject);
+    }
 }

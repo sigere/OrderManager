@@ -26,7 +26,7 @@
             this.$popup.removeClass("active");
             executeAfter(function () {
                 this.$popup.html(this.defaultContent);
-            }.bind(this), Date.now() + 300);
+            }.bind(this), Date.now() + 250);
             this.active = false;
         },
 

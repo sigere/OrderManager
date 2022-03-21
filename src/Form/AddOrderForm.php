@@ -37,6 +37,7 @@ class AddOrderForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $entity = $builder->getData();
         $builder
             ->add('client', EntityType::class, [
                 'class' => Client::class,
@@ -45,8 +46,6 @@ class AddOrderForm extends AbstractType
                         ->andWhere('c.deletedAt is null')
                         ->orderBy('c.alias', 'ASC');
                 },
-                'help' => 'Zleceniodawca nowego zlecenia',
-                'label' => 'Klient',
                 'choice_label' => 'alias',
                 'required' => true
             ])
@@ -57,67 +56,49 @@ class AddOrderForm extends AbstractType
                         ->andWhere('s.deletedAt is null')
                         ->orderBy('s.id', 'ASC');
                 },
-                'help' => 'Osoba relizująca zlecenie',
-                'label' => 'Tłumacz',
                 'choice_label' => function ($staff) {
                     return $staff->getFirstName() . ' ' . $staff->getLastName();
                 },
             ])
             ->add('topic', TextType::class, [
-                'help' => 'Temat nowego zlecenia',
-                'label' => 'Temat',
                 'required' => true,
             ])
             ->add('pages', NumberType::class, [
-                'label' => 'Strony',
                 'required' => false,
-                'help' => 'Liczba stron zaokrąglona do dwóch miejsc po przecinku (0.01)',
                 'html5' => true,
                 'attr' => ['step' => '0.01'],
                 'empty_data' => '0',
             ])
             ->add('price', NumberType::class, [
-                'label' => 'Cena',
                 'required' => false,
-                'help' => 'Cena za stronę zaokrąglona do dwóch miejsc po przecinku (0.01)',
                 'html5' => true,
                 'attr' => ['step' => '0.01'],
                 'empty_data' => '0',
             ])
             ->add('baseLang', EntityType::class, [
                 'class' => Lang::class,
-                'label' => 'Język z',
-                'help' => 'Oryginalny język dokumentu zlecenia',
-            ])
+                ])
             ->add('targetLang', EntityType::class, [
                 'class' => Lang::class,
-                'label' => 'Język na',
-                'help' => 'Docelowy język dokumentu zlecenia',
-            ])
+                ])
             ->add('certified', ChoiceType::class, [
-                'label' => 'Uwierzytelniane',
-                'help' => 'Czy zlecenie będzie uwierzytelniane/przysięgłe?',
                 'choices' => [
-                    'Nie' => false,
-                    'Tak' => true,
+                    'No' => false,
+                    'Yes' => true,
                 ],
             ])
             ->add('adoption', DateType::class, [
-                'label' => 'Przyjęte',
-                'help' => 'Data przyjęcia zlecenia',
                 'widget' => 'single_text',
-//                'empty_data' => "2021-01-01",  TODO
+                'data' => $entity?->getAdoption() ?? new \DateTime()
             ])
             ->add('deadline', DateTimeType::class, [
-                'label' => 'Termin',
-                'help' => 'Data i godzina ostatecznego terminu',
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
+                'data' => $entity?->getDeadline() ?? (new \DateTime())->setTime(23, 59),
             ])
             ->add('info', TextareaType::class, [
-                'label' => 'Notatki',
+                'label' => 'Notes',
                 'required' => false,
-                'help' => 'Dodatkowe informacje o zleceniu',
                 'empty_data' => '',
             ]);
     }
