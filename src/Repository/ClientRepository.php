@@ -19,6 +19,15 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
+    public function getForDefaultView(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.deletedAt is null')
+            ->orderBy('c.alias', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByAliasIgnoreCase($params): array
     {
         return $this->createQueryBuilder('c')

@@ -4,7 +4,7 @@
     {% else %}
         <h4>Dodaj nowy wpis</h4>
     {% endif %}
-    {{ form_start(entryForm, {'attr':{'id': '', 'class': ''}}) }}
+    {{ form_start(entryForm) }}
     {% for row in entryForm %}
         {% if 'hidden' not in row.vars['block_prefixes'] %}
             <div class="entity-form-row">

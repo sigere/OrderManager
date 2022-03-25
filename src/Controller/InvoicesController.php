@@ -9,6 +9,10 @@ use App\Entity\Log;
 use App\Entity\Order;
 use App\Form\InvoiceMonthFormType;
 use App\Form\InvoiceSummaryForm;
+use App\Repository\ClientRepository;
+use App\Repository\CompanyRepository;
+use App\Repository\OrderRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,11 +27,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class InvoicesController extends AbstractController
 {
     private ?Request $request;
+    private Company $company;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private OrderRepository $orderRepository,
+        private ClientRepository $clientRepository,
+        CompanyRepository $companyRepository,
         RequestStack $requestStack
     ) {
+        $this->company = $companyRepository->get();
         $this->request = $requestStack->getCurrentRequest();
     }
 
@@ -36,10 +45,9 @@ class InvoicesController extends AbstractController
      */
     public function index(): Response
     {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $clients = $this->loadClients($company->getInvoiceMonth());
-        $form = $this->createForm(InvoiceSummaryForm::class, $company);
-        $month = $company->getInvoiceMonth();
+        $clients = $this->loadClients($this->company->getInvoiceMonth());
+        $form = $this->createForm(InvoiceSummaryForm::class, $this->company);
+        $month = $this->company->getInvoiceMonth();
         $monthForm = $this->createForm(InvoiceMonthFormType::class, [
             'month' => $month ? intval($month->format('n')) : null,
             'year' => $month ? intval($month->format('Y')) : null,
@@ -47,7 +55,7 @@ class InvoicesController extends AbstractController
 
         return $this->render('invoices/index.html.twig', [
             'clients' => $clients,
-            'company' => $company,
+            'company' => $this->company,
             'summaryForm' => $form->createView(),
             'monthForm' => $monthForm->createView(),
         ]);
@@ -97,46 +105,35 @@ class InvoicesController extends AbstractController
     }
 
     /**
-     * @Route("/invoices/api/reloadOrders/{id}", name="invoices_api_reloadOrders")
+     * @Route("/invoices/client/{id}", methods={"GET"}, name="invoices_client_get")
      */
-    public function reloadOrders(Client $client): Response
+    public function getClient(Client $client): Response
     {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $date = $company->getInvoiceMonth();
-        $repo = $this->entityManager->getRepository(Order::class);
-        $orders = $repo->createQueryBuilder('o')
-            ->andWhere('o.deletedAt is null')
-            ->andWhere('o.settledAt is null')
-            ->andWhere('o.client = :client')
-            ->setParameter('client', $client);
-
-        if ($date) {
-            $orders = $orders
-            ->andWhere('month(o.deadline) = :month')
-            ->andWhere('year(o.deadline) = :year')
-            ->setParameter('month', $date->format('n'))
-            ->setParameter('year', $date->format('Y'));
-        }
-
-        $orders = $orders
-            ->orderBy('o.deadline', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $orders = $this->orderRepository->getForInvoicingByClient(
+            $client,
+            $this->company->getInvoiceMonth()
+        );
 
         $nettoSum = 0.0;
         $validCount = 0;
         foreach ($orders as $order) {
-            if (0 == count($order->getInvoiceWarnings())) {
+            if (count($order->getInvoiceWarnings()) == 0) {
                 $nettoSum += $order->getNetto();
                 ++$validCount;
             }
         }
 
-        return $this->render('invoices/orders_table.twig', [
+        $result['orders'] = $this->renderView('invoices/orders_table.html.twig', [
             'orders' => $orders,
             'nettoSum' => $nettoSum,
             'validCount' => $validCount,
         ]);
+
+        $result['client'] = $this->renderView('invoices/buyer_details.html.twig', [
+            'client' => $client
+        ]);
+
+        return new JsonResponse($result);
     }
 
     /**

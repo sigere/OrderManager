@@ -3,7 +3,6 @@
 (function (window, $) {
     window.Controller = function ($wrapper) {
         this.$wrapper = $wrapper;
-        this.$popup = $wrapper.find(".js-popup");
         this.currentSubject = null;
 
         this.filtersController = new FiltersController(
@@ -35,7 +34,7 @@
 
             let self = this;
             $.ajax({
-                url: "/order",
+                url: window.getUrlForSubject({type: "order"}),
                 method: "POST",
                 success: function (data) {
                     executeAfter( function () {
@@ -72,7 +71,7 @@
 
             let self = this;
             $.ajax({
-                url: "/repertory/entry",
+                url: window.getUrlForSubject({type: "entry"}),
                 method: "POST",
                 processData: false,
                 contentType: false,
@@ -195,6 +194,12 @@
         },
 
         _initListeners: function () {
+            this.$wrapper.on(
+                "click",
+                ".js-add-order-link",
+                this.addOrder.bind(this)
+            );
+
             this.$wrapper.on(
                 "click",
                 ".js-burger .js-edit-link",

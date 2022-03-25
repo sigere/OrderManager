@@ -5,11 +5,6 @@
         this.$wrapper = $wrapper;
         this.currentSubject = null;
 
-        this.filtersController = new FiltersController(
-            $(".js-left-col"),
-            this
-        );
-
         this.contentTableController = new ContentTableController(
             $(".js-mid-col"),
             this
@@ -27,23 +22,34 @@
         this._initListeners.bind(this)();
         window.onpopstate = window._onPopState.bind(this);
     };
-
     $.extend(window.Controller.prototype, {
         reloadDetails: function (subject) {
             this.detailsController.reload(subject);
         },
 
-        reloadTable: function () {
-            this.contentTableController.reload();
-        },
+        addClient: function () {
+            this.popupManager.open();
 
-        editOrder: function () {
-            let subject = {
-                id: this.$wrapper.find('.js-order-id').data('order'),
-                type: "order"
-            }
-
-            this.detailsController.edit(subject);
+            let self = this;
+            $.ajax({
+                url: window.getUrlForSubject({type: "client"}),
+                method: "POST",
+                success: function (data) {
+                    executeAfter( function () {
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(self)
+                        );
+                    });
+                },
+                error: function (jqXHR) {
+                    self.popupManager.display(jqXHR.responseText);
+                }
+            });
         },
 
         formSubmit: function (e) {
@@ -86,16 +92,16 @@
         _initListeners: function () {
             this.$wrapper.on(
                 "click",
-                ".js-burger .js-edit-link",
-                function () {
-                    this.detailsController.edit(this.currentSubject);
-                }.bind(this)
+                ".js-add-client-link",
+                this.addClient.bind(this)
             );
 
             this.$wrapper.on(
                 "click",
-                ".js-burger .js-edit-order-link",
-                this.editOrder.bind(this)
+                ".js-burger .js-edit-link",
+                function () {
+                    this.detailsController.edit(this.currentSubject);
+                }.bind(this)
             );
 
             this.$wrapper.on(

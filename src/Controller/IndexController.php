@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
 use App\Form\AddOrderForm;
@@ -25,7 +24,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     private ?Request $request;
-    private Company $company;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -37,7 +35,6 @@ class IndexController extends AbstractController
         RequestStack $request
     ) {
         $this->request = $request->getCurrentRequest();
-        $this->company = $entityManager->getRepository(Company::class)->findAll()[0];
     }
 
     /**
@@ -98,7 +95,7 @@ class IndexController extends AbstractController
     {
         $orders = $this->orderRepository->getByIndexPreferences($this->preferences);
 
-        return $this->render('index/orders_table.twig', [
+        return $this->render('index/orders_table.html.twig', [
             'orders' => $orders,
             'preferences' => $this->preferences,
             'dataSourceUrl' => '/order'
@@ -119,7 +116,7 @@ class IndexController extends AbstractController
         $options = $this->optionsProviderFactory->getOptions($order);
 
         $result = [];
-        $result['details'] = $this->renderView('index/details.twig', [
+        $result['details'] = $this->renderView('index/details.html.twig', [
             'order' => $order,
             'logs' => $logs,
         ]);
@@ -128,7 +125,7 @@ class IndexController extends AbstractController
             'options' => $options
         ]);
 
-        return new JsonResponse(json_encode($result));
+        return new JsonResponse($result);
     }
 
     /**
@@ -154,7 +151,7 @@ class IndexController extends AbstractController
             );
         }
 
-        return $this->render('index/addOrder.html.twig', [
+        return $this->render('index/order_form.html.twig', [
             'addOrderForm' => $form->createView(),
         ]);
     }
@@ -162,7 +159,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}", methods={"PUT"}, name="order_put")
      */
-    public function updateOrder(Order $order): Response
+    public function update(Order $order): Response
     {
         $attr = array_merge(AddOrderForm::DEFAULT_OPTIONS['attr'] ?? [], [
             'data-url' => '/order/' . $order->getId(),
@@ -185,12 +182,11 @@ class IndexController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Zaktualizowano zlecenie.'),
-                202,
-                ['orderId' => $order->getId()] //todo unnecessary data
+                202
             );
         }
 
-        return $this->render('index/addOrder.html.twig', [
+        return $this->render('index/order_form.html.twig', [
             'addOrderForm' => $form->createView(),
             'update' => true
         ]);

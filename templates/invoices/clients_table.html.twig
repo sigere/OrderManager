@@ -1,4 +1,4 @@
-<table id="main-table" class="table table-dark table-hover">
+<table class="table table-dark table-hover">
     <thead>
     <tr>
         <th>id</th>
@@ -9,7 +9,7 @@
     </thead>
     <tbody>
     {% for client in clients %}
-        <tr client-id="{{ client[0].id }}">
+        <tr data-subject-id="{{ client[0].id }}" data-subject-type="client">
             <td class="clickable-row" style="white-space: nowrap;">
                 {{ client[0].id }}
             </td>

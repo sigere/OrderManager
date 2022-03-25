@@ -1,27 +1,27 @@
-<div class="add-form-container">
+<div class="entity-form-container">
     {% if update is defined and update == true %}
-        <h4>Edytuj klienta</h4>
+        <h4>Zaktualizuj zlecenie</h4>
     {% else %}
-        <h4>Dodaj nowego klienta</h4>
+        <h4>Dodaj nowe zlecenie</h4>
     {% endif %}
-    {{ form_start(addClientForm, {'attr':{'name': 'add_client_form', 'id': 'add-client-form'}}) }}
-    {% for row in addClientForm %}
+    {{ form_start(addOrderForm) }}
+    {% for row in addOrderForm %}
         {% if not loop.last %}
-            <div class="add-form-row">
-                <span style="color: red;">{{ form_errors(row) }}</span>
-                <div class="add-form-label">
+            <div class="entity-form-row">
+                <div class="entity-form-label">
                     {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
                     {% if row.vars.required %}*{% endif %}
                 </div>
-                <div class="add-form-widget">
+                <div class="entity-form-widget">
                     {{ form_widget(row,{'attr': {}}) }}
                 </div>
                 <div style="clear: both;"></div>
+                <span class="error">{{ form_errors(row) }}</span>
             </div>
         {% endif %}
     {% endfor %}
-    <div class="add-form-submit-container">
+    <div class="entity-form-submit-container">
         <button type="submit" class="btn btn-primary">OK</button>
     </div>
-    {{ form_end(addClientForm) }}
+    {{ form_end(addOrderForm) }}
 </div>

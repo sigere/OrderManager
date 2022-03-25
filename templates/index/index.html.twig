@@ -63,7 +63,7 @@
                 </header>
                 <div class="col-content" style="width: auto">
                     <div class="table-container js-table-container">
-                        {% include 'index/orders_table.twig' %}
+                        {% include 'index/orders_table.html.twig' %}
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 </header>
                 <div class="col-content" id="details-content">
                     {% if details['order'] %}
-                        {% include 'index/details.twig' with {'order': details['order'], 'logs': details['logs']} %}
+                        {% include 'index/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %}
                     {% else %}
                         <div class="alert alert-primary">{{ "Select order to display details." | trans }}</div>
                     {% endif %}

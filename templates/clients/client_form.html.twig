@@ -1,11 +1,11 @@
 <div class="entity-form-container">
     {% if update is defined and update == true %}
-        <h4>Zaktualizuj zlecenie</h4>
+        <h4>Edytuj klienta</h4>
     {% else %}
-        <h4>Dodaj nowe zlecenie</h4>
+        <h4>Dodaj nowego klienta</h4>
     {% endif %}
-    {{ form_start(addOrderForm, {'attr':{'name': 'add_order_form', 'id': 'add-form'}}) }}
-    {% for row in addOrderForm %}
+    {{ form_start(addClientForm) }}
+    {% for row in addClientForm %}
         {% if not loop.last %}
             <div class="entity-form-row">
                 <div class="entity-form-label">
@@ -23,5 +23,5 @@
     <div class="entity-form-submit-container">
         <button type="submit" class="btn btn-primary">OK</button>
     </div>
-    {{ form_end(addOrderForm) }}
+    {{ form_end(addClientForm) }}
 </div>

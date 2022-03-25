@@ -55,7 +55,7 @@
     <div class="name">E-mail</div>
     <div class="value">
         {% if not client.email %}
-            {% include 'icons/warning.html' %}
+            {% include 'icons/notice.html' %}
         {% endif %}
         {{ client.email|default("brak") }}
     </div>

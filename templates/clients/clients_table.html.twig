@@ -1,6 +1,7 @@
-<table id="main-table" class="table table-dark table-hover">
+<table class="table table-dark table-hover js-main-table" data-source-url="{{ dataSourceUrl }}">
     <thead>
     <tr>
+        <th></th>
         <th>id</th>
         <th>Alias</th>
         <th>Pełna nazwa</th>
@@ -10,11 +11,13 @@
     </thead>
     <tbody>
     {% for client in clients %}
-        <tr client-id="{{ client.id }}">
-            <td class="clickable-row" style="white-space: nowrap;">
+        <tr data-subject-id="{{ client.id }}" data-subject-type="client">
+            <td class="entity-table icon-col">
                 {% if not client.email %}
-                    {% include 'icons/warning.html' %}
+                    {% include 'icons/notice.html' %}
                 {% endif %}
+            </td>
+            <td class="clickable-row" style="white-space: nowrap;">
                 {{ client.id }}
             </td>
             <td class="clickable-row">{{ client.alias }}</td>

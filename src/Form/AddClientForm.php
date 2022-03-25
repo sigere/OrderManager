@@ -12,6 +12,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddClientForm extends AbstractType
 {
+    public const DEFAULT_OPTIONS = [
+        'data_class' => Client::class,
+        'attr' => [
+            'name' => 'add_client_form',
+            'id' => 'add-form',
+            'data-url' => '/clients/client',
+            'data-method' => 'POST'
+        ]
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -44,8 +54,6 @@ class AddClientForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Client::class,
-        ]);
+        $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }

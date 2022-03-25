@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Client;
 use App\Entity\Order;
 use App\Service\UserPreferences\IndexPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -84,6 +85,33 @@ class OrderRepository extends ServiceEntityRepository
 
         return $orders
             ->setMaxResults(self::LIMIT)
+            ->orderBy('o.deadline', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param Client $client
+     * @param \DateTimeInterface|null $date
+     * @return Order[]
+     */
+    public function getForInvoicingByClient(Client $client, ?\DateTimeInterface $date = null): array
+    {
+        $orders = $this->createQueryBuilder('o')
+            ->andWhere('o.deletedAt is null')
+            ->andWhere('o.settledAt is null')
+            ->andWhere('o.client = :client')
+            ->setParameter('client', $client);
+
+        if ($date) {
+            $orders = $orders
+                ->andWhere('month(o.deadline) = :month')
+                ->andWhere('year(o.deadline) = :year')
+                ->setParameter('month', $date->format('n'))
+                ->setParameter('year', $date->format('Y'));
+        }
+
+        return $orders
             ->orderBy('o.deadline', 'ASC')
             ->getQuery()
             ->getResult();

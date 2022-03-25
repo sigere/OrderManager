@@ -39,9 +39,11 @@ services:
 
     App\Service\OptionsProvider\OrderOptionsProvider: ~
     App\Service\OptionsProvider\EntryOptionsProvider: ~
+    App\Service\OptionsProvider\ClientOptionsProvider: ~
 
     App\Service\OptionsProviderFactory:
         tags: ['container.service_locator']
         arguments:
             - app.entity.order: '@App\Service\OptionsProvider\OrderOptionsProvider'
               app.entity.repertory_entry: '@App\Service\OptionsProvider\EntryOptionsProvider'
+              app.entity.client: '@App\Service\OptionsProvider\ClientOptionsProvider'

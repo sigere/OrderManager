@@ -27,6 +27,7 @@ class Subject {
 window.subjectTypes = [
     "order",
     "log",
+    "client",
     "entry" //todo
 ];
 
@@ -34,15 +35,18 @@ function getUrlForSubject(subject) {
     let result;
     switch (subject.type) {
         case "order":
-            result = "/order/";
+            result = "/order";
             break;
         case "entry":
-            result = "/repertory/entry/";
+            result = "/repertory/entry";
+            break;
+        case "client":
+            result = "/clients/client";
             break;
         default:
             return undefined;
     }
-    return result + subject.id;
+    return subject.id ? result + "/" + subject.id : result;
 }
 
 function executeAfter(executable, stamp) {

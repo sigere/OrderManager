@@ -81,7 +81,7 @@ class RepertoryController extends AbstractController
     {
         $entries = $this->entryRepository->getByRepertoryPreferences($this->preferences);
 
-        return $this->render('repertory/entries_table.twig', [
+        return $this->render('repertory/entries_table.html.twig', [
             'entries' => $entries,
             'dataSourceUrl' => '/repertory/entry'
         ]);
