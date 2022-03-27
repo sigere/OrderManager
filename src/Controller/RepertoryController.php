@@ -104,7 +104,7 @@ class RepertoryController extends AbstractController
             'options' => $options
         ]);
 
-        return new JsonResponse(json_encode($result));
+        return new JsonResponse($result);
     }
 
     /**

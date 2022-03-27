@@ -120,6 +120,7 @@ class IndexController extends AbstractController
             'order' => $order,
             'logs' => $logs,
         ]);
+        dump($options);
 
         $result['burger'] = $this->renderView('burger.html.twig', [
             'options' => $options

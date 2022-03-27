@@ -7,7 +7,7 @@ use App\Entity\Company;
 use App\Entity\Invoice;
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Form\InvoiceMonthFormType;
+use App\Form\InvoiceMonthForm;
 use App\Form\InvoiceSummaryForm;
 use App\Repository\ClientRepository;
 use App\Repository\CompanyRepository;
@@ -48,7 +48,7 @@ class InvoicesController extends AbstractController
         $clients = $this->loadClients($this->company->getInvoiceMonth());
         $form = $this->createForm(InvoiceSummaryForm::class, $this->company);
         $month = $this->company->getInvoiceMonth();
-        $monthForm = $this->createForm(InvoiceMonthFormType::class, [
+        $monthForm = $this->createForm(InvoiceMonthForm::class, [
             'month' => $month ? intval($month->format('n')) : null,
             'year' => $month ? intval($month->format('Y')) : null,
         ]);

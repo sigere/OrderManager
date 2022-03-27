@@ -9,6 +9,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class InvoiceSummaryForm extends AbstractType
 {
+    private const DEFAULT_OPTIONS = [
+        'attr' => [
+            'class' => "filters-form",
+            'name' => 'invoice_summary_form'
+        ]
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $company = $builder->getData();
@@ -31,8 +38,6 @@ class InvoiceSummaryForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            // Configure your form options here
-        ]);
+        $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }

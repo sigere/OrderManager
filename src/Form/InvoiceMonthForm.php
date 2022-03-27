@@ -10,10 +10,16 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class InvoiceMonthFormType extends AbstractType
+class InvoiceMonthForm extends AbstractType
 {
-
+    private const DEFAULT_OPTIONS = [
+        'attr' => [
+            'class' => "filters-form",
+            'name' => 'invoice_month_form'
+        ]
+    ];
     private array $years;
+
     public function __construct(private EntityManagerInterface $entityManager)
     {
         $this->years = [];
@@ -76,7 +82,6 @@ class InvoiceMonthFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-        ]);
+        $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }

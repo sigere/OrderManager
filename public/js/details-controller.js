@@ -76,10 +76,10 @@
             let $svg = this.$element.find('.expandable .trigger .property svg');
             let $body = this.$element.find('.expandable .body');
             if ($body.hasClass('active')) {
-                $svg.css("rotate", "none");
+                $svg.css("transform", "none");
                 $body.removeClass('active');
             } else {
-                $svg.css("rotate", "90deg");
+                $svg.css("transform", "rotate(90deg)");
                 $body.addClass('active');
             }
         },
