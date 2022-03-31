@@ -92,23 +92,24 @@ class OrderRepository extends ServiceEntityRepository
 
     /**
      * @param Client $client
-     * @param \DateTimeInterface|null $date
+     * @param int $year
+     * @param int|null $month
      * @return Order[]
      */
-    public function getForInvoicingByClient(Client $client, ?\DateTimeInterface $date = null): array
+    public function getForInvoicingByClient(Client $client, int $year, ?int $month = null): array
     {
         $orders = $this->createQueryBuilder('o')
             ->andWhere('o.deletedAt is null')
             ->andWhere('o.settledAt is null')
             ->andWhere('o.client = :client')
-            ->setParameter('client', $client);
+            ->setParameter('client', $client)
+            ->andWhere('year(o.deadline) = :year')
+            ->setParameter('year', $year);
 
-        if ($date) {
+        if ($month) {
             $orders = $orders
                 ->andWhere('month(o.deadline) = :month')
-                ->andWhere('year(o.deadline) = :year')
-                ->setParameter('month', $date->format('n'))
-                ->setParameter('year', $date->format('Y'));
+                ->setParameter('month', $month);
         }
 
         return $orders

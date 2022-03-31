@@ -47,3 +47,8 @@ services:
             - app.entity.order: '@App\Service\OptionsProvider\OrderOptionsProvider'
               app.entity.repertory_entry: '@App\Service\OptionsProvider\EntryOptionsProvider'
               app.entity.client: '@App\Service\OptionsProvider\ClientOptionsProvider'
+
+    App\Service\Invoices\FakturowniaProvider:
+        arguments:
+            - '%env(FAKTUROWNIA_FIRM)%'
+            - '%env(FAKTUROWNIA_TOKEN)%'

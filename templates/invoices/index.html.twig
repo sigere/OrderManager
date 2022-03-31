@@ -33,7 +33,7 @@
                     </header>
                     <div class="col-content" id="clients-content" style="width: auto">
                         <h6>Wybierz miesiąc, z którego zlecenia mają być brane pod uwagę.</h6>
-                        <div class="form-month">
+                        <div class="form-month js-form-month">
                             {{ form_start(monthForm) }}
                             {{ form_errors(monthForm) }}
                             {{ form_widget(monthForm.month) }}
@@ -42,7 +42,7 @@
                         </div>
                         <h6>Wybierz klienta, dla którego chcesz wystawić fakturę.</h6>
                         <div class="alert alert-info">Klienci bez nierozliczonych zleceń nie są wyświetlani.</div>
-                        <div class="table-container">
+                        <div class="table-container js-clients-table-container">
                             {% include 'invoices/clients_table.html.twig' %}
                         </div>
                     </div>
@@ -77,29 +77,28 @@
                             {% include 'invoices/issuer_details.html.twig' %}
                         </div>
                         <br/>
-                        <div id="buyer-data">
+                        <div class="js-buyer-data">
                             <div class="alert alert-info">Wybierz klienta, by wystawić fakturę</div>
                         </div>
                         <div>
-                            <h6>Dane na fakturze</h6>
-                            {{ form_start(summaryForm) }}
-                            {% for row in summaryForm %}
-                                {% if not loop.last %}
-                                    {{ form_widget(row) }}
-                                    {{ form_label(row, null) }}
-                                {% endif %}
-                            {% endfor %}
-                            {{ form_end(summaryForm) }}
-                        </div>
-                        <div class="buttons-bar">
-                            <input type="button" id="button-execute-invoice" class="btn btn-primary" value=" Faktura ">
-                            <input type="button" id="button-execute-settle" class="btn btn-primary second" value=" Rozlicz ">
-                            <div id="invoice-button-placeholder" style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%); display: none">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                     fill="currentColor" class="bi bi-arrow-clockwise icon-loading" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                                </svg>
+                            <h6>{{ "Invoice data" | trans }}</h6>
+                            <div class="dates filters-form">
+                                <div>
+                                    <input id="issue-date" type="date" class="js-issue-date" value="{{ preferences.issueDate | date('Y-m-d') }}">
+                                    <label for="issue-date">{{ "Issue date" | trans }}</label>
+                                </div>
+                                <div>
+                                    <input id="payment-date" type="date" class="js-payment-date" value="{{ preferences.paymentDate | date('Y-m-d') }}">
+                                    <label for="payment-date">{{ "Payment date" | trans }}</label>
+                                </div>
+                            </div>
+                            <div class="buttons js-buttons">
+                                <div>
+                                    <input type="button" class="btn btn-primary js-button-invoice" value="{{ "Invoice" | trans }}">
+                                </div>
+                                <div>
+                                    <input type="button" class="btn btn-primary js-button-settle" value="{{ "Settle" | trans }}">
+                                </div>
                             </div>
                         </div>
                     </div>

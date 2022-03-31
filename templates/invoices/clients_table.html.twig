@@ -9,13 +9,13 @@
     </thead>
     <tbody>
     {% for client in clients %}
-        <tr data-subject-id="{{ client[0].id }}" data-subject-type="client">
+        <tr data-subject-id="{{ client['client'].id }}" data-subject-type="client">
             <td class="clickable-row" style="white-space: nowrap;">
-                {{ client[0].id }}
+                {{ client['client'].id }}
             </td>
-            <td class="clickable-row">{{ client[0].alias }}</td>
-            <td class="clickable-row">{{ client[0].name }}</td>
-            <td class="clickable-row">{{ client[1] }}</td>
+            <td class="clickable-row">{{ client['client'].alias }}</td>
+            <td class="clickable-row">{{ client['client'].name }}</td>
+            <td class="clickable-row">{{ client['count'] }}</td>
         </tr>
     {% endfor %}
     </tbody>

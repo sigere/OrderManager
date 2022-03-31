@@ -36,6 +36,41 @@
     font-size: 12px;
 }
 
-.left-col .form-month {
+.left-col .form-month select[name="invoice_month_form[year]"] {
+    margin-left: 15px;
+}
 
+.mid-col table tr {
+    cursor: pointer;
+}
+
+.right-col .dates {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+.right-col .dates div {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.right-col .buttons {
+    width: fit-content;
+    margin: 30px auto 30px;
+    display: flex;
+    align-content: center;
+}
+
+.right-col .buttons div {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.right-col .hidden {
+    opacity: 0;
+    transition: all 0.2s;
 }

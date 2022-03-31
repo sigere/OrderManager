@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Order;
+use App\Service\UserPreferences\InvoicesPreferences;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Form\AbstractType;
@@ -20,8 +21,10 @@ class InvoiceMonthForm extends AbstractType
     ];
     private array $years;
 
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct (
+        private EntityManagerInterface $entityManager,
+        private InvoicesPreferences $preferences
+    ) {
         $this->years = [];
         try {
             $first = $this->entityManager
@@ -58,6 +61,7 @@ class InvoiceMonthForm extends AbstractType
         $builder
             ->add('month', ChoiceType::class, [
                 'label' => 'Miesiąc',
+                'data' => $this->preferences->getMonth(),
                 'choices' => [
                     'Wszystkie' => null,
                     'Styczeń' => 1,

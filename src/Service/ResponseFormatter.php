@@ -1,4 +1,7 @@
 <?php
+/**
+ * Frontend formatter: window.formatter in public/js/base.js
+ */
 
 namespace App\Service;
 

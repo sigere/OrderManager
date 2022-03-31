@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\UserPreferences;
 
 use App\Entity\Staff;
@@ -17,7 +19,6 @@ class RepertoryPreferences extends AbstractPreferences
 
     protected function encode(): array
     {
-        dump($this->year);
         return [
             "month" => $this->month,
             "year" => $this->year,
@@ -27,8 +28,8 @@ class RepertoryPreferences extends AbstractPreferences
 
     protected function decode(array $config): void
     {
-        $this->month = $config["month"];
-        $this->year = $config["year"];
+        $this->month = $config["month"] ?? null;
+        $this->year = $config["year"] ?? null;
         $this->staff = $this->entityManager
             ->getRepository(Staff::class)
             ->findOneBy([
@@ -38,7 +39,6 @@ class RepertoryPreferences extends AbstractPreferences
 
     public function applyForm(mixed $data): void
     {
-        dump($data);
         $this->year = $data["year"] ?? null;
         $this->month = $data["month"] ?? null;
         $this->staff = $data['select-staff'] ?? null;
