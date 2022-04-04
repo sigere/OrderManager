@@ -77,7 +77,7 @@
                     });
                 },
                 error: function (jqXHR) {
-                    console.log(jqXHR);
+                    console.error(jqXHR);
                     self.popupManager.display(jqXHR.responseText);
                 }
             });

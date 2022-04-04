@@ -82,6 +82,12 @@
 <div style="clear:both;"></div>
 
 <div class="property">
+    <div class="name">Dodatkowe opłaty</div>
+    <div class="value">{{ order.additionalFee | number_format(2, ".", "") }} PLN</div>
+</div>
+
+
+<div class="property">
     <div class="name">Netto</div>
     <div class="value">{{ order.netto | number_format(2, ".", "") }} PLN</div>
 </div>

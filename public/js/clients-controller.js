@@ -21,6 +21,18 @@
 
         this._initListeners.bind(this)();
         window.onpopstate = window._onPopState.bind(this);
+        let self = this;
+        $(document).ajaxComplete(function(event, request, settings ) {
+            let header = request.getResponseHeader('Created-Entity');
+            if (header !== null) {
+                header = header.split("/");
+                self.currentSubject = {
+                    type: header[0],
+                    id: header[1]
+                };
+                self.reloadTable();
+            }
+        });
     };
     $.extend(window.Controller.prototype, {
         reloadDetails: function (subject) {
@@ -83,7 +95,7 @@
                     });
                 },
                 error: function (jqXHR) {
-                    console.log(jqXHR);
+                    console.error(jqXHR);
                     self.popupManager.display(jqXHR.responseText);
                 }
             });

@@ -18,7 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddOrderForm extends AbstractType
+class OrderForm extends AbstractType
 {
     public const DEFAULT_OPTIONS = [
         'data_class' => Order::class,
@@ -70,6 +70,12 @@ class AddOrderForm extends AbstractType
                 'empty_data' => '0',
             ])
             ->add('price', NumberType::class, [
+                'required' => false,
+                'html5' => true,
+                'attr' => ['step' => '0.01'],
+                'empty_data' => '0',
+            ])
+            ->add('additionalFee', NumberType::class, [
                 'required' => false,
                 'html5' => true,
                 'attr' => ['step' => '0.01'],

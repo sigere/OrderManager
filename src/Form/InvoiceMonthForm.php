@@ -59,27 +59,10 @@ class InvoiceMonthForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('month', ChoiceType::class, [
-                'label' => 'Miesiąc',
+            ->add('month', MonthChoiceType::class, [
                 'data' => $this->preferences->getMonth(),
-                'choices' => [
-                    'Wszystkie' => null,
-                    'Styczeń' => 1,
-                    'Luty' => 2,
-                    'Marzec' => 3,
-                    'Kwiecień' => 4,
-                    'Maj' => 5,
-                    'Czerwiec' => 6,
-                    'Lipiec' => 7,
-                    'Sierpień' => 8,
-                    'Wrzesień' => 9,
-                    'Październik' => 10,
-                    'Listopad' => 11,
-                    'Grudzień' => 12,
-                ],
             ])
             ->add('year', ChoiceType::class, [
-                'label' => 'Rok',
                 'choices' => $this->years,
             ]);
     }

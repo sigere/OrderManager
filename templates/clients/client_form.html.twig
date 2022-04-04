@@ -4,8 +4,8 @@
     {% else %}
         <h4>Dodaj nowego klienta</h4>
     {% endif %}
-    {{ form_start(addClientForm) }}
-    {% for row in addClientForm %}
+    {{ form_start(clientForm) }}
+    {% for row in clientForm %}
         {% if not loop.last %}
             <div class="entity-form-row">
                 <div class="entity-form-label">
@@ -23,5 +23,5 @@
     <div class="entity-form-submit-container">
         <button type="submit" class="btn btn-primary">OK</button>
     </div>
-    {{ form_end(addClientForm) }}
+    {{ form_end(clientForm) }}
 </div>

@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OrderRepository extends ServiceEntityRepository
 {
-    private const LIMIT = 100;
+    public const LIMIT = 100;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -25,9 +25,10 @@ class OrderRepository extends ServiceEntityRepository
 
     /**
      * @param IndexPreferences $preferences
+     * @param int|null $rows
      * @return Order[]
      */
-    public function getByIndexPreferences(IndexPreferences $preferences): array
+    public function getByIndexPreferences(IndexPreferences $preferences, int &$rows = null): array
     {
         $orders = $this->createQueryBuilder('o');
 
@@ -82,6 +83,8 @@ class OrderRepository extends ServiceEntityRepository
                 ->andWhere('o.' . $dateType . ' <= :dateTo')
                 ->setParameter('dateTo', $dateTo);
         }
+
+        $rows = (clone $orders)->select('count(o.id)')->getQuery()->getSingleScalarResult();
 
         return $orders
             ->setMaxResults(self::LIMIT)

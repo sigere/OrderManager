@@ -19,6 +19,7 @@ class MonthChoiceType extends AbstractType
     protected function getChoices(): array
     {
         return [
+            'All'       => 0,
             'January'   => 1,
             'February'  => 2,
             'March'     => 3,

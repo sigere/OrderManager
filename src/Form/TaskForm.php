@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddTaskForm extends AbstractType
+class TaskForm extends AbstractType
 {
     public const DEFAULT_OPTIONS = [
         'data_class' => Task::class,

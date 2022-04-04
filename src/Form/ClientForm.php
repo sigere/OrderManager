@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddClientForm extends AbstractType
+class ClientForm extends AbstractType
 {
     public const DEFAULT_OPTIONS = [
         'data_class' => Client::class,
@@ -26,29 +26,24 @@ class AddClientForm extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Pełna nazwa',
+                'label' => 'Full name',
             ])
             ->add('alias', TextType::class, [
-                'label' => 'Alias',
             ])
             ->add('nip', NumberType::class, [
-                'label' => 'NIP (tylko cyfry)',
+                'label' => 'NIP (digits only)',
             ])
             ->add('postCode', TextType::class, [
-                'label' => 'Kod Pocztowy',
             ])
             ->add('city', TextType::class, [
-                'label' => 'Miasto',
             ])
             ->add('street', TextType::class, [
-                'label' => 'Ulica',
             ])
             ->add('country', CountryType::class, [
-                'label' => 'Kraj',
                 'preferred_choices' => ['PL']
             ])
             ->add('email', null, [
-                'label' => 'Adres email',
+                'label' => 'Email address',
             ]);
     }
 

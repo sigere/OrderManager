@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Log;
-use App\Form\AddClientForm;
+use App\Form\ClientForm;
 use App\Repository\ClientRepository;
 use App\Repository\LogRepository;
 use App\Service\OptionsProviderFactory;
@@ -105,7 +105,7 @@ class ClientsController extends AbstractController
      */
     public function create(): Response
     {
-        $form = $this->createForm(AddClientForm::class);
+        $form = $this->createForm(ClientForm::class);
 
         $form->handleRequest($this->request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -118,12 +118,13 @@ class ClientsController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Dodano klienta'),
-                201
+                201,
+                ['Created-Entity' => 'client/' . $client->getId()]
             );
         }
 
         return $this->render('clients/client_form.html.twig', [
-            'addClientForm' => $form->createView()
+            'clientForm' => $form->createView()
         ]);
     }
 
@@ -132,16 +133,16 @@ class ClientsController extends AbstractController
      */
     public function update(Client $client): Response
     {
-        $attr = array_merge(AddClientForm::DEFAULT_OPTIONS['attr'] ?? [], [
+        $attr = array_merge(ClientForm::DEFAULT_OPTIONS['attr'] ?? [], [
             'data-url' => '/order/' . $client->getId(),
             'data-method' => 'PUT'
         ]);
-        $options = array_merge(AddClientForm::DEFAULT_OPTIONS, [
+        $options = array_merge(ClientForm::DEFAULT_OPTIONS, [
             'attr' => $attr,
             'method' => 'PUT'
         ]);
 
-        $form = $this->createForm(AddClientForm::class, $client, $options);
+        $form = $this->createForm(ClientForm::class, $client, $options);
 
         $form->handleRequest($this->request);
 
@@ -158,7 +159,7 @@ class ClientsController extends AbstractController
         }
 
         return $this->render('clients/client_form.html.twig', [
-            'addClientForm' => $form->createView(),
+            'clientForm' => $form->createView(),
             'update' => true
         ]);
     }

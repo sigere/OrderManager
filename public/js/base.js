@@ -29,7 +29,7 @@ window.subjectTypes = [
     "log",
     "client",
     "task",
-    "entry" //todo
+    "entry"
 ];
 
 /**
@@ -48,7 +48,6 @@ window.formatter = {
 };
 
 function getUrlForSubject(subject) {
-    console.log(subject);
     let result;
     switch (subject.type) {
         case "order":
@@ -80,7 +79,6 @@ function executeAfter(executable, stamp) {
 }
 
 function _onPopState(e) {
-    console.log(this, e);
     let subject = e.state;
     if (subject === null) {
         this.detailsController.loadDefaultContent();
@@ -97,6 +95,6 @@ function _onPopState(e) {
     ) {
         this.detailsController.insertHTML(subject);
     } else {
-        console.log("Error onpopstate. Subject:", subject);
+        console.error("Error onpopstate. Subject:", subject);
     }
 }

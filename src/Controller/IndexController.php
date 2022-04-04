@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Form\AddOrderForm;
+use App\Form\OrderForm;
 use App\Form\DeleteEntityFrom;
 use App\Form\IndexFiltersForm;
 use App\Repository\LogRepository;
@@ -42,7 +42,7 @@ class IndexController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        $orders = $this->orderRepository->getByIndexPreferences($this->preferences);
+        $orders = $this->orderRepository->getByIndexPreferences($this->preferences, $rowsCount);
         $order = $this->orderRepository->findOneBy(['id' => $request->get('order')]);
         $logs = $this->logRepository->findBy(
             ['order' => $order],
@@ -61,6 +61,8 @@ class IndexController extends AbstractController
             'filtersForm' => $form->createView(),
             'preferences' => $this->preferences,
             'options' => $options,
+            'rowsFound' => $rowsCount,
+            'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
             'dataSourceUrl' => '/order'
         ]);
     }
@@ -93,11 +95,13 @@ class IndexController extends AbstractController
      */
     public function getOrders(): Response
     {
-        $orders = $this->orderRepository->getByIndexPreferences($this->preferences);
+        $orders = $this->orderRepository->getByIndexPreferences($this->preferences, $rowsCount);
 
         return $this->render('index/orders_table.html.twig', [
             'orders' => $orders,
             'preferences' => $this->preferences,
+            'rowsFound' => $rowsCount,
+            'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
             'dataSourceUrl' => '/order'
         ]);
     }
@@ -133,7 +137,7 @@ class IndexController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $form = $this->createForm(AddOrderForm::class);
+        $form = $this->createForm(OrderForm::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -146,12 +150,13 @@ class IndexController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Dodano zlecenie'),
-                201
+                201,
+                ['Created-Entity' => 'order/' . $order->getId()]
             );
         }
 
         return $this->render('index/order_form.html.twig', [
-            'addOrderForm' => $form->createView(),
+            'orderForm' => $form->createView(),
         ]);
     }
 
@@ -160,16 +165,16 @@ class IndexController extends AbstractController
      */
     public function update(Order $order): Response
     {
-        $attr = array_merge(AddOrderForm::DEFAULT_OPTIONS['attr'] ?? [], [
+        $attr = array_merge(OrderForm::DEFAULT_OPTIONS['attr'] ?? [], [
             'data-url' => '/order/' . $order->getId(),
             'data-method' => 'PUT'
         ]);
-        $options = array_merge(AddOrderForm::DEFAULT_OPTIONS, [
+        $options = array_merge(OrderForm::DEFAULT_OPTIONS, [
             'attr' => $attr,
             'method' => 'PUT'
         ]);
 
-        $form = $this->createForm(AddOrderForm::class, $order, $options);
+        $form = $this->createForm(OrderForm::class, $order, $options);
 
         $form->handleRequest($this->request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -185,7 +190,7 @@ class IndexController extends AbstractController
         }
 
         return $this->render('index/order_form.html.twig', [
-            'addOrderForm' => $form->createView(),
+            'orderForm' => $form->createView(),
             'update' => true
         ]);
     }

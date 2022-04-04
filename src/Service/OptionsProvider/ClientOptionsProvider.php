@@ -5,7 +5,7 @@ namespace App\Service\OptionsProvider;
 class ClientOptionsProvider implements OptionsProviderInterface
 {
     public const ACTION_EDIT = [
-        'label' => 'Edit Client',
+        'label' => 'Edit client',
         'icon' => 'edit',
         'class' =>'js-edit-link'
     ];

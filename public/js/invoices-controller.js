@@ -29,7 +29,6 @@
                     year: year
                 },
                 success: function (data) {
-                    console.log(data);
                     executeAfter(function () {
                         self.$clientsTableContainer.html(data);
                         self.$clientsTableContainer.removeClass("hidden");

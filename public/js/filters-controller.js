@@ -4,7 +4,6 @@
     window.FiltersController = function ($wrapper, controller) {
         this.$wrapper = $wrapper;
         this.controller = controller;
-        console.log($wrapper);
 
         this.$wrapper.on(
             "submit",
@@ -34,8 +33,8 @@
                     self.controller.reloadTable();
                 },
                 error: function (jqXHR) {
-                    console.log(jqXHR);
-                    popupManager.display(jqXHR.responseText);
+                    console.error(jqXHR);
+                    self.popupManager.display(jqXHR.responseText);
                 }
             });
         }

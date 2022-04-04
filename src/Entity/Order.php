@@ -79,6 +79,12 @@ class Order
     private $price;
 
     /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\PositiveOrZero
+     */
+    private $additionalFee;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message="Temat nie może być pusty")
      */
@@ -181,6 +187,7 @@ class Order
 
         $result = round($this->price * $this->pages, 2);
         $result += $this->repertoryEntry?->getAdditionalFee() ?? 0.0;
+        $result += $this->additionalFee ?? 0.0;
 
         return $result;
     }
@@ -298,6 +305,18 @@ class Order
     public function setPrice(?string $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getAdditionalFee(): ?string
+    {
+        return $this->additionalFee;
+    }
+
+    public function setAdditionalFee(?string $additionalFee): self
+    {
+        $this->additionalFee = $additionalFee;
 
         return $this;
     }

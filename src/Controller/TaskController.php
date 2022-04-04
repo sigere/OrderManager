@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Log;
 use App\Entity\Task;
-use App\Form\AddTaskForm;
+use App\Form\TaskForm;
 use App\Form\DeleteEntityFrom;
 use App\Repository\LogRepository;
 use App\Repository\TaskRepository;
@@ -97,7 +97,7 @@ class TaskController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $form = $this->createForm(AddTaskForm::class);
+        $form = $this->createForm(TaskForm::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -107,11 +107,15 @@ class TaskController extends AbstractController
             $this->entityManager->persist(new Log($this->getUser(), 'Dodano zadanie', $task));
             $this->entityManager->flush();
 
-            return new Response($this->formatter->success('Dodano zadanie.'), 201, ['task_id' => $task->getId()]);
+            return new Response(
+                $this->formatter->success('Dodano zadanie.'),
+                201,
+                ['Created-Entity' => 'task/' . $task->getId()]
+            );
         }
 
         return $this->render('tasks/task_form.html.twig', [
-            'addTaskForm' => $form->createView(),
+            'taskForm' => $form->createView(),
         ]);
     }
 
@@ -120,16 +124,16 @@ class TaskController extends AbstractController
      */
     public function update(Request $request, Task $task): Response
     {
-        $attr = array_merge(AddTaskForm::DEFAULT_OPTIONS['attr'] ?? [], [
+        $attr = array_merge(TaskForm::DEFAULT_OPTIONS['attr'] ?? [], [
             'data-url' => '/tasks/task/' . $task->getId(),
             'data-method' => 'PUT'
         ]);
-        $options = array_merge(AddTaskForm::DEFAULT_OPTIONS, [
+        $options = array_merge(TaskForm::DEFAULT_OPTIONS, [
             'attr' => $attr,
             'method' => 'PUT'
         ]);
 
-        $form = $this->createForm(AddTaskForm::class, $task, $options);
+        $form = $this->createForm(TaskForm::class, $task, $options);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -142,7 +146,7 @@ class TaskController extends AbstractController
         }
 
         return $this->render('tasks/task_form.html.twig', [
-            'addTaskForm' => $form->createView(),
+            'taskForm' => $form->createView(),
             'update' => true
         ]);
     }

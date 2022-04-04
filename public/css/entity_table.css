@@ -6,3 +6,9 @@
     padding-left: 2px;
     padding-right: 2px;
 }
+
+.table-container .rows-count {
+    text-align: right;
+    padding-right: 8px;
+    font-size: 13px;
+}
