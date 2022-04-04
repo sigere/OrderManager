@@ -28,7 +28,7 @@
         window.onpopstate = _onPopState.bind(this);
         let self = this;
         $(document).ajaxComplete(function(event, request, settings ) {
-            let header = request.getResponseHeader('Created-Entity');
+            let header = request.getResponseHeader("Created-Entity");
             if (header !== null) {
                 header = header.split("/");
                 self.currentSubject = {
