@@ -58,7 +58,7 @@
             let subject = {
                 id: this.$wrapper.find(".js-repertory-entry-number").data("entry"),
                 type: "entry"
-            }
+            };
 
             this.detailsController.edit(subject);
         },

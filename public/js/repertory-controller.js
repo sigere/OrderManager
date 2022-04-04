@@ -41,7 +41,7 @@
             let subject = {
                 id: this.$wrapper.find(".js-order-id").data("order"),
                 type: "order"
-            }
+            };
 
             this.detailsController.edit(subject);
         },

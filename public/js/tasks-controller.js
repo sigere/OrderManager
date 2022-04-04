@@ -88,7 +88,7 @@
             let subject = {
                 id: this.$wrapper.find(".js-task-id").data("task"),
                 type: "task"
-            }
+            };
 
             this.detailsController.edit(subject);
         },
