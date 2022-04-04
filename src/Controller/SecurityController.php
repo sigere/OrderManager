@@ -30,7 +30,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/logout", name="logout")
      */
-    public function logout(UrlGeneratorInterface $urlGenerator)
+    public function logout(UrlGeneratorInterface $urlGenerator): Response
     {
         return new RedirectResponse($urlGenerator->generate('login'));
     }

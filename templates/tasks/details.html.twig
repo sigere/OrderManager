@@ -52,17 +52,18 @@
 
 <div class="property">
     <div class="name">Szczegóły</div>
-    <div class="value">{{ task.info }}</div>
+    <div class="value">{{ task.info | default('brak notatek') }}</div>
 </div>
 <div style="clear:both;"></div>
-
 
 <div class="logs">
     <table class="table table-dark">
         <thead>
-        <th>Data</th>
-        <th>Użytkownik</th>
-        <th>Akcja</th>
+        <tr>
+            <th>Data</th>
+            <th>Użytkownik</th>
+            <th>Akcja</th>
+        </tr>
         </thead>
         <tbody>
         {% for l in logs %}

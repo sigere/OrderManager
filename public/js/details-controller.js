@@ -49,6 +49,7 @@
                     );
                 },
                 error: function (jqXHR) {
+                    console.error(jqXHR.responseText);
                     self.$element.html(jqXHR.responseText);
                 }
             });
@@ -103,7 +104,6 @@
         edit: function (subject) {
             let controller = this.controller;
             controller.popupManager.open();
-            console.log(subject);
             $.ajax({
                 url: getUrlForSubject(subject),
                 method: "PUT",

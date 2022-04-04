@@ -120,7 +120,6 @@ class IndexController extends AbstractController
             'order' => $order,
             'logs' => $logs,
         ]);
-        dump($options);
 
         $result['burger'] = $this->renderView('burger.html.twig', [
             'options' => $options
@@ -147,8 +146,7 @@ class IndexController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Dodano zlecenie'),
-                201,
-                ['orderId' => $order->getId()] //todo unnecessary data
+                201
             );
         }
 
@@ -174,7 +172,6 @@ class IndexController extends AbstractController
         $form = $this->createForm(AddOrderForm::class, $order, $options);
 
         $form->handleRequest($this->request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $this->entityManager->persist($order);

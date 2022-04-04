@@ -14,17 +14,17 @@
 {% endblock %}
 
 {% block javascript %}
-{{ parent() }}
-<script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
-<script type="text/javascript" src="{{ asset("js/index-controller.js") }}"></script>
-<script>
-    $(document).ready(function (){
-        window.controller = new Controller($(document));
-    });
-</script>
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/index-controller.js") }}"></script>
+    <script>
+        $(document).ready(function (){
+            window.controller = new Controller($(document));
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -76,7 +76,7 @@
                             {% if details['order'] %}
                                 {{ details['order'].id }}
                             {% endif %}
-                        </span>
+                    </span>
                     <div class="js-burger">
                         {% include 'burger.html.twig' %}
                     </div>

@@ -28,6 +28,7 @@ window.subjectTypes = [
     "order",
     "log",
     "client",
+    "task",
     "entry" //todo
 ];
 
@@ -47,6 +48,7 @@ window.formatter = {
 };
 
 function getUrlForSubject(subject) {
+    console.log(subject);
     let result;
     switch (subject.type) {
         case "order":
@@ -57,6 +59,9 @@ function getUrlForSubject(subject) {
             break;
         case "client":
             result = "/clients/client";
+            break;
+        case "task":
+            result = "/tasks/task";
             break;
         default:
             return undefined;

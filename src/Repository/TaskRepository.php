@@ -18,4 +18,18 @@ class TaskRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Task::class);
     }
+
+    /* TODO TaskPreferences */
+    /**
+     * @return Task[]
+     */
+    public function getByTasksPreferences(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.deletedAt is null')
+            ->addOrderBy('t.doneAt', 'ASC')
+            ->addOrderBy('t.deadline', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

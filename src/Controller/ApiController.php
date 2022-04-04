@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Company;
 use App\Entity\Log;
 use App\Entity\Order;
+use App\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,9 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/order/{id}/state", methods={"POST"}, name="api_order_post_state")
+     * @Route("/order/{id}/state", methods={"PUT"}, name="api_order_post_state")
      */
-    public function updateState(Request $request, Order $order): Response
+    public function updateOrderState(Request $request, Order $order): Response
     {
         if (!$state = $request->get('state')) {
             return new Response('Niepoprawne dane.', 400);
@@ -84,5 +85,23 @@ class ApiController extends AbstractController
         $this->entityManager->flush();
 
         return new Response('Wprowadzono zmiany', 200);
+    }
+
+    /**
+     * @Route("/task/{id}/set-done", methods={"PUT"}, name="api_task_set_done")
+     */
+    public function setTaskDone(Task $task): Response
+    {
+        if ($task->getDoneAt()) {
+            return new Response('Zadanie jest już wykonane.', 406);
+        }
+        $task->setDoneAt(new \DateTime());
+        $this->entityManager->persist($task);
+        $this->entityManager->persist(
+            new Log($this->getUser(), 'Ustawiono na wykonane.', $task)
+        );
+        $this->entityManager->flush();
+
+        return new Response('Wykonano zadanie', 200);
     }
 }

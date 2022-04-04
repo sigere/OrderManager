@@ -17,6 +17,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/clients")
+ */
 class ClientsController extends AbstractController
 {
     private ?Request $request;
@@ -33,7 +36,7 @@ class ClientsController extends AbstractController
     }
 
     /**
-     * @Route("/clients", methods={"GET"}, name="clients")
+     * @Route("/", methods={"GET"}, name="clients")
      */
     public function index(): Response
     {
@@ -59,7 +62,7 @@ class ClientsController extends AbstractController
     }
 
     /**
-     * @Route("/clients/client", methods={"GET"}, name="clients_client_get_all")
+     * @Route("/client", methods={"GET"}, name="clients_client_get_all")
      */
     public function getAll(): Response
     {
@@ -72,7 +75,7 @@ class ClientsController extends AbstractController
     }
 
     /**
-     * @Route("/clients/client/{id}", methods={"GET"}, name="clients_client_get")
+     * @Route("/client/{id}", methods={"GET"}, name="clients_client_get")
      */
     public function getClient(Client $client): Response
     {
@@ -98,7 +101,7 @@ class ClientsController extends AbstractController
     }
 
     /**
-     * @Route("/clients/client", methods={"POST"}, name="clients_client_post")
+     * @Route("/client", methods={"POST"}, name="clients_client_post")
      */
     public function create(): Response
     {
@@ -125,7 +128,7 @@ class ClientsController extends AbstractController
     }
 
     /**
-     * @Route("/clients/client/{id}", methods={"PUT"}, name="clients_client_put")
+     * @Route("/client/{id}", methods={"PUT"}, name="clients_client_put")
      */
     public function update(Client $client): Response
     {

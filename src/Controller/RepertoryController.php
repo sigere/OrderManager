@@ -19,6 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/repertory")
+ */
 class RepertoryController extends AbstractController
 {
     public function __construct(
@@ -31,7 +34,7 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory", methods={"GET"}, name="repertory")
+     * @Route("/", methods={"GET"}, name="repertory")
      */
     public function index(Request $request): Response
     {
@@ -52,7 +55,7 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory/filters", methods={"POST"}, name="repertory_filters")
+     * @Route("/filters", methods={"POST"}, name="repertory_filters")
      */
     public function filters(Request $request): Response
     {
@@ -75,7 +78,7 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory/entry", methods={"GET"}, name="repertory_entry_get_all")
+     * @Route("/entry", methods={"GET"}, name="repertory_entry_get_all")
      */
     public function getEntries(): Response
     {
@@ -88,7 +91,7 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory/entry/{id}", methods={"GET"}, name="repertory_entry_get")
+     * @Route("/entry/{id}", methods={"GET"}, name="repertory_entry_get")
      */
     public function getEntry(RepertoryEntry $entry): Response
     {
@@ -98,7 +101,6 @@ class RepertoryController extends AbstractController
         ]);
 
         $options = $this->optionsProviderFactory->getOptions($entry);
-        dump($options);
 
         $result['burger'] = $this->renderView('burger.html.twig', [
             'options' => $options
@@ -108,7 +110,7 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory/entry", methods={"POST"}, name="repertory_entry_post")
+     * @Route("/entry", methods={"POST"}, name="repertory_entry_post")
      */
     public function create(Request $request): Response
     {
@@ -167,7 +169,7 @@ class RepertoryController extends AbstractController
     }
 
     /**
-     * @Route("/repertory/entry/{id}", methods={"PUT"}, name="repertory_entry_put")
+     * @Route("/entry/{id}", methods={"PUT"}, name="repertory_entry_put")
      */
     public function update(RepertoryEntry $entry, Request $request): Response
     {

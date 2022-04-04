@@ -1,4 +1,4 @@
-<table id="main-table" class="table table-dark table-hover">
+<table id="main-table" class="table table-dark table-hover js-main-table" data-source-url="{{ dataSourceUrl }}">
     <thead>
     <tr>
         <th>id</th>
@@ -13,10 +13,10 @@
     </thead>
     <tbody>
     {% for task in tasks %}
-        <tr task-id="{{ task.id }}" {{ task.doneAt ? 'style="color: rgba(255,255,255,0.5);"' : "" }}>
+        <tr data-subject-type="task" data-subject-id="{{ task.id }}" {{ task.doneAt ? 'style="color: rgba(255,255,255,0.5);"' : "" }}>
             <td class="clickable-row" style="white-space: nowrap;">
                 {% if task.getWarnings is not empty %}
-                    {% include 'icons/warning.html' %}
+                    {% include 'icons/notice.html' %}
                 {% endif %}
                 {{ task.id }}
             </td>
