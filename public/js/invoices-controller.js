@@ -141,8 +141,8 @@
             let ids = [];
             for (let i = 0; i < $rows.length; i++) {
                 let $row = $($rows[i]);
-                if ($row.data('subject-type') === "order") {
-                    ids.push($row.data('subject-id'));
+                if ($row.data("subject-type") === "order") {
+                    ids.push($row.data("subject-id"));
                 }
             }
             return ids;

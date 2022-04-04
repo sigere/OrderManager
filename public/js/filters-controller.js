@@ -7,8 +7,8 @@
         console.log($wrapper);
 
         this.$wrapper.on(
-            'submit',
-            'form',
+            "submit",
+            "form",
             this.submit.bind(this)
         );
     };

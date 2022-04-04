@@ -56,7 +56,7 @@
 
         editEntry: function () {
             let subject = {
-                id: this.$wrapper.find('.js-repertory-entry-number').data('entry'),
+                id: this.$wrapper.find(".js-repertory-entry-number").data("entry"),
                 type: "entry"
             }
 

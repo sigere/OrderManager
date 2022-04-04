@@ -86,7 +86,7 @@
 
         editTask: function () {
             let subject = {
-                id: this.$wrapper.find('.js-task-id').data('task'),
+                id: this.$wrapper.find(".js-task-id").data("task"),
                 type: "task"
             }
 
