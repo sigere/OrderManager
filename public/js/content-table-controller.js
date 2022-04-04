@@ -53,7 +53,7 @@
 
     $.extend(window.ContentTableController.prototype, {
         _setCurrentSubject: function (subject) {
-            this.$table.find('.active-row').removeClass('active-row');
+            this.$table.find(".active-row").removeClass("active-row");
 
             this.controller.currentSubject = subject;
             if (subject.row) {
@@ -107,7 +107,7 @@
 
         reload: function () {
             let self = this;
-            let url = this.$table.data('source-url');
+            let url = this.$table.data("source-url");
             $.ajax({
                 url: url,
                 method: "GET",

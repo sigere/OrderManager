@@ -180,7 +180,7 @@ class InvoicesController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        $this->_settle($orders);
+        $this->settleOrders($orders);
         $this->logInvoice($orders);
 
         return new Response(
@@ -189,7 +189,7 @@ class InvoicesController extends AbstractController
         );
     }
 
-    private function _settle(array $orders): void
+    private function settleOrders(array $orders): void
     {
         foreach ($orders as $order) {
             if (!($order instanceof Order)) {

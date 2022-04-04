@@ -21,7 +21,7 @@ class InvoiceMonthForm extends AbstractType
     ];
     private array $years;
 
-    public function __construct (
+    public function __construct(
         private EntityManagerInterface $entityManager,
         private InvoicesPreferences $preferences
     ) {

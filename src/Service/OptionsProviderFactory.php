@@ -19,14 +19,14 @@ class OptionsProviderFactory extends ServiceLocator
 
             return $service->getOptions($object);
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
-            dump($e->getMessage());
+            // todo log
             return [];
         }
     }
 
     private function fromCamelCase(string $input): string
     {
-        $array = explode("\\",$input);
+        $array = explode("\\", $input);
         foreach ($array as $key => $value) {
             preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $value, $matches);
             $ret = $matches[0];

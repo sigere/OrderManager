@@ -158,7 +158,7 @@ class RepertoryController extends AbstractController
                 $this->formatter->success("Dodano nowy wpis"),
                 201,
             );
-        } else if (!$form->isSubmitted()) {
+        } elseif (!$form->isSubmitted()) {
             $form->add('order', HiddenType::class, ['data' => $order->getId()]);
         }
 

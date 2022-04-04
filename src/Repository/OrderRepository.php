@@ -32,7 +32,7 @@ class OrderRepository extends ServiceEntityRepository
         $orders = $this->createQueryBuilder('o');
 
         $states = $preferences->getStates();
-        if(empty($states) && !$preferences->getSettled() && !$preferences->getDeleted()){
+        if (empty($states) && !$preferences->getSettled() && !$preferences->getDeleted()) {
             return [];
         }
 

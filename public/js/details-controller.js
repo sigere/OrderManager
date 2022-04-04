@@ -8,8 +8,8 @@
         this.defaultContent = this.$element.html();
 
         this.$element.on(
-            'click',
-            '.expandable .trigger .property .value',
+            "click",
+            ".expandable .trigger .property .value",
             this.manageExpandable.bind(this)
         );
     };
@@ -74,14 +74,14 @@
         },
 
         manageExpandable: function (e) {
-            let $svg = this.$element.find('.expandable .trigger .property svg');
-            let $body = this.$element.find('.expandable .body');
-            if ($body.hasClass('active')) {
+            let $svg = this.$element.find(".expandable .trigger .property svg");
+            let $body = this.$element.find(".expandable .body");
+            if ($body.hasClass("active")) {
                 $svg.css("transform", "none");
-                $body.removeClass('active');
+                $body.removeClass("active");
             } else {
                 $svg.css("transform", "rotate(90deg)");
-                $body.addClass('active');
+                $body.addClass("active");
             }
         },
 
@@ -97,7 +97,7 @@
                     $row.html(defaultHTML);
                 }, Date.now() + 1500);
             }, function(err) {
-                console.error('Async: Could not copy text: ', err);
+                console.error("Async: Could not copy text: ", err);
             });
         },
 

@@ -105,6 +105,6 @@ class AddOrderForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults( self::DEFAULT_OPTIONS);
+        $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }
