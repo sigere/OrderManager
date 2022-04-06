@@ -14,7 +14,7 @@ final class Version20220404175313 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Repertory Entry entity, additional_fee, refactor states to en, clear preferences';
     }
 
     public function up(Schema $schema): void
