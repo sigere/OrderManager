@@ -19,7 +19,7 @@
     font-size: 12px;
     padding: 5px 12px;
     border-radius: 15px;
-    background-color: rgb(39, 39, 39);
+    background-color: var(--color-select-background);
     color: white;
     border: none;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -30,7 +30,7 @@
 .filters-form input[type="date"] {
     width: 150px;
     color: white;
-    background-color: rgb(39, 39, 39);
+    background-color: var(--color-select-background);
     border-radius: 10px;
     border: none;
     padding: 5px;
@@ -79,7 +79,7 @@
 }
 
 .filters-form input[type="checkbox"]:checked + label {
-    background-color: rgb(35, 105, 252);
+    background-color: var(--color-order-manager);
 }
 
 .filters-form button {

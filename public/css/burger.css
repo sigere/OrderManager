@@ -2,7 +2,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    background-color: rgb(73, 82, 91);
+    background-color: var(--color-burger);
     padding: 12px 0 0 10px;
     width: 50px;
     height: 40px;
@@ -39,10 +39,10 @@
 
 .burger {
     position: absolute;
-    z-index: 10;
+    z-index: 1;
     right: 0;
     top: 0;
-    background-color: rgb(73, 82, 91);
+    background-color: var(--color-burger);
     padding: 0;
     width: 50px;
     max-height: 40px;
@@ -91,6 +91,7 @@
     float: right;
     height: 20px;
     width: 20px;
+    margin-right: 4px;
 }
 
 .burger-header svg {

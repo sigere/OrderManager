@@ -7,6 +7,7 @@ use App\Entity\Order;
 use App\Form\OrderForm;
 use App\Form\DeleteEntityFrom;
 use App\Form\IndexFiltersForm;
+use App\Form\OrderSearchForm;
 use App\Repository\LogRepository;
 use App\Repository\OrderRepository;
 use App\Service\OptionsProviderFactory;
@@ -64,6 +65,35 @@ class IndexController extends AbstractController
             'rowsFound' => $rowsCount,
             'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
             'dataSourceUrl' => '/order'
+        ]);
+    }
+
+    /**
+     * @Route("/locate", methods={"POST"}, name="search_post")
+     */
+    public function search(Request $request): Response
+    {
+        $id = $request->get('id');
+        if ($id) {
+            $order = $this->orderRepository->findOneBy(['id' => $id]);
+            if (!$order) {
+                return $this->render('index/locate_form.html.twig', [
+                    'entity' => 'order',
+                    'dataUrl' => '/locate',
+                    'errors' => ['Order not found.']
+                ]);
+            }
+
+            return new Response(
+                $this->formatter->success("Znaleziono zlecenie."),
+                200,
+                ['Set-Current-Entity' => 'order/' . $order->getId()]
+            );
+        }
+
+        return $this->render('index/locate_form.html.twig', [
+            'entity' => 'order',
+            'dataUrl' => '/locate',
         ]);
     }
 

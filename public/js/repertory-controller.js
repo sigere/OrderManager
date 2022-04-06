@@ -64,7 +64,6 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    self.reloadTable();
                     executeAfter(function () {
                         let $handle = self.popupManager.display(data);
                         if (!$handle) {

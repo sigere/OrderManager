@@ -1,4 +1,4 @@
-{% set style = rowsShown < rowsFound ? 'style=color:red;' : '' %}
+{% set style = rowsShown < rowsFound ? 'style=color:var(--color-warning);' : '' %}
 <div class="rows-count" title="{{ ('rows shown' | trans) ~ ' / ' ~ ('rows found' | trans) }}">
     {% include 'icons/learn.html' %}
     {{ ('Rows' | trans) ~ ': ' }}

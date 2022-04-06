@@ -1,6 +1,6 @@
 body {
   height: 100%;
-  background-color: rgb(28, 31, 34);
+  background-color: var(--color-background-dark);
   font-family: "Rubik", sans-serif;
   color: white;
 }
@@ -11,10 +11,10 @@ body {
   height: 45px;
   background: linear-gradient(
           90deg,
-          rgba(35, 105, 252, 1) 0%,
-          rgba(35, 105, 252, 1) 38%,
-          rgba(239, 83, 96, 1) 56%,
-          rgba(239, 83, 96, 1) 100%
+          var(--color-order-manager) 0%,
+          var(--color-order-manager) 38%,
+          var(--color-kadamaxo) 56%,
+          var(--color-kadamaxo) 100%
   );
   background-size: 150% 100%;
   animation: gradient 20s ease infinite;
@@ -51,7 +51,6 @@ body {
 }
 
 .nav-link a:hover {
-  /* color: rgb(173, 173, 173); */
   text-shadow: 0px 0px 15px white;
   transition: all 0.5s;
 }
@@ -61,11 +60,10 @@ body {
 }
 
 .current-tab .item-container {
-  color: rgb(35, 105, 252);
+  color: var(--color-order-manager);
 }
 
 a {
-  /* color: rgb(0,143,224); */
   color: white;
   text-decoration: none;
 }
@@ -81,8 +79,8 @@ a {
 #sidebar {
   min-width: 200px;
   max-width: 200px;
-  background: rgb(45, 50, 55);
-  color: rgb(255, 255, 255);
+  background: var(--color-header);
+  color: white;
   transition: all 0.5s;
   height: 100%;
   text-align: center;
@@ -107,11 +105,11 @@ a {
 }
 
 .item-container a:hover h6 {
-  color: rgb(35, 105, 252);
+  color: var(--color-order-manager);
 }
 
 .item-container a:hover svg path {
-  fill: rgb(35, 105, 252);
+  fill: var(--color-order-manager);
 }
 
 @keyframes show-up-delayed {
@@ -160,7 +158,7 @@ a {
 }
 
 #sidebar ul li a:hover {
-  color: rgb(35, 105, 252);
+  color: var(--color-order-manager);
 }
 
 #sidebar ul li a i {
@@ -213,19 +211,24 @@ input[type="radio"] {
 }
 
 [data-state="accepted"] {
-  background-color: rgba(254, 161, 57);
+  background-color: var(--color-state-accepted);
 }
 [data-state="done"] {
-  background-color: rgb(35, 105, 252);
+  background-color: var(--color-state-done);
 }
 [data-state="sent"] {
-  background-color: rgb(7, 192, 107);
+  background-color: var(--color-state-sent);
 }
 [data-state="settled"] {
-  background-color: rgb(58, 58, 58);
+  background-color: var(--color-state-settled);
 }
 [data-deleted="true"] {
-  background-color: rgb(251, 36, 80);
+  background-color: var(--color-state-deleted);
+}
+
+.btn-primary {
+  background-color: var(--color-state-done);
+  border-color: var(--color-state-done);
 }
 
 .row {
@@ -267,4 +270,43 @@ input[type="radio"] {
   -webkit-animation: spin 1s linear infinite;
   -moz-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
+}
+
+.locate-form .error {
+  color: var(--color-warning);
+}
+
+.locate-form input {
+  background-color: var(--color-burger);
+  color: white;
+  border: none;
+  padding: 2px;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.locate-form button {
+  float: right;
+  margin-top: 20px;
+}
+
+/* --- colors --- */
+:root {
+  --color-order-manager:      rgb(35, 105, 252);
+  --color-kadamaxo:           rgb(239, 83, 96);
+  --color-background:         rgb(33, 37, 41);
+  --color-background-dark:    rgb(28, 31, 34);
+  --color-header:             rgb(57, 64, 70);
+  --color-burger:             rgb(73, 82, 91);
+  --color-active-link:        var(--color-order-manager);
+  --color-disabled:           rgb(58, 58, 58);
+  --color-property-label:     rgb(136, 137, 139);
+  --color-notice:             rgb(255, 251, 0);
+  --color-warning:            rgb(255, 3, 64);
+  --color-select-background:  rgb(39, 39, 39);
+  --color-state-accepted:     rgb(254, 161, 57);
+  --color-state-done:         var(--color-order-manager);
+  --color-state-sent:         rgb(7, 192, 107);
+  --color-state-settled:      rgb(0, 150, 166);
+  --color-state-deleted:      rgb(251, 36, 80);
 }

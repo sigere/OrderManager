@@ -90,7 +90,7 @@
 
             $.ajax({
                 url: "/api/" + type + "/" + id + "/state",
-                method: "POST",
+                method: "PUT",
                 data: {state: $select.val()},
                 success: function (data) {
                     $select.attr("data-state", $select.val());

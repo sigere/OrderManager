@@ -28,7 +28,7 @@
         window.onpopstate = _onPopState.bind(this);
         let self = this;
         $(document).ajaxComplete(function(event, request, settings ) {
-            let header = request.getResponseHeader("Created-Entity");
+            let header = request.getResponseHeader("Set-Current-Entity");
             if (header !== null) {
                 header = header.split("/");
                 self.currentSubject = {
@@ -36,11 +36,42 @@
                     id: header[1]
                 };
                 self.reloadTable();
+                return;
+            }
+
+            header = request.getResponseHeader("Reload-Table");
+            if (header !== null) {
+                self.reloadTable();
             }
         });
     };
 
     $.extend(window.Controller.prototype, {
+        searchOrder: function () {
+            this.popupManager.open();
+            let self = this;
+            $.ajax({
+                url: "/locate",
+                method: "POST",
+                success: function (data) {
+                    executeAfter( function () {
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(self)
+                        );
+                    });
+                },
+                error: function (jqXHR) {
+                    console.error(jqXHR.responseText);
+                    self.popupManager.display(jqXHR.responseText);
+                }
+            });
+        },
+
         addOrder: function () {
             this.popupManager.open();
 
@@ -61,6 +92,7 @@
                     });
                 },
                 error: function (jqXHR) {
+                    console.error(jqXHR.responseText);
                     self.popupManager.display(jqXHR.responseText);
                 }
             });
@@ -101,6 +133,7 @@
                     });
                 },
                 error: function (jqXHR) {
+                    console.error(jqXHR.responseText);
                     self.popupManager.display(jqXHR.responseText);
                 }
             });
@@ -178,7 +211,6 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    self.reloadTable();
                     executeAfter(function () {
                         let $handle = self.popupManager.display(data);
                         if (!$handle) {
@@ -206,6 +238,12 @@
         },
 
         _initListeners: function () {
+            this.$wrapper.on(
+                "click",
+                ".js-search-order-link",
+                this.searchOrder.bind(this)
+            );
+
             this.$wrapper.on(
                 "click",
                 ".js-add-order-link",

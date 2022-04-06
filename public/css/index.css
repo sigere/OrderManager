@@ -1,6 +1,6 @@
 /* -- filters -- */
 .filters-form .filter-columns-label {
-    background-color: rgb(45, 50, 55);
+    background-color: var(--color-select-background);
     margin-top: 12px;
     width: 150px;
     padding: 5px 10px;
@@ -72,31 +72,9 @@
 
 .right-col .logs thead {
     font-size: 12px;
-    color: rgb(185, 185, 185);
+    color: var(--color-property-label);
 }
 
 .right-col .logs tbody {
     font-size: 12px;
-}
-
-.right-col .expandable .body {
-    display: none;
-}
-
-.right-col .expandable .body .value {
-    background-color: rgb(40, 45, 50);
-    color: rgb(200,200,200);
-}
-.right-col .expandable .body.active {
-    display: block;
-}
-
-.right-col .expandable .trigger .value{
-    cursor: pointer;
-}
-
-.right-col .expandable svg {
-    position: absolute;
-    right: 18px;
-    top: 13px;
 }

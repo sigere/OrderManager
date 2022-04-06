@@ -23,13 +23,19 @@
         window.onpopstate = window._onPopState.bind(this);
         let self = this;
         $(document).ajaxComplete(function(event, request, settings ) {
-            let header = request.getResponseHeader("Created-Entity");
+            let header = request.getResponseHeader("Set-Current-Entity");
             if (header !== null) {
                 header = header.split("/");
                 self.currentSubject = {
                     type: header[0],
                     id: header[1]
                 };
+                self.reloadTable();
+                return;
+            }
+
+            header = request.getResponseHeader("Reload-Table");
+            if (header !== null) {
                 self.reloadTable();
             }
         });
@@ -82,7 +88,6 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    self.reloadTable();
                     executeAfter(function () {
                         let $handle = self.popupManager.display(data);
                         if (!$handle) {
