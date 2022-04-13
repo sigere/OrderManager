@@ -165,6 +165,11 @@ a {
   margin-right: 10px;
 }
 
+#sidebar svg {
+  height: 22px;
+  width: 22px;
+}
+
 .dropdown-toggle::after {
   display: block;
   position: absolute;
@@ -179,9 +184,14 @@ a {
 
 .container-fluid {
   height: 100%;
-  padding: 0 25px 0 18px;
+  padding: 0 25px 0 15px;
   width: 100%;
   transition: all 0.3s;
+}
+
+.column {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .column header {

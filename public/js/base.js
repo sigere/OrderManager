@@ -98,3 +98,19 @@ function _onPopState(e) {
         console.error("Error onpopstate. Subject:", subject);
     }
 }
+
+$(document).ajaxComplete(function(event, request, settings) {
+    let header = request.getResponseHeader("Set-Current-Subject");
+    if (header !== null) {
+        header = header.split("/");
+        let subject = {
+            type: header[0],
+            id: parseInt(header[1])
+        };
+        console.log("controller" in window);
+        console.log("setCurrentSubject" in window.controller);
+        if ("controller" in window && "setCurrentSubject" in window.controller) {
+            window.controller.setCurrentSubject(subject);
+        }
+    }
+});

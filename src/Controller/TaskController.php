@@ -110,7 +110,7 @@ class TaskController extends AbstractController
             return new Response(
                 $this->formatter->success('Dodano zadanie.'),
                 201,
-                ['Created-Entity' => 'task/' . $task->getId()]
+                ['Set-Current-Subject' => 'task/' . $task->getId()]
             );
         }
 
@@ -142,7 +142,11 @@ class TaskController extends AbstractController
             $this->entityManager->persist(new Log($this->getUser(), 'Zaktualizowano zadanie', $task));
             $this->entityManager->flush();
 
-            return new Response($this->formatter->success('Zaktualizowano zadanie.'), 201);
+            return new Response(
+                $this->formatter->success('Zaktualizowano zadanie.'),
+                201,
+                ['Set-Current-Subject' => 'task/' . $task->getId()]
+            );
         }
 
         return $this->render('tasks/task_form.html.twig', [
@@ -178,7 +182,8 @@ class TaskController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Zadanie usunięte.'),
-                200
+                200,
+                ['Set-Current-Subject' => 'task/' . $task->getId()]
             );
         }
 

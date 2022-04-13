@@ -1,34 +1,46 @@
-.burger-single {
+.burger-flat-container {
     position: absolute;
     right: 0;
     top: 0;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.burger-flat {
     background-color: var(--color-burger);
-    padding: 12px 0 0 10px;
     width: 50px;
     height: 40px;
-    border-top-right-radius: 10px;
     transition: all 0.4s;
     font-size: 13px;
     cursor: pointer;
     overflow: hidden;
+    margin-right: 20px;
+    position: relative;
 }
 
-.burger-single:hover {
+.burger-flat:first-child {
+    border-top-right-radius: 10px;
+    margin-right: 0;
+}
+
+.burger-flat:hover {
     width: 150px;
 }
 
-.burger-single .label {
+.burger-flat .label {
     display: none;
+    margin-top: 12px;
+    margin-left: 8px;
 }
 
-.burger-single:hover .label {
+.burger-flat:hover .label {
     animation-name: show-up-delayed;
     animation-iteration-count: 1;
     animation-duration: 0.7s;
     display: block;
 }
 
-.burger-single svg {
+.burger-flat svg {
     position: absolute;
     right: 15px;
     top: 9px;

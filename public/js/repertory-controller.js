@@ -29,6 +29,18 @@
     };
 
     $.extend(window.Controller.prototype, {
+        setCurrentSubject: function (subject) {
+            if (subject.type === "entry") {
+                this.currentSubject = subject;
+                this.detailsController.reload(subject);
+                this.contentTableController.reload();
+            } else if (subject.type === "order") {
+                // todo what if given order is not related to current entry?
+                this.detailsController.reload();
+                this.contentTableController.reload();
+            }
+        },
+
         reloadDetails: function (subject) {
             this.detailsController.reload(subject);
         },

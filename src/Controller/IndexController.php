@@ -7,7 +7,6 @@ use App\Entity\Order;
 use App\Form\OrderForm;
 use App\Form\DeleteEntityFrom;
 use App\Form\IndexFiltersForm;
-use App\Form\OrderSearchForm;
 use App\Repository\LogRepository;
 use App\Repository\OrderRepository;
 use App\Service\OptionsProviderFactory;
@@ -87,7 +86,7 @@ class IndexController extends AbstractController
             return new Response(
                 $this->formatter->success("Znaleziono zlecenie."),
                 200,
-                ['Set-Current-Entity' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
         }
 
@@ -181,7 +180,7 @@ class IndexController extends AbstractController
             return new Response(
                 $this->formatter->success('Dodano zlecenie'),
                 201,
-                ['Created-Entity' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
         }
 
@@ -215,7 +214,8 @@ class IndexController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Zaktualizowano zlecenie.'),
-                202
+                202,
+                ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
         }
 
@@ -252,7 +252,8 @@ class IndexController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Zlecenie usunięte'),
-                200
+                200,
+                ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
         }
 
@@ -292,7 +293,8 @@ class IndexController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Zlecenie przywrócone'),
-                200
+                200,
+                ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
         }
 

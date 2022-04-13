@@ -52,13 +52,19 @@
 
 /* --------mid-column-------------- */
 
-#rep {
-    right: 100px;
-    width: 100px;
-    background: none;
-    border-radius: 0;
-    font-size: 15px;
-    padding: 10px 0;
+.mid-col .table-container {
+    height: calc(100% - 5px);
+}
+
+.mid-col .rows-count-container {
+    height: 25px;
+}
+
+.mid-col .rows-count-container .rows-count {
+    text-align: right;
+    padding-right: 8px;
+    font-size: 13px;
+    margin-top: 7px;
 }
 
 /* -----------right-col-------------- */

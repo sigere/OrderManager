@@ -70,7 +70,7 @@ class ClientsController extends AbstractController
 
         return $this->render('clients/clients_table.html.twig', [
             'clients' => $clients,
-            'dataSourceUlr' => '/clients/client'
+            'dataSourceUrl' => '/clients/client'
         ]);
     }
 
@@ -109,8 +109,8 @@ class ClientsController extends AbstractController
 
         $form->handleRequest($this->request);
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Client $client */
             $client = $form->getData();
-            $client->setAuthor($this->getUser());
 
             $this->entityManager->persist($client);
             $this->entityManager->persist(new Log($this->getUser(), 'Dodano klienta', $client));
@@ -119,7 +119,7 @@ class ClientsController extends AbstractController
             return new Response(
                 $this->formatter->success('Dodano klienta'),
                 201,
-                ['Created-Entity' => 'client/' . $client->getId()]
+                ['Set-Current-Subject' => 'client/' . $client->getId()]
             );
         }
 
@@ -134,7 +134,7 @@ class ClientsController extends AbstractController
     public function update(Client $client): Response
     {
         $attr = array_merge(ClientForm::DEFAULT_OPTIONS['attr'] ?? [], [
-            'data-url' => '/order/' . $client->getId(),
+            'data-url' => '/clients/client/' . $client->getId(),
             'data-method' => 'PUT'
         ]);
         $options = array_merge(ClientForm::DEFAULT_OPTIONS, [
@@ -154,7 +154,8 @@ class ClientsController extends AbstractController
 
             return new Response(
                 $this->formatter->success('Zaktualizowano klienta.'),
-                202
+                202,
+                ['Set-Current-Subject' => 'client/' . $client->getId()]
             );
         }
 

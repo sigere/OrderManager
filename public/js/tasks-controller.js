@@ -21,27 +21,15 @@
 
         this._initListeners.bind(this)();
         window.onpopstate = window._onPopState.bind(this);
-        let self = this;
-        $(document).ajaxComplete(function(event, request, settings ) {
-            let header = request.getResponseHeader("Set-Current-Entity");
-            if (header !== null) {
-                header = header.split("/");
-                self.currentSubject = {
-                    type: header[0],
-                    id: header[1]
-                };
-                self.reloadTable();
-                return;
-            }
-
-            header = request.getResponseHeader("Reload-Table");
-            if (header !== null) {
-                self.reloadTable();
-            }
-        });
     };
 
     $.extend(window.Controller.prototype, {
+        setCurrentSubject: function (subject) {
+            this.currentSubject = subject;
+            this.detailsController.reload(subject);
+            this.contentTableController.reload();
+        },
+
         reloadDetails: function (subject) {
             this.detailsController.reload(subject);
         },

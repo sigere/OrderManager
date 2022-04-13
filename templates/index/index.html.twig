@@ -57,7 +57,7 @@
                     </div>
                     Zlecenia
                     <div style="clear: both;"></div>
-                    {% include 'burger.html.twig' with {'options': [
+                    {% include 'burger.html.twig' with {'flat': true, 'options': [
                         {'label': "Add order", 'icon': 'add', 'class': 'js-add-order-link'},
                         {'label': "Locate", 'icon': 'target', 'class': 'js-search-order-link'}
                     ]} %}
@@ -65,6 +65,16 @@
                 <div class="col-content" style="width: auto">
                     <div class="table-container js-table-container">
                         {% include 'index/orders_table.html.twig' %}
+                    </div>
+                    <div class="rows-count-container">
+                        {% set style = rowsShown < rowsFound ? 'style=color:var(--color-warning);' : '' %}
+                        <div class="rows-count" title="{{ ('rows shown' | trans) ~ ' / ' ~ ('rows found' | trans) }}">
+                            {% include 'icons/learn.html' %}
+                            {{ ('Rows' | trans) ~ ': ' }}
+                            <span class="js-rows-count" {{ style }}>
+                                {{ rowsShown }}/{{ rowsFound }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
