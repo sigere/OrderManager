@@ -8,7 +8,7 @@ use App\Entity\Staff;
 
 class RepertoryPreferences extends AbstractPreferences
 {
-    private ?string $month;
+    private ?int $month;
     private ?int $year;
     private ?Staff $staff;
 
@@ -46,18 +46,18 @@ class RepertoryPreferences extends AbstractPreferences
     }
 
     /**
-     * @return string|null
+     * @return int|null
      */
-    public function getMonth(): ?string
+    public function getMonth(): ?int
     {
         return $this->month;
     }
 
     /**
-     * @param string|null $month
+     * @param int|null $month
      * @return RepertoryPreferences
      */
-    public function setMonth(?string $month): RepertoryPreferences
+    public function setMonth(?int $month): RepertoryPreferences
     {
         $this->month = $month;
         return $this;

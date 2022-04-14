@@ -14,19 +14,6 @@
     display: none;
 }
 
-.filters-form select {
-    width: 150px;
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 15px;
-    background-color: var(--color-select-background);
-    color: white;
-    border: none;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
 .filters-form input[type="date"] {
     width: 150px;
     color: white;
@@ -90,4 +77,142 @@
 
 .filters-form label {
     display: block;
+}
+
+/* ---- custom select ---- */
+
+.filters-form .hidden, .filters-form select.form-select {
+    display: none;
+    visibility: hidden;
+    padding-right: 10px;
+}
+
+.filters-form .select {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    font-size: 12px;
+    width: 150px;
+    height: 32px;
+    margin-top: 10px;
+}
+
+.filters-form .select-styled {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -moz-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    padding-left: 10px;
+    padding-top: 7px;
+    padding-right: 19px;
+    overflow: hidden;
+    border: 1px solid white;
+    border-radius: 6px;
+    line-height: 19px;
+}
+
+.filters-form .select-styled:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-color: white transparent transparent transparent;
+    position: absolute;
+    top: 13px;
+    right: 5px;
+}
+
+.filters-form .select-styled:active, .select-styled.active {
+    border: 1px solid var(--color-order-manager);
+    color: var(--color-order-manager);
+}
+
+.filters-form .select-styled:active:after, .select-styled.active:after {
+    top: 5px;
+    border-color: transparent transparent white transparent;
+}
+
+.filters-form .select-options {
+    max-height: 600%;
+    overflow-y: scroll;
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 999;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: var(--color-header);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    width: 150px;
+}
+
+.filters-form .select-options li {
+    margin: 0;
+    padding: 12px 0;
+    text-indent: 15px;
+    -moz-transition: all 0.15s ease-in;
+    -o-transition: all 0.15s ease-in;
+    -webkit-transition: all 0.15s ease-in;
+    transition: all 0.15s ease-in;
+    overflow: hidden;
+    height: 32px;
+}
+
+.filters-form .select-options li:hover, .select-options li.is-selected {
+    background: linear-gradient(90deg, rgb(73, 81, 88) 0%, var(--color-header) 70%, var(--color-header) 100%);
+}
+
+.filters-form .select-options li[rel="hide"] {
+    display: none;
+}
+
+.filters-form label {
+    cursor: pointer;
+}
+
+.filters-form input[type=radio] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /*background-color: red;*/
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 15px;
+    height: 15px;
+    border: 1px solid white;
+    border-radius: 50%;
+    display: block;
+}
+
+.filters-form input[type=radio]::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 11px 11px var(--color-order-manager);
+    margin-left: 2px;
+    margin-top: 2px;
+}
+
+.filters-form input[type=radio]:checked {
+    border: 1px solid var(--color-order-manager);
+}
+
+.filters-form input[type=radio]:checked::before {
+    display: block;
+}
+
+.filters-form input[type=radio]:hover {
+    border: 1px solid var(--color-order-manager);
 }

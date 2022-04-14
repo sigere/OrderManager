@@ -34,6 +34,10 @@
     margin-top: 15px;
 }
 
+.filters-form div[id="index_filters_form_date-type"] {
+    margin-top: 10px;
+}
+
 .filters-form label[for="index_filters_form_date-type_0"],
 .filters-form label[for="index_filters_form_date-type_1"] {
     display: inline;
