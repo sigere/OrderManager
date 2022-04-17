@@ -19,14 +19,20 @@
   position: fixed;
   opacity: 0;
   max-height: calc(100% - 120px);
-  top: calc(50% + 35px);
+  top: calc(50% - 10px);
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 20px;
   border-radius: 10px;
   transition: all 0.4s;
   z-index: -1;
-  /* border: 1px solid blue; */
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.popup::-webkit-scrollbar {
+  display: none; /* chrome, safari, opera*/
 }
 
 .popup.active {

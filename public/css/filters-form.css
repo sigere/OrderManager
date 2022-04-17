@@ -111,7 +111,7 @@
     padding-top: 7px;
     padding-right: 19px;
     overflow: hidden;
-    border: 1px solid white;
+    border: 1px solid var(--color-property-label);
     border-radius: 6px;
     line-height: 19px;
 }
@@ -153,6 +153,11 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     width: 150px;
+    box-shadow: 0px 0px 10px black;
+}
+
+.filters-form .select-options::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
 }
 
 .filters-form .select-options li {

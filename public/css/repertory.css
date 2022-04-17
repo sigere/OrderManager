@@ -2,3 +2,21 @@
     padding-top: 20px !important;
     color: #bdbdbd;
 }
+
+.icon-link-container {
+    height: 20px;
+    display: flex;
+    flex-direction: row;
+    padding-left: 20px;
+    position: relative;
+}
+
+.icon-link-container svg {
+    height: 100%;
+    width: auto;
+    position: absolute;
+}
+
+.icon-link-text {
+  color: black;
+}

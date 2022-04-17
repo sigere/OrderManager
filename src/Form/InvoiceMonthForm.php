@@ -61,6 +61,8 @@ class InvoiceMonthForm extends AbstractType
         $builder
             ->add('month', MonthChoiceType::class, [
                 'data' => $this->preferences->getMonth(),
+                'placeholder' => 'All months',
+                'required' => false
             ])
             ->add('year', ChoiceType::class, [
                 'choices' => $this->years,

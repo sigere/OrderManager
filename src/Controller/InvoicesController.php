@@ -72,7 +72,7 @@ class InvoicesController extends AbstractController
     public function getAll(Request $request): Response
     {
         $year = $request->get('year');
-        $month = $request->get('month');
+        $month = (int)$request->get('month');
 
         if (!$year) {
             return new Response($this->formatter->error("Year not specified."), 400);

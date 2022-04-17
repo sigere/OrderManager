@@ -1,4 +1,15 @@
 /* --------left-column-------------- */
+.left-col h6 {
+    font-size: 15px;
+    margin-top: 25px;
+    margin-bottom: 2px;
+    color: var(--color-property-label)
+}
+
+.left-col h6:first-child {
+    margin-top: 15px;
+}
+
 .left-col .table {
     font-size: 13px;
 }
@@ -36,12 +47,41 @@
     font-size: 12px;
 }
 
+.left-col .form-month {
+    margin-left: auto;
+    margin-right: auto;
+    width: 313px;
+}
+
+.left-col .form-month form div:first-child {
+    margin-right: 10px;
+}
+
 .left-col .form-month select[name="invoice_month_form[year]"] {
     margin-left: 15px;
 }
 
+.left-col .alert.alert-info {
+    margin-bottom: 0;
+    padding-left: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .mid-col table tr {
     cursor: pointer;
+}
+
+.mid-col table svg {
+    width: 12px;
+}
+
+.mid-col table tr:last-child {
+    white-space: nowrap;
+}
+
+.right-col h6 {
+    margin-top: 15px;
 }
 
 .right-col .dates {
@@ -73,4 +113,10 @@
 .right-col .hidden {
     opacity: 0;
     transition: all 0.2s;
+}
+
+.right-col .alert.alert-info {
+    padding-top: 2px;
+    padding-left: 11px;
+    /*margin-bottom: 0;*/
 }

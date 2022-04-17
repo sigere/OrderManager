@@ -67,15 +67,8 @@
                     <div class="table-container js-table-container">
                         {% include 'index/orders_table.html.twig' %}
                     </div>
-                    <div class="rows-count-container">
-                        {% set style = rowsShown < rowsFound ? 'style=color:var(--color-warning);' : '' %}
-                        <div class="rows-count" title="{{ ('rows shown' | trans) ~ ' / ' ~ ('rows found' | trans) }}">
-                            {% include 'icons/learn.html' %}
-                            {{ ('Rows' | trans) ~ ': ' }}
-                            <span class="js-rows-count" {{ style }}>
-                                {{ rowsShown }}/{{ rowsFound }}
-                            </span>
-                        </div>
+                    <div class="rows-count-container js-rows-count-container">
+                        {% include 'index/rows_count.html.twig' %}
                     </div>
                 </div>
             </div>
@@ -97,7 +90,7 @@
                     {% if details['order'] %}
                         {% include 'index/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %}
                     {% else %}
-                        <div class="alert alert-primary">{{ "Select order to display details." | trans }}</div>
+                        <div class="alert alert-info">{{ "Select order to display details." | trans }}</div>
                     {% endif %}
                 </div>
             </div>

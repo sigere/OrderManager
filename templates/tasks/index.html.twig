@@ -63,7 +63,7 @@
                     {% if details['task'] %}
                         {% include 'tasks/details.html.twig' with {'task': details['task'], 'logs': details['task']} %}
                     {% else %}
-                        <div class="alert alert-primary">{{ "Select task to display details." | trans }}</div>
+                        <div class="alert alert-info">{{ "Select task to display details." | trans }}</div>
                     {% endif %}
                 </div>
             </div>

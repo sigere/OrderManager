@@ -216,6 +216,12 @@ a {
   font-size: 13px;
 }
 
+.alert.alert-info {
+  color: var(--color-property-label);
+  background-color: unset;
+  border: none;
+}
+
 input[type="radio"] {
   margin-right: 5px;
 }

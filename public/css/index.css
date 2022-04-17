@@ -71,6 +71,12 @@
     margin-top: 7px;
 }
 
+.mid-col .rows-count svg {
+    height: 14px;
+    margin-bottom: 2px;
+    margin-right: 3px;
+}
+
 /* -----------right-col-------------- */
 
 

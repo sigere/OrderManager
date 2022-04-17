@@ -1,0 +1,8 @@
+{% set style = rowsShown < rowsFound ? 'style=color:var(--color-warning);' : '' %}
+<div class="rows-count" title="{{ ('rows shown' | trans) ~ ' / ' ~ ('rows found' | trans) }}">
+    {% include 'icons/learn.html' %}
+    {{ ('Rows' | trans) ~ ': ' }}
+    <span class="js-rows-count" {{ style }}>
+        {{ rowsShown }}/{{ rowsFound }}
+    </span>
+</div>

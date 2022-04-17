@@ -12,6 +12,23 @@
     <div class="alert alert-success">Zlecenie zostało rozliczone.</div>
 {% endif %}
 
+{% if order.repertoryEntry is not null %}
+    <div class="expandable">
+        <div class="trigger">
+            <div class="property js-repertory-entry-number" data-entry="{{ order.repertoryEntry.id }}">
+                <div class="name">Numer wpisu</div>
+                <div class="value">
+                    {{ order.repertoryEntry.formattedNumber }}
+                    {% include 'icons/expand.html' %}
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <div class="body">
+            {% include 'index/entry_summary.html.twig' with {"entry": order.repertoryEntry} %}
+        </div>
+    </div>
+{% endif %}
 
 <div class="property">
     <div class="name">Status</div>
@@ -92,24 +109,6 @@
     <div class="value">{{ order.netto | number_format(2, ".", "") }} PLN</div>
 </div>
 <div style="clear:both;"></div>
-
-{% if order.repertoryEntry is not null %}
-    <div class="expandable">
-        <div class="trigger">
-            <div class="property js-repertory-entry-number" data-entry="{{ order.repertoryEntry.id }}">
-                <div class="name">Numer wpisu</div>
-                <div class="value">
-                    {{ order.repertoryEntry.formattedNumber }}
-                    {% include 'icons/expand.html' %}
-                </div>
-            </div>
-            <div style="clear:both;"></div>
-        </div>
-        <div class="body">
-            {% include 'index/entry_summary.html.twig' with {"entry": order.repertoryEntry} %}
-        </div>
-    </div>
-{% endif %}
 
 <div class="logs">
     <table class="table table-dark">

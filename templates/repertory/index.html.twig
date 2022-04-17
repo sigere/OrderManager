@@ -74,7 +74,7 @@
                     {% if details['entry'] %}
                         {% include 'repertory/details.html.twig' with {'entry': details['entry']} %}
                     {% else %}
-                        <div class="alert alert-primary">{{ "Select entry to display details." | trans }}</div>
+                        <div class="alert alert-info">{{ "Select entry to display details." | trans }}</div>
                     {% endif %}
                 </div>
             </div>

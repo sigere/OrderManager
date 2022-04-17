@@ -1,4 +1,4 @@
-<table class="table table-dark table-hover js-main-table" data-source-url="{{ dataSourceUrl }}">
+<table class="table table-dark table-hover entity-table js-main-table" data-source-url="{{ dataSourceUrl }}">
     <thead>
     <tr>
         <th>id</th>
@@ -26,9 +26,10 @@
             <td class="clickable-row">{{ entry.comments }}</td>
 
             <td class="clickable-row">
-                {% include 'icons/order.html' %}
-                <i>{{ entry.order.id }}</i>
-                {% include 'icons/inheritance_arrow.html' %}
+                <div class="icon-link-container">
+                    {% include 'icons/link.html' %}
+                    <div class="icon-link-text">{{ entry.order.id }}</div>
+                </div>
             </td>
 
             <td class="clickable-row inherited">

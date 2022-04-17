@@ -8,6 +8,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset("css/filters-form.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/entity_table.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/invoices.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/popups.css") }}"/>
 {% endblock %}
@@ -16,6 +17,7 @@
 {{ parent() }}
 <script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
 <script type="text/javascript" src="{{ asset("js/invoices-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/interface/custom-select.js") }}"></script>
 <script>
     $(document).ready(function (){
         window.controller = new Controller($(document));
@@ -51,13 +53,12 @@
             <div class="col-lg-6" style=" height: 100%;">
                 <div class="column mid-col js-mid-col">
                     <header>
-                        Zlecenia
+                        Nierozliczone zlecenia
                         <div style="clear: both;"></div>
                     </header>
                     <div class="col-content" id="orders-content" style="width: auto">
-                        <h6>Lista nierozliczonych zleceń wybranego klienta</h6>
-
                         <div class="table-container js-orders-table-container">
+                            <div class="alert alert-info">Wybierz klienta, aby wyświetlić zlecenia</div>
                         </div>
                     </div>
                 </div>
@@ -76,8 +77,8 @@
                         <div>
                             {% include 'invoices/issuer_details.html.twig' %}
                         </div>
-                        <br/>
                         <div class="js-buyer-data">
+                            <h6>Dane kupującego</h6>
                             <div class="alert alert-info">Wybierz klienta, by wystawić fakturę</div>
                         </div>
                         <div>

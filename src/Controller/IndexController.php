@@ -122,17 +122,22 @@ class IndexController extends AbstractController
     /**
      * @Route("/order", methods={"GET"}, name="order_get_all")
      */
-    public function getOrders(): Response
+    public function getOrders(): JsonResponse
     {
         $orders = $this->orderRepository->getByIndexPreferences($this->preferences, $rowsCount);
 
-        return $this->render('index/orders_table.html.twig', [
+        $result['table'] = $this->renderView('index/orders_table.html.twig', [
             'orders' => $orders,
             'preferences' => $this->preferences,
-            'rowsFound' => $rowsCount,
-            'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
             'dataSourceUrl' => '/order'
         ]);
+
+        $result['rowsCount'] = $this->renderView('index/rows_count.html.twig', [
+            'rowsFound' => $rowsCount,
+            'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
+        ]);
+
+        return new JsonResponse($result);
     }
 
     /**

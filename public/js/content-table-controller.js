@@ -5,6 +5,7 @@
         this.$wrapper = $wrapper;
         this.controller = controller;
         this.$tableContainer = $wrapper.find(".js-table-container");
+        this.$rowsCount = $wrapper.find(".js-rows-count-container");
         this.$table = $wrapper.find(".js-main-table");
 
         let subjectType = null;
@@ -114,6 +115,12 @@
                 success: function (data) {
                     self.$tableContainer.addClass("hidden");
                     executeAfter(function () {
+                        if (typeof data === "object") {
+                            let rowsCount = data.rowsCount;
+                            data = data.table;
+                            self.$rowsCount.html(rowsCount);
+                        }
+
                         self.$tableContainer.html(data);
                         self.$table = self.$wrapper.find(".js-main-table");
                         self.setAndHighlightCurrent();

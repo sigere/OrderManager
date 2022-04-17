@@ -2,7 +2,7 @@
     <div class="burger-flat-container">
         {% for option in options %}
             <div class="burger-flat {{ option['class'] }}">
-                <span class="label">{{ option['label'] | trans }}</span> {% include 'icons/' ~ option['icon'] ~ '.html' %}
+                <div class="label">{{ option['label'] | trans }}</div> {% include 'icons/' ~ option['icon'] ~ '.html' %}
             </div>
         {% endfor %}
     </div>
