@@ -12,6 +12,12 @@
         );
 
         this._initListeners.bind(this)();
+        let self = this;
+        $(document).ajaxComplete(function(event, request, settings) {
+            if (request.getResponseHeader("Set-Current-Subject") !== null) {
+                self.reloadClient();
+            }
+        });
     };
 
     $.extend(window.Controller.prototype, {
@@ -93,6 +99,8 @@
 
             $buttons.html(window.reloadIcon);
             let self = this;
+            console.log(orders);
+            return;
             $.ajax({
                 url: url,
                 method: method,
@@ -119,11 +127,26 @@
             });
         },
 
+        updateNetto: function () {
+            let $nettoSummaryCell = this.$wrapper.find(".js-orders-table .js-netto-summary");
+            let $rows = this.$ordersTableContainer.find("tr[data-valid='1']");
+
+            let sum = 0;
+            for (let i=0; i<$rows.length; i++) {
+                let $row = $($rows[i]);
+                if ($row.find("input").is(":checked")) {
+                    sum += $row.data("netto");
+                }
+            }
+            $nettoSummaryCell.html(sum + "PLN");
+        },
+
         onRowClicked: function (e) {
             let $row = $(e.target).closest("tr");
             let checkbox = $row.find("input[type='checkbox']");
             checkbox = checkbox.length === 1 ? checkbox[0] : null;
 
+            this.updateNetto();
             if (checkbox) {
                 checkbox.checked = !checkbox.checked;
             }
@@ -132,6 +155,72 @@
         applyTableSorter: function () {
             this.$ordersTableContainer.find(".js-orders-table").tablesorter({
                 dateFormat: "ddmmyyyy"
+            });
+        },
+
+        openOrderInNewTab: function (e) {
+            let $row = $(e.currentTarget).closest("tr");
+            let subject = {
+                id: $row.data("subject-id"),
+                type: $row.data("subject-type")
+            }
+
+            let self = this;
+            this.popupManager.open();
+            $.ajax({
+                url: getUrlForSubject(subject),
+                method: "PUT",
+                success: function (data) {
+                    executeAfter( function () {
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(controller)
+                        );
+                    });
+                },
+                error: function (jqXHR) {
+                    self.popupManager.display(jqXHR.responseText);
+                }
+            });
+        },
+
+        formSubmit: function (e) {
+            e.preventDefault();
+            let self = this;
+            let data = new FormData(e.currentTarget);
+            let url = $(e.currentTarget).data("url");
+            let method = $(e.currentTarget).data("method");
+            if (method !== "POST") {
+                data.append("_method", method);
+            }
+
+            this.popupManager.default();
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    executeAfter(function () {
+                        let $handle = self.popupManager.display(data);
+                        if (!$handle) {
+                            return;
+                        }
+                        $handle.find("form").on(
+                            "submit",
+                            self.formSubmit.bind(self)
+                        );
+                    });
+                },
+                error: function (jqXHR) {
+                    console.error(jqXHR);
+                    self.popupManager.display(jqXHR.responseText);
+                }
             });
         },
 
@@ -148,6 +237,8 @@
         },
 
         _initListeners: function () {
+            let self = this;
+
             this.$wrapper.on(
                 "change",
                 ".js-form-month select",
@@ -160,10 +251,20 @@
                 this.selectClient.bind(this)
             );
 
+            // this.$wrapper.on(
+            //     "click",
+            //     ".js-orders-table",
+            //     this.onRowClicked.bind(this)
+            // );
+
             this.$wrapper.on(
                 "click",
-                ".js-orders-table",
-                this.onRowClicked.bind(this)
+                ".js-orders-table input[type=\"checkbox\"]",
+                this.updateNetto.bind(this)
+                // function (event) {
+                //     self.updateNetto();
+                //     event.stopPropagation();
+                // }
             );
 
             this.$wrapper.on(
@@ -176,6 +277,12 @@
                 "click",
                 ".js-button-settle",
                 this.settle.bind(this, false)
+            );
+
+            this.$wrapper.on(
+                "click",
+                ".js-edit-order-link",
+                this.openOrderInNewTab.bind(this)
             );
         }
     });

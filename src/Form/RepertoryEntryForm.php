@@ -26,6 +26,7 @@ class RepertoryEntryForm extends AbstractType
     {
         $builder
             ->add('documentIssuer', null, [
+                'attr' => ['autocomplete' => 'off']
             ])
             ->add('copies', NumberType::class, [
                 'label' => 'Additional copies',

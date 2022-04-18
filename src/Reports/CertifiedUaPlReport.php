@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Service\Reports;
+namespace App\Reports;
 
 use Twig\Environment;
 use App\Entity\Order;
 use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
-use App\Service\ReportInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Error\LoaderError;

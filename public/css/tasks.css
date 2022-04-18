@@ -13,3 +13,7 @@
     border-radius: 20px;
     color: rgba(255,255,255,0.5);
 }
+
+tbody svg {
+    height: 13px;
+}

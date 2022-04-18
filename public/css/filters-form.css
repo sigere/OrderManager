@@ -17,66 +17,65 @@
 .filters-form input[type="date"] {
     width: 150px;
     color: white;
-    background-color: var(--color-select-background);
-    border-radius: 10px;
-    border: none;
+    background-color: rgba(0,0,0,0);
+    border-radius: 4px;
+    border: 1px solid var(--color-property-label);
     padding: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 
 .filters-form label[state="accepted"] {
-    background-color: rgba(254, 161, 57, 0.3);
+background-color: rgba(254, 161, 57, 0.3);
 }
 
 .filters-form input[type="checkbox"]:checked + label[state="accepted"] {
-    background-color: rgba(254, 161, 57, 1);
+background-color: rgba(254, 161, 57, 1);
 }
 
 .filters-form label[state="done"] {
-    background-color: rgba(35, 105, 252, 0.3);
+background-color: rgba(35, 105, 252, 0.3);
 }
 
 .filters-form input[type="checkbox"]:checked + label[state="done"] {
-    background-color: rgba(35, 105, 252, 1);
+background-color: rgba(35, 105, 252, 1);
 }
 
 .filters-form label[state="sent"] {
-    background-color: rgba(7, 192, 107, 0.3);
+background-color: rgba(7, 192, 107, 0.3);
 }
 
 .filters-form input[type="checkbox"]:checked + label[state="sent"] {
-    background-color: rgba(7, 192, 107, 1);
+background-color: rgba(7, 192, 107, 1);
 }
 
 .filters-form label[state="settled"] {
-    background-color: rgba(58, 58, 58, 0.3);
+background-color: rgba(58, 58, 58, 0.3);
 }
 
 .filters-form input[type="checkbox"]:checked + label[state="settled"] {
-    background-color: rgba(58, 58, 58, 1);
+background-color: rgba(58, 58, 58, 1);
 }
 
 .filters-form label[state="deleted"] {
-    background-color: rgba(251, 36, 80, 0.3);
+background-color: rgba(251, 36, 80, 0.3);
 }
 
 .filters-form input[type="checkbox"]:checked + label[state="deleted"] {
-    background-color: rgba(251, 36, 80, 1);
+background-color: rgba(251, 36, 80, 1);
 }
 
 .filters-form input[type="checkbox"]:checked + label {
-    background-color: var(--color-order-manager);
+background-color: var(--color-order-manager);
 }
 
 .filters-form button {
-    margin-top: 20px;
-    margin-left: 30px;
-    width: 90px;
+margin-top: 20px;
+margin-left: 30px;
+width: 90px;
 }
 
 .filters-form label {
-    display: block;
+display: block;
 }
 
 /* ---- custom select ---- */
@@ -162,14 +161,15 @@
 
 .filters-form .select-options li {
     margin: 0;
-    padding: 12px 0;
+    padding: 10px 0;
     text-indent: 15px;
     -moz-transition: all 0.15s ease-in;
     -o-transition: all 0.15s ease-in;
     -webkit-transition: all 0.15s ease-in;
     transition: all 0.15s ease-in;
     overflow: hidden;
-    height: 32px;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 
 .filters-form .select-options li:hover, .select-options li.is-selected {

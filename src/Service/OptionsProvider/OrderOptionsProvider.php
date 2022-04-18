@@ -52,7 +52,9 @@ class OrderOptionsProvider implements OptionsProviderInterface
             return $result;
         }
 
-        $result[] = self::ACTION_EDIT;
+        if (!$object->getSettledAt()) {
+            $result[] = self::ACTION_EDIT;
+        }
 
         if ($object->getCertified()) {
             if (!$object->getRepertoryEntry()) {

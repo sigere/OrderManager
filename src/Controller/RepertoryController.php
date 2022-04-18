@@ -157,6 +157,7 @@ class RepertoryController extends AbstractController
             return new Response(
                 $this->formatter->success("Dodano nowy wpis"),
                 201,
+                ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
         } elseif (!$form->isSubmitted()) {
             $form->add('order', HiddenType::class, ['data' => $order->getId()]);

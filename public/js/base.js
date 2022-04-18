@@ -107,8 +107,6 @@ $(document).ajaxComplete(function(event, request, settings) {
             type: header[0],
             id: parseInt(header[1])
         };
-        console.log("controller" in window);
-        console.log("setCurrentSubject" in window.controller);
         if ("controller" in window && "setCurrentSubject" in window.controller) {
             window.controller.setCurrentSubject(subject);
         }

@@ -9,6 +9,7 @@ use App\Form\DeleteEntityFrom;
 use App\Form\IndexFiltersForm;
 use App\Repository\LogRepository;
 use App\Repository\OrderRepository;
+use App\Service\OptionsProvider\OrderOptionsProvider;
 use App\Service\OptionsProviderFactory;
 use App\Service\ResponseFormatter;
 use App\Service\UserPreferences\IndexPreferences;
@@ -199,6 +200,16 @@ class IndexController extends AbstractController
      */
     public function update(Order $order): Response
     {
+        if (!in_array(
+            OrderOptionsProvider::ACTION_EDIT,
+            $this->optionsProviderFactory->getOptions($order)
+        )) {
+            return new Response(
+                $this->formatter->error("To zlecenie nie może być edytowane."),
+                403
+            );
+        }
+
         $attr = array_merge(OrderForm::DEFAULT_OPTIONS['attr'] ?? [], [
             'data-url' => '/order/' . $order->getId(),
             'data-method' => 'PUT'

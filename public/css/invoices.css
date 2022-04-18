@@ -69,11 +69,16 @@
 }
 
 .mid-col table tr {
-    cursor: pointer;
+    /*cursor: pointer;*/
 }
 
 .mid-col table svg {
     width: 12px;
+}
+
+.mid-col table .edit-order {
+    cursor: pointer;
+    color: white;
 }
 
 .mid-col table tr:last-child {
@@ -82,6 +87,10 @@
 
 .right-col h6 {
     margin-top: 15px;
+}
+
+.right-col .value svg {
+    height: 13px;
 }
 
 .right-col .dates {

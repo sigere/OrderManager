@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\ReportsFactory;
+use App\Reports\ReportsFactory;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

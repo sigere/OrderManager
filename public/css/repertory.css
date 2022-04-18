@@ -1,22 +1,25 @@
-.inherited {
-    padding-top: 20px !important;
-    color: #bdbdbd;
-}
-
 .icon-link-container {
     height: 20px;
     display: flex;
     flex-direction: row;
-    padding-left: 20px;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 1px;
     position: relative;
+    background-color: white;
+    color: var(--color-background);
+    width: fit-content;
+    border-radius: 5px;
 }
 
 .icon-link-container svg {
-    height: 100%;
+    height: 15px;
     width: auto;
-    position: absolute;
+    padding-top: 2px;
 }
 
 .icon-link-text {
-  color: black;
+    color: black;
+    margin-left: 2px;
+    font-weight: 400;
 }

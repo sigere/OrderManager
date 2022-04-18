@@ -80,7 +80,7 @@
                 $svg.css("transform", "none");
                 $body.removeClass("active");
             } else {
-                $svg.css("transform", "rotate(90deg)");
+                $svg.css("transform", "rotate(-180deg)");
                 $body.addClass("active");
             }
         },

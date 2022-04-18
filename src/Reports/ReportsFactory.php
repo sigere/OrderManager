@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Service;
+namespace App\Reports;
 
 use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
-use App\Service\Reports\CertifiedUaPlReport;
 use Twig;
 
 class ReportsFactory

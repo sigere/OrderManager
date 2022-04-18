@@ -37,8 +37,16 @@ class OrderForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $states = [];
+        foreach (Order::STATES as $STATE) {
+            $states[ucfirst($STATE)] = $STATE;
+        }
         $entity = $builder->getData();
         $builder
+            ->add('state', ChoiceType::class, [
+                'choices' => $states,
+                'data' => $entity?->getState() ?? Order::ACCEPTED
+            ])
             ->add('client', EntityType::class, [
                 'class' => Client::class,
                 'query_builder' => function () {
@@ -62,6 +70,7 @@ class OrderForm extends AbstractType
             ])
             ->add('topic', TextType::class, [
                 'required' => true,
+                'attr' => ['autocomplete' => 'off']
             ])
             ->add('pages', NumberType::class, [
                 'required' => false,

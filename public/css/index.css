@@ -22,12 +22,12 @@
     margin-top: 20px;
 }
 
-.filters-form  select[name="index_filters_form[select-client]"] {
-    margin-top: 20px;
+.filters-form label[for="index_filters_form_staff"] {
+    margin-bottom: 15px;
 }
 
-.filters-form select[name="index_filters_form[select-staff]"]{
-    margin-bottom: 15px;
+.filters-form #index_filters_form_date-type {
+    margin-top: 15px;
 }
 
 .filters-form input[name="index_filters_form[date-from]"]{
@@ -58,6 +58,11 @@
 
 .mid-col .table-container {
     height: calc(100% - 5px);
+}
+
+.reload-placeholder svg {
+    width: 20px;
+    margin-left: 40%;
 }
 
 .mid-col .rows-count-container {

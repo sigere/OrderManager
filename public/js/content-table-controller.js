@@ -88,19 +88,33 @@
             let id = $row.data("subject-id");
             let type = $row.data("subject-type");
             let currentSubject = this.controller.currentSubject;
+            let $cell = $select.parent();
+            let $placeholder = $cell.find(".js-reload-placeholder");
 
+            $select.css({display: "none"});
+            $placeholder.css({display: "block"});
             $.ajax({
                 url: "/api/" + type + "/" + id + "/state",
                 method: "PUT",
                 data: {state: $select.val()},
                 success: function (data) {
-                    $select.attr("data-state", $select.val());
-                    if (type === currentSubject.type &&
-                        id === currentSubject.id) {
-                        self.controller.detailsController.reload(currentSubject);
-                    }
+                    executeAfter(function () {
+                        $select.css({display: "block"});
+                        $placeholder.css({display: "none"});
+                        $select.attr("data-state", $select.val());
+                        if (type === currentSubject.type &&
+                            id === currentSubject.id) {
+                            self.controller.detailsController.reload(currentSubject);
+                        }
+                    })
                 },
                 error: function (jqXHR) {
+                    $placeholder.html("Wystąpił błąd.");
+                    executeAfter(function () {
+                        $placeholder.html(window.reloadIcon);
+                        $placeholder.css({display: "none"});
+                        $select.css({display: "block"});
+                    }, Date.now() + 5000);
                     self.controller.popupManager.display(jqXHR.responseText);
                 }
             });

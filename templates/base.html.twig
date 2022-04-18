@@ -82,14 +82,14 @@
                             </div>
                         </a>
                     </li>
-                    <li {% if app.request.attributes.get('_route') == "reports" %}class="current-tab"{% endif %}>
-                        <a href="{{ path('reports') }}">
-                            <div id="nav-tasks" class="item-container">
-                                {%  include 'icons/report.html' %}
-                                <h6>Raporty</h6>
-                            </div>
-                        </a>
-                    </li>
+{#                    <li {% if app.request.attributes.get('_route') == "reports" %}class="current-tab"{% endif %}>#}
+{#                        <a href="{{ path('reports') }}">#}
+{#                            <div id="nav-tasks" class="item-container">#}
+{#                                {%  include 'icons/report.html' %}#}
+{#                                <h6>Raporty</h6>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
                 </ul>
             </nav>
         {% endblock %}

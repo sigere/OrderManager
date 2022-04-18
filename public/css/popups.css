@@ -16,10 +16,10 @@
 .popup {
   display: block;
   background-color: var(--color-background);
-  position: fixed;
+  position: absolute;
   opacity: 0;
   max-height: calc(100% - 120px);
-  top: calc(50% - 10px);
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 20px;
@@ -27,8 +27,8 @@
   transition: all 0.4s;
   z-index: -1;
   overflow-y: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .popup::-webkit-scrollbar {

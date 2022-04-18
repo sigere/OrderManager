@@ -39,7 +39,7 @@
                 $styledSelect.text($(this).text()).removeClass("active");
                 $this.val($(this).attr("rel"));
                 $list.hide();
-                //console.log($this.val());
+                $this.trigger("change");
             });
 
             $(document).click(function() {

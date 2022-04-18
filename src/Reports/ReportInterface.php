@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Reports;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;

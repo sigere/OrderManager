@@ -214,6 +214,7 @@ a {
 
 .alert {
   font-size: 13px;
+  border-radius: 5px;
 }
 
 .alert.alert-info {
