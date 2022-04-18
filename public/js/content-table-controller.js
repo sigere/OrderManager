@@ -106,7 +106,7 @@
                             id === currentSubject.id) {
                             self.controller.detailsController.reload(currentSubject);
                         }
-                    })
+                    });
                 },
                 error: function (jqXHR) {
                     $placeholder.html("Wystąpił błąd.");

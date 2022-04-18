@@ -163,7 +163,7 @@
             let subject = {
                 id: $row.data("subject-id"),
                 type: $row.data("subject-type")
-            }
+            };
 
             let self = this;
             this.popupManager.open();
@@ -251,20 +251,11 @@
                 this.selectClient.bind(this)
             );
 
-            // this.$wrapper.on(
-            //     "click",
-            //     ".js-orders-table",
-            //     this.onRowClicked.bind(this)
-            // );
 
             this.$wrapper.on(
                 "click",
                 ".js-orders-table input[type=\"checkbox\"]",
                 this.updateNetto.bind(this)
-                // function (event) {
-                //     self.updateNetto();
-                //     event.stopPropagation();
-                // }
             );
 
             this.$wrapper.on(
