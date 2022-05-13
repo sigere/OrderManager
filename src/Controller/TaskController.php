@@ -4,67 +4,102 @@ namespace App\Controller;
 
 use App\Entity\Log;
 use App\Entity\Task;
-use App\Form\AddTaskForm;
+use App\Form\TaskForm;
+use App\Form\DeleteEntityFrom;
+use App\Repository\LogRepository;
+use App\Repository\TaskRepository;
+use App\Service\OptionsProviderFactory;
+use App\Service\ResponseFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/tasks")
+ */
 class TaskController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-    private ?Request $request;
-
-    public function __construct(EntityManagerInterface $em, RequestStack $request)
-    {
-        $this->entityManager = $em;
-        $this->request = $request->getCurrentRequest();
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private TaskRepository $taskRepository,
+        private LogRepository $logRepository,
+        private ResponseFormatter $formatter,
+        private OptionsProviderFactory $optionsProviderFactory
+    ) {
     }
 
     /**
-     * @Route("/tasks", name="tasks")
+     * @Route("/", methods={"GET"}, name="tasks")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $tasks = $this->loadTasks();
+        $tasks = $this->taskRepository->getByTasksPreferences();
+        $task = $this->taskRepository->findOneBy(['id' => $request->get('task')]);
+        $logs = $this->logRepository->findBy(
+            ['task' => $task],
+            ['createdAt' => 'DESC'],
+            100
+        );
+        $options = $task ? $this->optionsProviderFactory->getOptions($task) : [];
 
         return $this->render('tasks/index.html.twig', [
             'tasks' => $tasks,
-        ]);
-    }
-
-    private function loadTasks(): array
-    {
-        return $this->entityManager
-            ->getRepository(Task::class)
-            ->createQueryBuilder('t')
-            ->andWhere('t.deletedAt is null')
-            ->addOrderBy('t.doneAt', 'ASC')
-            ->addOrderBy('t.deadline', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @Route("/tasks/api/reloadTable", name="tasks_api_reloadTable")
-     */
-    public function reloadTable(): Response
-    {
-        return $this->render('tasks/tasks_table.twig', [
-            'tasks' => $this->loadTasks(),
+            'details' => [
+                'task' => $task,
+                'logs' => $logs
+            ],
+            'options' => $options,
+            'dataSourceUrl' => "/tasks/task"
         ]);
     }
 
     /**
-     * @Route("/tasks/api/addTask", name="tasks_api_addTask")
+     * @Route("/task", methods={"GET"}, name="tasks_task_get_all")
      */
-    public function addTask(): Response
+    public function getTasks(): Response
     {
-        $form = $this->createForm(AddTaskForm::class);
+        return $this->render('tasks/tasks_table.html.twig', [
+            'tasks' => $this->taskRepository->getByTasksPreferences(),
+            'dataSourceUrl' => "/tasks/task"
+        ]);
+    }
 
-        $form->handleRequest($this->request);
+    /**
+     * @Route("/task/{id}", methods={"GET"}, name="tasks_task_get")
+     */
+    public function getTask(Task $task): Response
+    {
+        $logs = $this->logRepository->findBy(
+            ['task' => $task],
+            ['createdAt' => 'DESC'],
+            100
+        );
+        $options = $this->optionsProviderFactory->getOptions($task);
+
+        $result = [];
+        $result['details'] = $this->renderView('tasks/details.html.twig', [
+            'task' => $task,
+            'logs' => $logs,
+        ]);
+
+        $result['burger'] = $this->renderView('burger.html.twig', [
+            'options' => $options
+        ]);
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/task", methods={"POST"}, name="tasks_task_post")
+     */
+    public function create(Request $request): Response
+    {
+        $form = $this->createForm(TaskForm::class);
+
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $task = $form->getData();
             $task->setAuthor($this->getUser());
@@ -72,64 +107,88 @@ class TaskController extends AbstractController
             $this->entityManager->persist(new Log($this->getUser(), 'Dodano zadanie', $task));
             $this->entityManager->flush();
 
-            return new Response('Dodano zadanie.', 201, ['task_id' => $task->getId()]);
+            return new Response(
+                $this->formatter->success('Dodano zadanie.'),
+                201,
+                ['Set-Current-Subject' => 'task/' . $task->getId()]
+            );
         }
 
-        return $this->render('tasks/addTask.html.twig', [
-            'addTaskForm' => $form->createView(),
+        return $this->render('tasks/task_form.html.twig', [
+            'taskForm' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/tasks/api/setDone/{id}", name="tasks_api_setDone")
+     * @Route("/task/{id}", methods={"PUT"}, name="tasks_task_put")
      */
-    public function setDone(Task $task): Response
+    public function update(Request $request, Task $task): Response
     {
-        if ($task->getDoneAt()) {
-            return new Response('Zadanie jest już wykonane.', 406);
-        }
-        $task->setDoneAt(new \DateTime());
-        $this->entityManager->persist($task);
-        $this->entityManager->persist(
-            new Log($this->getUser(), 'Ustawiono na wykonane.', $task)
-        );
-        $this->entityManager->flush();
+        $attr = array_merge(TaskForm::DEFAULT_OPTIONS['attr'] ?? [], [
+            'data-url' => '/tasks/task/' . $task->getId(),
+            'data-method' => 'PUT'
+        ]);
+        $options = array_merge(TaskForm::DEFAULT_OPTIONS, [
+            'attr' => $attr,
+            'method' => 'PUT'
+        ]);
 
-        return new Response('Wykonano zadanie', 200);
+        $form = $this->createForm(TaskForm::class, $task, $options);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $task = $form->getData();
+            $this->entityManager->persist($task);
+            $this->entityManager->persist(new Log($this->getUser(), 'Zaktualizowano zadanie', $task));
+            $this->entityManager->flush();
+
+            return new Response(
+                $this->formatter->success('Zaktualizowano zadanie.'),
+                201,
+                ['Set-Current-Subject' => 'task/' . $task->getId()]
+            );
+        }
+
+        return $this->render('tasks/task_form.html.twig', [
+            'taskForm' => $form->createView(),
+            'update' => true
+        ]);
     }
 
     /**
-     * @Route("/tasks/api/delete/{id}", name="tasks_api_delete")
+     * @Route("/task/{id}", methods={"DELETE"}, name="tasks_task_delete")
      */
-    public function delete(Task $task): Response
+    public function delete(Request $request, Task $task): Response
     {
         if ($task->getDeletedAt()) {
-            return new Response('Zadanie zostało juz usunięte.', 406);
+            return new Response(
+                $this->formatter->notice('Zadanie zostało już usunięte.'),
+                406
+            );
         }
-        $task->setDeletedAt(new \DateTime());
-        $this->entityManager->persist($task);
-        $this->entityManager->persist(
-            new Log($this->getUser(), 'Usunięto zadanie..', $task)
-        );
-        $this->entityManager->flush();
 
-        return new Response('Usunieto zadanie.', 200);
-    }
+        $attr = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS['attr'] ?? [], [
+            'data-url' => '/tasks/task/' . $task->getId(),
+        ]);
+        $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
+        $form = $this->createForm(DeleteEntityFrom::class, null, $options);
 
-    /**
-     * @Route("/tasks/api/details/{id}", name="tasks_api_details")
-     */
-    public function details(Task $task): Response
-    {
-        $logs = $this->entityManager->getRepository(Log::class)->findBy(
-            ['task' => $task],
-            ['createdAt' => 'DESC'],
-            100
-        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $task->setDeletedAt(new \Datetime());
+            $this->entityManager->persist($task);
+            $this->entityManager->persist(new Log($this->getUser(), 'Usunięto zadanie', $task));
+            $this->entityManager->flush();
 
-        return $this->render('tasks/details.twig', [
-            'task' => $task,
-            'logs' => $logs,
+            return new Response(
+                $this->formatter->success('Zadanie usunięte.'),
+                200,
+                ['Set-Current-Subject' => 'task/' . $task->getId()]
+            );
+        }
+
+        return $this->render('delete_entity_form.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 }

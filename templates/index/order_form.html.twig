@@ -1,0 +1,28 @@
+<div class="entity-form-container">
+    {% if update is defined and update == true %}
+        <h4>Zaktualizuj zlecenie</h4>
+    {% else %}
+        <h4>Dodaj nowe zlecenie</h4>
+    {% endif %}
+    {{ form_start(orderForm) }}
+    {% for row in orderForm %}
+        {% if not loop.last %}
+            <div class="entity-form-row">
+                <div class="entity-form-label">
+                    {{ form_label(row, null) }}
+                    {% if row.vars.required %}*{% endif %}
+                </div>
+                <div class="entity-form-widget">
+                    {{ form_widget(row) }}
+                </div>
+                <div style="clear: both;"></div>
+                <span class="error">{{ form_errors(row) }}</span>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="entity-form-submit-container">
+        <button type="submit" class="btn btn-primary">OK</button>
+    </div>
+    <div style="clear: both;"></div>
+    {{ form_end(orderForm) }}
+</div>

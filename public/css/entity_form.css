@@ -1,0 +1,59 @@
+.entity-form-container {
+    width: 600px;
+}
+
+.entity-form-container h4 {
+    margin-left: 30px;
+    margin-bottom: 18px;
+}
+
+.entity-form-row {
+    width: 550px;
+    margin: 3px auto;
+}
+
+.entity-form-label {
+    padding: 5px;
+    float: left;
+    max-width: 200px;
+    height: 20px;
+}
+
+.entity-form-widget {
+    float: right;
+    padding: 5px;
+}
+
+.entity-form-submit-container {
+    float: right;
+    margin-right: 30px;
+    margin-top: 15px;
+}
+
+.entity-form-container button {
+    width: 100px;
+}
+
+.entity-form-widget input[type="text"],
+.entity-form-widget input[type="number"],
+.entity-form-widget input[type="email"],
+.entity-form-widget select,
+.entity-form-widget textarea {
+    width: 220px;
+}
+
+.entity-form-container input,
+.entity-form-container select,
+.entity-form-container textarea {
+    background-color: var(--color-burger);
+    color: white;
+    border: none;
+    padding: 2px;
+    border-radius: 5px;
+}
+
+.entity-form-row .error li{
+    color: var(--color-state-deleted);
+    text-align: left;
+    list-style-type: none
+}

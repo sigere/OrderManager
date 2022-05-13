@@ -2,13 +2,16 @@
 
 namespace App\Command;
 
+use App\Entity\CertifiedOrder;
 use App\Entity\Client;
 use App\Entity\Company;
 use App\Entity\Lang;
 use App\Entity\Log;
 use App\Entity\Order;
+use App\Entity\RepertoryEntry;
 use App\Entity\Staff;
 use App\Entity\User;
+use App\Repository\RepertoryEntryRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -77,18 +80,18 @@ class InstallSampleDataCommand extends Command
         $this->entityManager->persist($lang);
         $io->info('Created language: Polski.');
 
-        $lang = new Lang();
-        $lang = $lang
+        $lang1 = new Lang();
+        $lang1 = $lang1
             ->setName('Angielski')
             ->setShort('EN');
-        $this->entityManager->persist($lang);
+        $this->entityManager->persist($lang1);
         $io->info('Created language: Angielski.');
 
-        $lang = new Lang();
-        $lang = $lang
+        $lang2 = new Lang();
+        $lang2 = $lang2
             ->setName('Ukraiński')
             ->setShort('UA');
-        $this->entityManager->persist($lang);
+        $this->entityManager->persist($lang2);
         $io->info('Created language: Ukraiński.');
 
         $client = new Client();
@@ -115,14 +118,27 @@ class InstallSampleDataCommand extends Command
             ->setAdoption(new DateTime())
             ->setCertified(false)
             ->setBaseLang($lang)
-            ->setTargetLang($lang)
+            ->setTargetLang($lang2)
             ->setPrice(30)
             ->setClient($client);
         $this->entityManager->persist($order);
         $io->info('Created sample order.');
 
+        $repertoryEntry = new RepertoryEntry();
+
+        $repertoryEntry = $repertoryEntry
+            ->setComments("Comments")
+            ->setCopies(2)
+            ->setCopyPrice(10)
+            ->setDocumentDate(new \DateTime());
+        $this->entityManager
+            ->getRepository(RepertoryEntry::class)
+            ->configureEntry($repertoryEntry, $order);
+        $this->entityManager->persist($repertoryEntry);
+        $io->info('Created sample certified order.');
+
         $this->entityManager->persist(
-            new Log($user, 'Dodano zlecenie.', $order)
+            new Log($user, 'Dodano wpis do repertorium.', $repertoryEntry)
         );
         $io->info('Created log for order.');
 

@@ -1,0 +1,27 @@
+<div class="entity-form-container">
+    {% if update is defined and update == true %}
+        <h4>Edytuj klienta</h4>
+    {% else %}
+        <h4>Dodaj nowego klienta</h4>
+    {% endif %}
+    {{ form_start(clientForm) }}
+    {% for row in clientForm %}
+        {% if not loop.last %}
+            <div class="entity-form-row">
+                <div class="entity-form-label">
+                    {{ form_label(row, null, {'label_attr': {'state': row.vars.label|lower}}) }}
+                    {% if row.vars.required %}*{% endif %}
+                </div>
+                <div class="entity-form-widget">
+                    {{ form_widget(row,{'attr': {}}) }}
+                </div>
+                <div style="clear: both;"></div>
+                <span class="error">{{ form_errors(row) }}</span>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="entity-form-submit-container">
+        <button type="submit" class="btn btn-primary">OK</button>
+    </div>
+    {{ form_end(clientForm) }}
+</div>

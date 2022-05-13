@@ -7,292 +7,192 @@ use App\Entity\Company;
 use App\Entity\Invoice;
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Form\InvoiceMonthFormType;
-use App\Form\InvoiceSummaryForm;
+use App\Form\InvoiceMonthForm;
+use App\Repository\ClientRepository;
+use App\Repository\CompanyRepository;
+use App\Repository\OrderRepository;
+use App\Service\Invoices\FakturowniaProvider;
+use App\Service\ResponseFormatter;
+use App\Service\UserPreferences\InvoicesPreferences;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
+/**
+ * @Route("/invoices")
+ */
 class InvoicesController extends AbstractController
 {
-    private ?Request $request;
+    private Company $company;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        RequestStack $requestStack
+        private OrderRepository $orderRepository,
+        private InvoicesPreferences $preferences,
+        private ClientRepository $clientRepository,
+        private ResponseFormatter $formatter,
+        private FakturowniaProvider $provider,
+        CompanyRepository $companyRepository,
     ) {
-        $this->request = $requestStack->getCurrentRequest();
+        $this->company = $companyRepository->get();
     }
 
     /**
-     * @Route("/invoices", name="invoices")
+     * @Route("/", name="invoices")
      */
     public function index(): Response
     {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $clients = $this->loadClients($company->getInvoiceMonth());
-        $form = $this->createForm(InvoiceSummaryForm::class, $company);
-        $month = $company->getInvoiceMonth();
-        $monthForm = $this->createForm(InvoiceMonthFormType::class, [
+        $clients = $this->clientRepository->getForInvoices(
+            $this->preferences->getYear() ?? (int) (new \DateTime())->format('Y'),
+            $this->preferences->getMonth()
+        );
+
+        $month = $this->company->getInvoiceMonth();
+        $monthForm = $this->createForm(InvoiceMonthForm::class, [
             'month' => $month ? intval($month->format('n')) : null,
             'year' => $month ? intval($month->format('Y')) : null,
         ]);
 
         return $this->render('invoices/index.html.twig', [
             'clients' => $clients,
-            'company' => $company,
-            'summaryForm' => $form->createView(),
+            'company' => $this->company,
             'monthForm' => $monthForm->createView(),
+            'preferences' => $this->preferences
         ]);
     }
 
-    private function loadClients(?DateTime $month): array
+    /**
+     * @Route("/client", methods={"GET"}, name="invoices_client_get_all")
+     */
+    public function getAll(Request $request): Response
     {
-        $repo = $this->entityManager->getRepository(Client::class);
-        $clients = $repo->createQueryBuilder('c')
-            ->andWhere('c.deletedAt is null')
-            ->orderBy('c.alias', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $year = $request->get('year');
+        $month = (int)$request->get('month');
 
-        $repo = $this->entityManager->getRepository(Order::class);
-        $result = [];
-
-        foreach ($clients as $client) {
-            try {
-                $count = $repo->createQueryBuilder('o')
-                    ->select('count(o.id)')
-                    ->andWhere('o.deletedAt is null')
-                    ->andWhere('o.settledAt is null');
-
-                if ($month) {
-                    $count = $count
-                    ->andWhere('month(o.deadline) = :month')
-                    ->andWhere('year(o.deadline) = :year')
-                    ->setParameter('month', $month->format('n'))
-                    ->setParameter('year', $month->format('Y'));
-                }
-
-                $count = $count
-                    ->andWhere('o.client = :client')
-                    ->setParameter('client', $client)
-                    ->getQuery()
-                    ->getSingleScalarResult();
-            } catch (NoResultException | NonUniqueResultException $e) {
-                $count = 0;
-            }
-            if ($count) {
-                $result[] = [$client, $count];
-            }
+        if (!$year) {
+            return new Response($this->formatter->error("Year not specified."), 400);
         }
 
-        return $result;
+        $clients = $this->clientRepository->getForInvoices($year, $month);
+        $this->preferences
+            ->setMonth($month)
+            ->setYear($year)
+            ->save();
+
+        return $this->render('invoices/clients_table.html.twig', [
+            'clients' => $clients,
+        ]);
     }
 
     /**
-     * @Route("/invoices/api/reloadOrders/{id}", name="invoices_api_reloadOrders")
+     * @Route("/client/{id}", methods={"GET"}, name="invoices_client_get")
      */
-    public function reloadOrders(Client $client): Response
+    public function getClient(Client $client): Response
     {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $date = $company->getInvoiceMonth();
-        $repo = $this->entityManager->getRepository(Order::class);
-        $orders = $repo->createQueryBuilder('o')
-            ->andWhere('o.deletedAt is null')
-            ->andWhere('o.settledAt is null')
-            ->andWhere('o.client = :client')
-            ->setParameter('client', $client);
-
-        if ($date) {
-            $orders = $orders
-            ->andWhere('month(o.deadline) = :month')
-            ->andWhere('year(o.deadline) = :year')
-            ->setParameter('month', $date->format('n'))
-            ->setParameter('year', $date->format('Y'));
-        }
-
-        $orders = $orders
-            ->orderBy('o.deadline', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $orders = $this->orderRepository->getForInvoicingByClient(
+            $client,
+            $this->preferences->getYear(),
+            $this->preferences->getMonth()
+        );
 
         $nettoSum = 0.0;
         $validCount = 0;
         foreach ($orders as $order) {
-            if (0 == count($order->getInvoiceWarnings())) {
+            if (count($order->getInvoiceWarnings()) == 0) {
                 $nettoSum += $order->getNetto();
-                ++$validCount;
+                $validCount++;
             }
         }
 
-        return $this->render('invoices/orders_table.twig', [
+        $result['orders'] = $this->renderView('invoices/orders_table.html.twig', [
             'orders' => $orders,
             'nettoSum' => $nettoSum,
             'validCount' => $validCount,
         ]);
-    }
 
-    /**
-     * @Route("/invoices/api/reloadClient/{id}", name="invoices_api_reloadClient")
-     */
-    public function reloadClient(Client $client): Response
-    {
-        return $this->render('invoices/buyerDetails.twig', [
-            'client' => $client,
+        $result['client'] = $this->renderView('invoices/buyer_details.html.twig', [
+            'client' => $client
         ]);
+
+        return new JsonResponse($result);
     }
 
     /**
-     * @Route("/invoices/api/execute", name="invoices_api_execute")
+     * @Route("/invoice", methods={"POST"}, name="invoices_invoice_post")
      */
-    public function executeInvoice(): Response
+    public function createInvoice(Request $request): Response
     {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $fakturowniaFirm = $this->getParameter('app.fakturownia_firm');
-        $form = $this->createForm(InvoiceSummaryForm::class);
-        $form->handleRequest($this->request);
+        $client = $this->clientRepository->findOneBy(['id' => $request->get('client')]);
+        $issueDate = $request->get('issue_date');
+        $paymentDate = $request->get('payment_date');
+        $ids = $request->get('orders');
 
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            return new Response("<div class='alert alert-danger'>Niepoprawne dane</div>", 406);
+        if (!$client || !$issueDate || !$paymentDate || !$ids) {
+            return new Response($this->formatter->error("Niepoprawne dane."), 400);
         }
 
-        $company->setPaymentTo($form->getData()['paymentTo']);
-        $company->setIssueDate($form->getData()['issueDate']);
-        $this->entityManager->persist($company);
-        $this->entityManager->flush();
+        $orders = $this->orderRepository->createQueryBuilder('o')
+            ->andWhere('o.id in (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
 
-        $ids = $this->request->get('orders');
-        if (!$ids) {
-            return new Response("<div class='alert alert-danger'>Nie wybrano żadnych zleceń</div>", 406);
-        }
-
-        $repo = $this->entityManager->getRepository(Order::class);
-        $orders = [];
-        foreach ($ids as $id) {
-            $orders[] = $repo->findOneBy(['id' => $id]);
-        }
-
-        $payload = $this->getPayload(
-            $orders,
-            $this->request->get('client')
-        );
-
-        $url = 'https://' . $fakturowniaFirm . '.fakturownia.pl/invoices.json';
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json']);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        $result = json_decode($result, true);
-        curl_close($ch);
-        if (!isset($result['id'])) {
-            $text = 'Bład serwisu Fakturownia.pl';
-            if (isset($result['message'])) {
-                $text .= ': ' . json_encode($result['message'], JSON_UNESCAPED_UNICODE);
-            }
-
-            return new Response("<div class='alert alert-danger'>" . $text . '</div>', 500);
+        try {
+            $link = $this->provider->createInvoice($orders, $client);
+        } catch (ExceptionInterface|\Exception $e) {
+            return new Response($this->formatter->error(
+                "Bład serwisu: " . $e->getMessage()
+            ), 500);
         }
 
         $this->settle($orders);
         $this->logInvoice($orders);
 
+        $link = "<a href='" . $link . "'>Podgląd</a>";
+
         return new Response(
-            "<div class='alert alert-success'>" .
-            "Wystawiono fakturę i ustawiono zlecenia na rozliczone.<br/>" .
-            "<a href='https://" . $fakturowniaFirm . '.fakturownia.pl/invoices/' .
-            $result['id'] . "'>Podgląd</a></div>",
+            $this->formatter->success("Wystawiono fakturę i ustawiono zlecenia na rozliczone" . $link),
             200
         );
     }
 
-    private function getPayload($orders, $clientId): string
-    {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $client = $this->entityManager
-            ->getRepository(Client::class)
-            ->findOneBy(['id' => $clientId]);
-
-        $positions = [];
-        foreach ($orders as $order) {
-            $positions[] = [
-                'name' => $order->getTopic(),
-                'quantity' => $order->getPages(),
-                'total_price_gross' => $order->getBrutto(),
-                'tax' => 23,
-                'price_net' => $order->getPrice(),
-            ];
-        }
-
-        $token = $this->getParameter('app.fakturownia_token');
-        $payload = [
-            'api_token' => $token,
-            'invoice' => [
-                'kind' => 'vat',
-                'number' => null,
-                'sell_date' => $company->getIssueDate()->format('Y-m-d'),
-                'issue_date' => $company->getIssueDate()->format('Y-m-d'),
-                'payment_to' => $company->getPaymentTo()->format('Y-m-d'),
-                'seller_name' => $company->getName(),
-                'seller_tax_no' => $company->getNip(),
-                'seller_post_code' => $company->getPostCode(),
-                'seller_city' => $company->getCity(),
-                'seller_street' => $company->getAddress(),
-                'seller_country' => 'PL',
-                'seller_bank_account' => $company->getBankAccount(),
-                'buyer_name' => $client->getName(),
-                'buyer_tax_no' => $client->getNip(),
-                'buyer_post_code' => $client->getPostCode(),
-                'buyer_city' => $client->getCity(),
-                'buyer_street' => $client->getStreet(),
-                'buyer_country' => $client->getCountry(),
-                'positions' => $positions,
-            ],
-        ];
-
-        return json_encode($payload);
-    }
-
     /**
-     * @Route("/invoices/api/settleOrders", name="invoices_api_settleOrders")
+     * @Route("/settle", methods={"PUT"}, name="invoices_settle_put")
      */
-    public function settleOrders(): Response
+    public function settle(Request $request): Response
     {
-        $ids = $this->request->get('orders');
+        $ids = $request->get('orders');
         if (!$ids) {
             return new Response(
-                "<div class='alert alert-danger'>Nie wybrano żadnych zleceń</div>",
+                $this->formatter->error("Nie wybrano żadnych zleceń"),
                 406
             );
         }
 
-        $repo = $this->entityManager->getRepository(Order::class);
-        $orders = [];
-        foreach ($ids as $id) {
-            $orders[] = $repo->findOneBy(['id' => $id]);
-        }
+        $orders = $this->orderRepository->createQueryBuilder('o')
+            ->andWhere('o.id in (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
 
-        $this->settle($orders);
+        $this->settleOrders($orders);
         $this->logInvoice($orders);
 
         return new Response(
-            "<div class='alert alert-success'>Ustawiono zlecenia na rozliczone.</div>",
+            $this->formatter->success("Ustawiono zlecenia na rozliczone"),
             200
         );
     }
 
-    private function settle(array $orders): void
+    private function settleOrders(array $orders): void
     {
         foreach ($orders as $order) {
-            if (Order::class == !get_class($order)) {
+            if (!($order instanceof Order)) {
                 continue;
             }
             $order->setSettledAt(new DateTime());
@@ -301,36 +201,6 @@ class InvoicesController extends AbstractController
         }
 
         $this->entityManager->flush();
-    }
-
-    /**
-     * @Route("/invoices/api/reloadClients", name="invoices_api_reloadClients")
-     */
-    public function reloadClients(): Response
-    {
-        $company = $this->entityManager->getRepository(Company::class)->findAll()[0];
-        $form = $this->createForm(InvoiceMonthFormType::class);
-        $form->handleRequest($this->request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $month = $form->getData()['month'];
-            $year = $form->getData()['year'];
-            try {
-                $date = new DateTime($year . '-' . $month . '-01');
-            } catch (Exception $e) {
-                $date = null;
-            }
-            $company->setInvoiceMonth($date);
-            $this->entityManager->persist($company);
-            $this->entityManager->flush();
-
-            $clients = $this->loadClients($date);
-
-            return $this->render('invoices/clients_table.twig', [
-                'clients' => $clients,
-            ]);
-        }
-
-        return new Response('Błędne dane.', 406);
     }
   
     private function logInvoice(Array $orders): void

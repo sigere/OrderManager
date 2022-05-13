@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    - Repertorium
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/repertory.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/entity_table.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/popups.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("css/filters-form.css") }}"/>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/repertory-controller.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/interface/custom-select.js") }}"></script>
+<script>
+    $(document).ready(function (){
+        window.controller = new Controller($(document));
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-2" style="height: 100%;">
+            <div class="column left-col js-left-col">
+                <header>
+                    Filtruj
+                </header>
+                <div class="col-content" id="reports-content">
+                    {% include 'repertory/filters.html.twig' %}
+                </div>
+
+            </div>
+        </div>
+        <div class="col-lg-7" style=" height: 100%;">
+            <div class="column mid-col js-mid-col">
+                <header>
+                    <div class="icon" style="float: left;">
+                        {% include 'icons/repertory_entry.html' %}
+                    </div>
+                    Wpisy
+                    <div style="clear: both;"></div>
+                </header>
+                <div class="col-content" id="" style="width: auto;">
+                    <div class="table-container js-table-container">
+                        {% include 'repertory/entries_table.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3" style=" height: 100%;">
+            <div class="column right-col js-right-col">
+                <header>
+                    Szczegóły wpisu
+                    <span class="js-subject-id">
+                            {% if details['entry'] %}
+                                {{ details['entry'].id }}
+                            {% endif %}
+                        </span>
+                    <div class="js-burger">
+                        {% include 'burger.html.twig' %}
+                    </div>
+                </header>
+                <div class="col-content" id="details-content" style="">
+                    {% if details['entry'] %}
+                        {% include 'repertory/details.html.twig' with {'entry': details['entry']} %}
+                    {% else %}
+                        <div class="alert alert-info">{{ "Select entry to display details." | trans }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -3,9 +3,7 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
-parameters:
-    app.fakturownia_token: '%env(FAKTUROWNIA_TOKEN)%'
-    app.fakturownia_firm: '%env(FAKTUROWNIA_FIRM)%'
+
 services:
     # default configuration for services in *this* file
     Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'
@@ -23,7 +21,26 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
             - '../src/Service/Reports/'
+            - '../src/Service/OptionsProvider/'
 
     App\Controller\:
         resource: '../src/Controller/'
         tags: [ 'controller.service_arguments' ]
+
+    App\Service\OptionsProvider\OrderOptionsProvider: ~
+    App\Service\OptionsProvider\EntryOptionsProvider: ~
+    App\Service\OptionsProvider\ClientOptionsProvider: ~
+    App\Service\OptionsProvider\TaskOptionsProvider: ~
+
+    App\Service\OptionsProviderFactory:
+        tags: ['container.service_locator']
+        arguments:
+            - app.entity.order: '@App\Service\OptionsProvider\OrderOptionsProvider'
+              app.entity.repertory_entry: '@App\Service\OptionsProvider\EntryOptionsProvider'
+              app.entity.client: '@App\Service\OptionsProvider\ClientOptionsProvider'
+              app.entity.task: '@App\Service\OptionsProvider\TaskOptionsProvider'
+
+    App\Service\Invoices\FakturowniaProvider:
+        arguments:
+            - '%env(FAKTUROWNIA_FIRM)%'
+            - '%env(FAKTUROWNIA_TOKEN)%'

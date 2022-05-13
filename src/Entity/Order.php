@@ -14,111 +14,117 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Order
 {
-    public const ALLCOLUMNS = [
-        'client',
-        'author',
-        'staff',
-        'baseLang',
-        'targetLang',
-        'deleted',
-        'certified',
-        'pages',
-        'price',
-        'netto',
-        'topic',
-        'state',
-        'info',
-        'adoption',
-        'deadline',
-    ];
-    public const PRZYJETE = 'przyjete';
-    public const WYKONANE = 'wykonane';
-    public const WYSLANE = 'wyslane';
+    public const ACCEPTED = 'accepted';
+    public const DONE = 'done';
+    public const SENT = 'sent';
+    public const STATES = [self::ACCEPTED, self::DONE, self::SENT];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
+
     /**
      * @ORM\ManyToOne(targetEntity=Client::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $client;
+
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
+
     /**
      * @ORM\ManyToOne(targetEntity=Staff::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $staff;
+
     /**
      * @ORM\ManyToOne(targetEntity=Lang::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $baseLang;
+
     /**
      * @ORM\ManyToOne(targetEntity=Lang::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $targetLang;
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $deletedAt;
+
     /**
      * @ORM\Column(type="boolean")
      */
     private $certified;
+
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
      * @Assert\PositiveOrZero
      */
     private $pages;
+
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
      * @Assert\PositiveOrZero
      */
     private $price;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\PositiveOrZero
+     */
+    private $additionalFee;
+
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message="Temat nie może być pusty")
      */
     private $topic;
+
     /**
      * @ORM\Column(type="string", length=20)
      */
     private $state;
+
     /**
      * @ORM\Column(type="text")
      */
     private $info;
+
     /**
      * @ORM\Column(type="datetime")
      */
     private $adoption;
+
     /**
      * @ORM\Column(type="datetime")
      */
     private $deadline;
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $settledAt;
 
+    /**
+     * @ORM\OneToOne(targetEntity=RepertoryEntry::class, mappedBy="order", cascade={"persist", "remove"})
+     */
+    private ?RepertoryEntry $repertoryEntry;
+
     public function __construct()
     {
         $this->deletedAt = null;
-        $this->state = self::PRZYJETE;
+        $this->state = self::ACCEPTED;
         $this->settledAt = null;
-    }
-
-    public function __toString(): string
-    {
-        return $this->getId();
     }
 
     public function getId(): ?int
@@ -129,7 +135,7 @@ class Order
     public function getInvoiceWarnings(): array
     {
         $warnings = $this->getWarnings();
-        if (self::WYSLANE != $this->state) {
+        if (self::SENT != $this->state) {
             $warnings[] = 'Zlecenie nie zostało wysłane.';
         }
 
@@ -147,7 +153,7 @@ class Order
         }
 
         switch ($this->state) {
-            case self::PRZYJETE:
+            case self::ACCEPTED:
                 if ($timeToDeadline < 0) {
                     $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
                 } elseif ($timeToDeadline < 86400) {
@@ -155,7 +161,7 @@ class Order
                         'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
                 }
                 break;
-            case self::WYKONANE:
+            case self::DONE:
                 if ($timeToDeadline < 0) {
                     $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na wykonane';
                 }
@@ -163,7 +169,7 @@ class Order
                     $warnings[] = 'Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.';
                 }
                 break;
-            case self::WYSLANE:
+            case self::SENT:
                 if (0 == $this->pages) {
                     $warnings[] = 'Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.';
                 }
@@ -173,25 +179,17 @@ class Order
         return $warnings;
     }
 
-    public function nextState(): string
-    {
-        switch ($this->state) {
-            case self::PRZYJETE:
-                return self::WYKONANE;
-            case self::WYKONANE:
-                return self::WYSLANE;
-            default:
-                return '';
-        }
-    }
-
     public function getNetto(): float
     {
-        if ($this->price && $this->pages) {
-            return round($this->price * $this->pages, 2);
+        if (!$this->price || !$this->pages) {
+            return 0.0;
         }
 
-        return 0.00;
+        $result = round($this->price * $this->pages, 2);
+        $result += $this->repertoryEntry?->getAdditionalFee() ?? 0.0;
+        $result += $this->additionalFee ?? 0.0;
+
+        return $result;
     }
 
     public function getBrutto(): float
@@ -311,6 +309,18 @@ class Order
         return $this;
     }
 
+    public function getAdditionalFee(): ?string
+    {
+        return $this->additionalFee;
+    }
+
+    public function setAdditionalFee(?string $additionalFee): self
+    {
+        $this->additionalFee = $additionalFee;
+
+        return $this;
+    }
+
     public function getTopic(): ?string
     {
         return $this->topic;
@@ -379,6 +389,28 @@ class Order
     public function setSettledAt(?DateTimeInterface $settledAt): self
     {
         $this->settledAt = $settledAt;
+
+        return $this;
+    }
+
+    public function getRepertoryEntry(): ?RepertoryEntry
+    {
+        return $this->repertoryEntry;
+    }
+
+    public function setRepertoryEntry(?RepertoryEntry $repertoryEntry): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($repertoryEntry === null && $this->repertoryEntry !== null) {
+            $this->repertoryEntry->setOrder(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($repertoryEntry !== null && $repertoryEntry->getOrder() !== $this) {
+            $repertoryEntry->setOrder($this);
+        }
+
+        $this->repertoryEntry = $repertoryEntry;
 
         return $this;
     }

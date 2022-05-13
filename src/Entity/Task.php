@@ -164,7 +164,9 @@ class Task
         $warnings = [];
         $now = new DateTime();
         $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
-        if ($timeToDeadline < 86400) {
+        if ($timeToDeadline < 0) {
+            $warnings[] = 'Minął termin zadania.';
+        } elseif ($timeToDeadline < 86400) {
             $warnings[] = 'Pozostało mniej niż 24h do terminu zadania.';
         }
 

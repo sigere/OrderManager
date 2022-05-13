@@ -1,0 +1,30 @@
+
+    <div class="property">
+        <div class="name">Organ wydający</div>
+        <div class="value">{{ entry.documentIssuer | default('brak') }}</div>
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="property">
+        <div class="name">Dodatkowe uwagi</div>
+        <div class="value">{{ entry.comments | default('brak uwag') }}</div>
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="property">
+        <div class="name">Kopie dodatkowe</div>
+        <div class="value">{{ entry.copies }}</div>
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="property">
+        <div class="name">Cena za kopię</div>
+        <div class="value">{{ entry.copyPrice }}</div>
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="property">
+        <div class="name">Data dokumentu</div>
+        <div class="value">{{ entry.documentDate | date('d.m.Y H:i') }}</div>
+    </div>
+    <div style="clear:both;"></div>

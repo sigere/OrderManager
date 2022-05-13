@@ -1,0 +1,20 @@
+{% if flat is defined or options | length < 2 %}
+    <div class="burger-flat-container">
+        {% for option in options %}
+            <div class="burger-flat {{ option['class'] }}">
+                <div class="label">{{ option['label'] | trans }}</div> {% include 'icons/' ~ option['icon'] ~ '.html' %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div id="add-button" class="burger">
+        <div class="burger-header">
+            {% include 'icons/burger.html' %}
+        </div>
+        {% for option in options %}
+            <div class="burger-row {{ option['class'] }}">
+                {{ option['label'] | trans }} {% include 'icons/' ~ option['icon'] ~ '.html' %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

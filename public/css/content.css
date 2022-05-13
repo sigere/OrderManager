@@ -1,0 +1,205 @@
+.column {
+    min-width: min-content;
+    width: 100%;
+    height: calc(100% - 40px);
+    margin: 25px 5px 5px;
+    border-radius: 10px;
+    background: linear-gradient(
+            180deg,
+            var(--color-header) 0%,
+            var(--color-header) 40px,
+            var(--color-background) 40px,
+            var(--color-background) 100%
+    );
+}
+
+.col-content {
+    padding: 5px 10px 0;
+    font-size: 12px;
+    width: min-content;
+    margin: auto;
+    height: calc(100% - 75px);
+
+}
+
+.col-content h6 {
+    margin-left: 12px;
+}
+
+/* --------left-column-------------- */
+
+.left-col .col-content {
+    overflow-y: scroll;
+    padding-top: 5px;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.left-col .col-content::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.mid-col table {
+    font-size: 13px;
+}
+
+.mid-col table thead th {
+    position: sticky;
+    top: 0;
+}
+
+.mid-col .table-container {
+    height: 100%;
+    overflow-y: scroll;
+    opacity: 1;
+    transition: all 0.3s;
+    /* border: 1px solid red; */
+}
+
+.mid-col .table-container.hidden {
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.mid-col .table-container::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.mid-col .table-container {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.mid-col .clickable-row {
+    cursor: pointer;
+}
+
+.mid-col table select {
+    font-size: 12px;
+    padding: 0 20px 2px 11px;
+    border-radius: 15px;
+    color: white;
+    border: none;
+    width: 110px;
+}
+
+.mid-col table select:disabled {
+    background-color: var(--color-disabled);
+}
+
+.active-row {
+    background: white;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.20211834733893552) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%);
+}
+
+.active-row td {
+    background: none;
+}
+
+.right-col .warning {
+    /* display: none; */
+    padding: 15px 15px 15px 20px;
+    text-align: justify;
+    background-color: var(--color-notice);
+    color: black;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.right-col .warning li {
+    font-size: 14px;
+    margin: 2px;
+}
+
+.right-col .col-content {
+    overflow-y: scroll;
+    width: 100%;
+    opacity: 1;
+    transition: all 0.3s;
+}
+
+.right-col .col-content.hidden {
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.right-col .col-content::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.right-col .col-content {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.right-col .property {
+    position: relative;
+    font-size: 14px;
+    color: var(--color-property-label);
+    width: 330px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    margin: 5px auto 10px;
+    display: block;
+    overflow: auto;
+}
+
+.right-col .property .name {
+    position: absolute;
+    top: 12px;
+    left: 0;
+}
+
+.right-col .property .value {
+    color: white;
+    background-color: var(--color-header);
+    font-size: 15px;
+    padding: 8px 20px;
+    border-radius: 5px;
+    float: right;
+    margin-left: 20px;
+    white-space: normal;
+    overflow-wrap: break-word;
+    width: 200px;
+    text-align: left;
+}
+
+
+.right-col .logs thead {
+    font-size: 12px;
+    color: var(--color-property-label);
+}
+
+.right-col .logs tbody {
+    font-size: 12px;
+}
+
+.right-col .expandable .body {
+    /*display: none;*/
+    max-height: 0;
+    overflow: hidden;
+    box-shadow: inset 0 0 45px rgba(0,0,0,0.15);
+    border-radius: 20px;
+    opacity: 0.7;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding-right: 5px;
+    padding-left: 5px;
+    transition: all 0.6s;
+}
+.right-col .expandable .body.active {
+    max-height: 1000px;
+}
+
+.right-col .expandable .trigger .value{
+    cursor: pointer;
+}
+
+.right-col .expandable svg {
+    position: absolute;
+    right: 18px;
+    top: 19px;
+    height: 7px;
+    transition: transform .3s ease-in-out;
+}

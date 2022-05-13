@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\ReportsFactory;
+use App\Reports\ReportsFactory;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig;
 
+/**
+ * @Route("/reports")
+ */
 class ReportsController extends AbstractController
 {
     public function __construct(
@@ -22,7 +25,7 @@ class ReportsController extends AbstractController
     }
 
     /**
-     * @Route("/reports", name="reports")
+     * @Route("/", name="reports")
      */
     public function index(): Response
     {
@@ -33,7 +36,7 @@ class ReportsController extends AbstractController
     }
 
     /**
-     * @Route("/reports/api/form/{report}", name="reports_form_report")
+     * @Route("/api/form/{report}", name="reports_form_report")
      */
     public function getForm($report): JsonResponse
     {
@@ -45,7 +48,7 @@ class ReportsController extends AbstractController
     }
 
     /**
-     * @Route("/reports/api/details/{report}", name="reports_form_details")
+     * @Route("/api/details/{report}", name="reports_form_details")
      */
     public function getDetails($report): JsonResponse
     {
@@ -65,7 +68,7 @@ class ReportsController extends AbstractController
      * @param $report
      * @return JsonResponse
      * @throws Exception
-     * @Route("/reports/api/preview/{report}", name="reports_preview_report")
+     * @Route("/api/preview/{report}", name="reports_preview_report")
      */
     public function getPreview(Request $request, $report): JsonResponse
     {
@@ -90,7 +93,7 @@ class ReportsController extends AbstractController
      * @param $report
      * @return JsonResponse
      * @throws Exception
-     * @Route("/reports/api/export/{report}", name="reports_export_report")
+     * @Route("/api/export/{report}", name="reports_export_report")
      */
     public function export(Request $request, $report): JsonResponse
     {
@@ -110,7 +113,7 @@ class ReportsController extends AbstractController
     /**
      * @param $report
      * @return Response
-     * @Route("/reports/api/get/{report}", name="reports_get_report")
+     * @Route("/api/get/{report}", name="reports_get_report")
      */
     public function getReport($report) : Response
     {

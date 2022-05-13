@@ -10,9 +10,9 @@ RUN apt update \
 
 WORKDIR /var/www/OrderManager
 
+RUN usermod -u 1000 www-data
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
-RUN git config --global user.email "a.marczak1324@gmail.com" \ 
-    && git config --global user.name "siger"
