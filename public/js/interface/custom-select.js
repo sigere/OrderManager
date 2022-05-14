@@ -5,6 +5,7 @@
         $(".filters-form select").each(function(){
             let $this = $(this);
             let numberOfOptions = $(this).children("option").length;
+            let currentText = $(this).find(":selected").text();
 
             $this.addClass("hidden");
             $this.wrap("<div class=\"select\"></div>");
@@ -46,6 +47,7 @@
                 $styledSelect.removeClass("active");
                 $list.hide();
             });
+            $styledSelect.text(currentText);
         });
     });
 })(window, jQuery);

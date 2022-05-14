@@ -1,5 +1,11 @@
 
     <div class="property">
+        <div class="name">Nazwa dokumentu</div>
+        <div class="value">{{ entry.documentName | default('brak nazwy') }}</div>
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="property">
         <div class="name">Organ wydający</div>
         <div class="value">{{ entry.documentIssuer | default('brak') }}</div>
     </div>
