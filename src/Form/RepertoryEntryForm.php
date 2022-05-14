@@ -25,6 +25,9 @@ class RepertoryEntryForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('documentName', null, [
+                'attr' => ['autocomplete' => 'off']
+            ])
             ->add('documentIssuer', null, [
                 'attr' => ['autocomplete' => 'off']
             ])

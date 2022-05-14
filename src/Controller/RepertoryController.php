@@ -195,6 +195,7 @@ class RepertoryController extends AbstractController
             return new Response(
                 $this->formatter->success("Zaktualizowano wpis"),
                 201,
+                ['Set-Current-Subject' => 'order/' . $entry->getOrder()->getId()]
             );
         }
 
