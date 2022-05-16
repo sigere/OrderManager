@@ -150,7 +150,7 @@ class InvoicesController extends AbstractController
             ), 500);
         }
 
-        $this->settle($orders);
+        $this->settleOrders($orders);
         $this->logInvoice($orders);
 
         $link = "<a href='" . $link . "'>Podgląd</a>";
