@@ -99,8 +99,6 @@
 
             $buttons.html(window.reloadIcon);
             let self = this;
-            console.log(orders);
-            return;
             $.ajax({
                 url: url,
                 method: method,
