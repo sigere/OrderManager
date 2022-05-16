@@ -16,6 +16,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
         "sensio/framework-extra-bundle": "^5.6",
+        "sentry/sentry-symfony": "^4.2",
         "shuchkin/simplexlsxgen": "^1.0",
         "symfony/asset": "5.4.*",
         "symfony/console": "5.4.*",
