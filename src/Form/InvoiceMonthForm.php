@@ -65,6 +65,7 @@ class InvoiceMonthForm extends AbstractType
                 'required' => false
             ])
             ->add('year', ChoiceType::class, [
+                'data' => $this->preferences->getYear(),
                 'choices' => $this->years,
             ]);
     }

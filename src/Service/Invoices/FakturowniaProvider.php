@@ -32,9 +32,9 @@ class FakturowniaProvider
      * @throws ExceptionInterface
      * @throws Exception
      */
-    public function createInvoice(array $orders, Client $client): string
+    public function createInvoice(array $orders, Client $client, \DateTime $issueDate, \DateTime $paymentTo): string
     {
-        $payload = $this->getPayload($orders, $client);
+        $payload = $this->getPayload($orders, $client, $issueDate, $paymentTo);
         $body = [
             "api_token" => $this->token,
             "invoice" => $payload
@@ -70,10 +70,10 @@ class FakturowniaProvider
             throw new Exception($text);
         }
 
-        return "https://" . $this->hostname . ".fakturownia.pl/invoices/";
+        return "https://" . $this->hostname . ".fakturownia.pl/invoices/" . $result['id'];
     }
 
-    private function getPayload($orders, $client): array
+    private function getPayload(array $orders, Client $client, \DateTime $issueDate, \DateTime $paymentTo): array
     {
         $positions = [];
         foreach ($orders as $order) {
@@ -89,9 +89,9 @@ class FakturowniaProvider
         return [
             'kind' => 'vat',
             'number' => null,
-            'sell_date' => $this->company->getIssueDate()->format('Y-m-d'),
-            'issue_date' => $this->company->getIssueDate()->format('Y-m-d'),
-            'payment_to' => $this->company->getPaymentTo()->format('Y-m-d'),
+            'sell_date' => $issueDate->format('Y-m-d'),
+            'issue_date' => $issueDate->format('Y-m-d'),
+            'payment_to' => $paymentTo->format('Y-m-d'),
             'seller_name' => $this->company->getName(),
             'seller_tax_no' => $this->company->getNip(),
             'seller_post_code' => $this->company->getPostCode(),
