@@ -11,5 +11,6 @@ jobs:
 
       - name: Unit
         run: |
+          ls -la
           composer install --no-interaction
           php ~/.composer/vendor/bin/codecept run unit
