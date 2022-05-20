@@ -11,6 +11,6 @@ jobs:
 
       - name: Unit
         run: |
-          composer require "codeception/codeception=^4.1" \
+          composer global require "codeception/codeception=^4.1" \
             --no-interaction
-          php vendor/bin/codecept run unit
+          php ~/.composer/vendor/bin/codecept run unit
