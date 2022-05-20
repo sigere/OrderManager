@@ -128,11 +128,21 @@ class InvoicesController extends AbstractController
     public function createInvoice(Request $request): Response
     {
         $client = $this->clientRepository->findOneBy(['id' => $request->get('client')]);
-        $issueDate = $request->get('issue_date');
-        $paymentDate = $request->get('payment_date');
         $ids = $request->get('orders');
 
-        if (!$client || !$issueDate || !$paymentDate || !$ids) {
+        try {
+            $issueDate = new DateTime($request->get('issue_date'));
+            $paymentDate = new DateTime($request->get('payment_date'));
+        } catch (\Exception $e) {
+            return new Response($this->formatter->error("Niepoprawne dane."), 400);
+        }
+
+        $this->preferences
+            ->setIssueDate($issueDate)
+            ->setPaymentDate($paymentDate)
+            ->save();
+
+        if (!$client || !$ids) {
             return new Response($this->formatter->error("Niepoprawne dane."), 400);
         }
 
@@ -143,14 +153,14 @@ class InvoicesController extends AbstractController
             ->getResult();
 
         try {
-            $link = $this->provider->createInvoice($orders, $client);
+            $link = $this->provider->createInvoice($orders, $client, $issueDate, $paymentDate);
         } catch (ExceptionInterface|\Exception $e) {
             return new Response($this->formatter->error(
                 "Bład serwisu: " . $e->getMessage()
             ), 500);
         }
 
-        $this->settle($orders);
+        $this->settleOrders($orders);
         $this->logInvoice($orders);
 
         $link = "<a href='" . $link . "'>Podgląd</a>";

@@ -99,8 +99,6 @@
 
             $buttons.html(window.reloadIcon);
             let self = this;
-            console.log(orders);
-            return;
             $.ajax({
                 url: url,
                 method: method,
@@ -229,7 +227,7 @@
             let ids = [];
             for (let i = 0; i < $rows.length; i++) {
                 let $row = $($rows[i]);
-                if ($row.data("subject-type") === "order") {
+                if ($row.data("subject-type") === "order" && $row.find("input").is(":checked")) {
                     ids.push($row.data("subject-id"));
                 }
             }

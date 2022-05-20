@@ -66,6 +66,11 @@ class RepertoryEntry
      */
     private \DateTimeInterface $createdAt;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $documentName;
+
     public function __construct()
     {
         $this->copies = 0;
@@ -115,7 +120,7 @@ class RepertoryEntry
      * @param Order $order
      * @return RepertoryEntry
      */
-    public function setOrder(Order $order): RepertoryEntry
+    public function setOrder(Order $order): self
     {
         $this->order = $order;
         return $this;
@@ -133,7 +138,7 @@ class RepertoryEntry
      * @param string|null $documentIssuer
      * @return RepertoryEntry
      */
-    public function setDocumentIssuer(?string $documentIssuer): RepertoryEntry
+    public function setDocumentIssuer(?string $documentIssuer): self
     {
         $this->documentIssuer = $documentIssuer;
         return $this;
@@ -151,7 +156,7 @@ class RepertoryEntry
      * @param string|null $comments
      * @return RepertoryEntry
      */
-    public function setComments(?string $comments): RepertoryEntry
+    public function setComments(?string $comments): self
     {
         $this->comments = $comments;
         return $this;
@@ -169,7 +174,7 @@ class RepertoryEntry
      * @param int $copies
      * @return RepertoryEntry
      */
-    public function setCopies(int $copies): RepertoryEntry
+    public function setCopies(int $copies): self
     {
         $this->copies = $copies;
         return $this;
@@ -203,7 +208,7 @@ class RepertoryEntry
      * @param \DateTimeInterface|null $documentDate
      * @return RepertoryEntry
      */
-    public function setDocumentDate(?\DateTimeInterface $documentDate): RepertoryEntry
+    public function setDocumentDate(?\DateTimeInterface $documentDate): self
     {
         $this->documentDate = $documentDate;
         return $this;
@@ -221,7 +226,7 @@ class RepertoryEntry
      * @param float $copyPrice
      * @return RepertoryEntry
      */
-    public function setCopyPrice(float $copyPrice): RepertoryEntry
+    public function setCopyPrice(float $copyPrice): self
     {
         $this->copyPrice = $copyPrice;
         return $this;
@@ -239,7 +244,7 @@ class RepertoryEntry
      * @param int $number
      * @return RepertoryEntry
      */
-    public function setNumber(int $number): RepertoryEntry
+    public function setNumber(int $number): self
     {
         $this->number = $number;
         return $this;
@@ -249,9 +254,27 @@ class RepertoryEntry
      * @param int $year
      * @return RepertoryEntry
      */
-    public function setYear(int $year): RepertoryEntry
+    public function setYear(int $year): self
     {
         $this->year = $year;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDocumentName(): ?string
+    {
+        return $this->documentName;
+    }
+
+    /**
+     * @param string|null $documentName
+     * @return $this
+     */
+    public function setDocumentName(?string $documentName): self
+    {
+        $this->documentName = $documentName;
         return $this;
     }
 }

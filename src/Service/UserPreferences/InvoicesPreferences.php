@@ -40,6 +40,8 @@ class InvoicesPreferences extends AbstractPreferences
         $this->month = $data["month"] ?? null;
         $this->issueDate = $data['issue-date'] ?? null;
         $this->paymentDate = $data['payment-date'] ?? null;
+
+        $this->save();
     }
 
     /**
