@@ -78,8 +78,8 @@ class IndexFiltersForm extends AbstractType
                     ->andWhere('c.deletedAt is null')
                     ->orderBy('c.alias', 'ASC'),
                 'label' => 'Client',
-                'attr' => ['class' => 'form-select'],
-                'label_attr' => ['style' => 'display: none;'],
+                'attr' => ['class' => 'form-select js-no-transformation'],
+//                'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
                 'placeholder' => 'All clients',
                 'data' => $this->preferences->getClient()

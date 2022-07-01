@@ -3,6 +3,11 @@
 (function (window, $) {
     $(document).ready(function () {
         $(".filters-form select").each(function(){
+            if ($(this).hasClass("js-no-transformation")) {
+                console.log(this);
+                return;
+            }
+
             let $this = $(this);
             let numberOfOptions = $(this).children("option").length;
             let currentText = $(this).find(":selected").text();
