@@ -87,8 +87,8 @@ class IndexFiltersForm extends AbstractType
             ->add('select-staff', EntityType::class, [
                 'class' => Staff::class,
                 'label' => 'Staff',
-                'attr' => ['class' => 'form-select'],
-                'label_attr' => ['style' => 'display: none;'],
+                'attr' => ['class' => 'form-select js-no-transformation'],
+//                'label_attr' => ['style' => 'display: none;'],
                 'required' => false,
                 'placeholder' => 'All staff',
                 'query_builder' => $this->entityManager
