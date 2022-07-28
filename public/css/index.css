@@ -99,3 +99,18 @@
 .right-col .logs tbody {
     font-size: 12px;
 }
+
+/* ---------- tmp fix ----------*/
+.js-no-transformation {
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 15px;
+    width: 150px;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: rgb(39, 39, 39);
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
