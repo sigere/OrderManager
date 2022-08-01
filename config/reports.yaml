@@ -1,0 +1,10 @@
+services:
+  _defaults:
+    autowire: true
+
+  App\Reports\ReportsFactory:
+    arguments:
+      $reports:
+        - '@App\Reports\CertifiedUaPlReport\CertifiedUaPlReport'
+
+  App\Reports\CertifiedUaPlReport\CertifiedUaPlReport: ~

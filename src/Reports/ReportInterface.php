@@ -4,10 +4,19 @@ namespace App\Reports;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 interface ReportInterface
 {
+    /**
+     * @return string
+     */
+    public static function getName() : string;
+
+    /**
+     * @return string
+     */
+    public static function getNameForUI() : string;
+
     /**
      * @return string
      * @throws Exception
@@ -15,18 +24,19 @@ interface ReportInterface
     public function export() : string;
 
     /**
-     * @param Request $request
+     * @param mixed $data
+     * @throws MissingParameterException
      */
-    public function configure(Request $request) : void;
+    public function configure(mixed $data) : void;
 
     /**
      * @return array
      * @throws Exception
      */
-    public function getPreview() : array;
+    public function getData() : array;
 
     /**
      * @return string
      */
-    public function renderForm() : string;
+    public function getFormFQCN() : string;
 }

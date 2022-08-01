@@ -1,52 +1,63 @@
 <?php
 
-namespace App\Reports;
+namespace App\Reports\CertifiedUaPlReport;
 
-use Twig\Environment;
 use App\Entity\Order;
+use App\Reports\MissingParameterException;
+use App\Reports\ReportInterface;
 use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
 use Exception;
+use Shuchkin\SimpleXLSXGen;
 use Symfony\Component\HttpFoundation\Request;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 class CertifiedUaPlReport implements ReportInterface
 {
+    private const TMP_PATH = "/var/www/OrderManager/var/tmp";
     private array $config = [];
 
     public function __construct(
         private LangRepository $langRepository,
-        private OrderRepository $orderRepository,
-        private Environment $twig
+        private OrderRepository $orderRepository
     ) {
+    }
+
+    public static function getNameForUI(): string
+    {
+        return "Przysięgłe UA/PL";
+    }
+
+    public static function getName(): string
+    {
+        return "certified_ua_pl";
     }
 
     /**
      * @return string
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
      */
-    public function renderForm(): string
+    public function getFormFQCN(): string
     {
-        return $this->twig->render('reports/forms/CERTIFIED_UA_PL.html.twig');
+        return CertifiedUaPlReportForm::class;
     }
 
     /**
      * @throws Exception
      */
-    public function configure(Request $request): void
+    public function configure(mixed $data): void
     {
-        $from = $request->get('from');
-        if ($from) {
-            $this->config['from'] = new \DateTime($from);
+        if (!isset($data['dateFrom']) ||
+            !isset($data['dateTo'])) {
+            throw new MissingParameterException();
         }
 
-        $to = $request->get('to');
+        $from = $data['dateFrom'];
+        if ($from) {
+            $this->config['dateFrom'] = $from;
+        }
+
+        $to = $data['dateTo'];
         if ($to) {
-            $this->config['to'] = new \DateTime($to);
+            $this->config['dateTo'] = $to;
         }
     }
 
@@ -54,14 +65,13 @@ class CertifiedUaPlReport implements ReportInterface
      * @return array
      * @throws Exception
      */
-    public function getPreview(): array
+    public function getData(): array
     {
         if (!isset($this->config)) {
             throw new Exception('Report not configured.');
         }
         return $this->getArray();
     }
-
 
     /**
      * @return string
@@ -76,11 +86,12 @@ class CertifiedUaPlReport implements ReportInterface
         $array = $this->getArray();
 
         $filename = uniqid() . '.xlsx';
-        $path = '../var/tmp/' . $filename;
-        if (!file_exists('../var/tmp')) {
-            mkdir('../var/tmp', 775);
+        $path = self::TMP_PATH . '/' . $filename;
+        if (!file_exists(self::TMP_PATH)) {
+            mkdir(self::TMP_PATH, 0775);
         }
-        \SimpleXLSXGen::fromArray($array)->saveAs($path);
+
+        SimpleXLSXGen::fromArray($array)->saveAs($path);
         return $filename;
     }
 
