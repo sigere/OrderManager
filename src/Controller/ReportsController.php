@@ -79,7 +79,8 @@ class ReportsController extends AbstractController
                 'success' => true,
                 'content' => $this->twig->render(
                     'reports/preview.html.twig',
-                    ['data' => $data]),
+                    ['data' => $data]
+                ),
                 'burger' => $this->twig->render(
                     'burger.html.twig',
                     ['options' => $options]
@@ -88,9 +89,8 @@ class ReportsController extends AbstractController
         }
 
         return $this->render(
-            "reports/form.html.twig", [
-                'form' => $form->createView()
-            ]
+            "reports/form.html.twig",
+            ['form' => $form->createView()]
         );
     }
 

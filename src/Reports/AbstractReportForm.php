@@ -14,7 +14,7 @@ abstract class AbstractReportForm extends AbstractType
 
     abstract protected function getReportName() : string;
 
-    public final function configureOptions(OptionsResolver $resolver)
+    final public function configureOptions(OptionsResolver $resolver)
     {
         $defaults = $this->getOptions();
         if (!(isset($defaults['attr']) && is_array($defaults['attr']))) {

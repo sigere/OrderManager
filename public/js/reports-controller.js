@@ -54,7 +54,7 @@
                 success: function (data) {
                     if (typeof data === "object" && data.path) {
                         console.log(data.path);
-                        window.open('/reports/download/' + data.path, '_blank').focus();
+                        window.open("/reports/download/" + data.path, "_blank").focus();
                         return;
                     }
                     console.error("Invalid response", data);
