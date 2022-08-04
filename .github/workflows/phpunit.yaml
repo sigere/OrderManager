@@ -1,0 +1,15 @@
+name: Tests
+on: pull_request
+
+jobs:
+  build:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+
+      - name: Unit
+        run: |
+          composer install --no-interaction
+          php ./bin/phpunit -c ./tests/phpunit.xml.dist
