@@ -10,3 +10,8 @@
 
 .idea
 src/Controller/FixController.php
+
+###> symfony/phpunit-bridge ###
+tests/.phpunit.result.cache
+tests/phpunit.xml
+###< symfony/phpunit-bridge ###
