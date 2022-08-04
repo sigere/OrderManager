@@ -13,4 +13,4 @@ jobs:
         run: |
           ls -la
           composer install --no-interaction
-          php ./bin/phpunit -c ./tests/phpunit.xml.dist 
+          php ./bin/phpunit -c ./tests/phpunit.xml.dist
