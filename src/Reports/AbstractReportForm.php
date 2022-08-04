@@ -3,6 +3,8 @@
 namespace App\Reports;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractReportForm extends AbstractType
@@ -26,5 +28,19 @@ abstract class AbstractReportForm extends AbstractType
         $defaults['method'] = "GET";
 
         $resolver->setDefaults($defaults);
+    }
+
+    final protected function addDateIntervalFields(FormBuilderInterface $builder)
+    {
+        $builder
+            ->add('dateFrom', DateType::class, [
+                'widget' => 'single_text',
+                'data' => new \DateTime('first day of this month')
+            ])
+            ->add('dateTo', DateType::class, [
+                'widget' => 'single_text',
+                'data' => new \DateTime('last day of this month')
+            ])
+        ;
     }
 }

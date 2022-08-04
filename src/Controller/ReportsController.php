@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Reports\AbstractReportForm;
-use App\Reports\MissingParameterException;
+use App\Reports\Exception\MissingParameterException;
 use App\Reports\ReportsFactory;
 use App\Service\ResponseFormatter;
 use Exception;
@@ -117,7 +117,7 @@ class ReportsController extends AbstractController
         $form->handleRequest($request);
         $service->configure($form->getData());
 
-        $result = $service->export();
+        $result = $service->exportToXLSX();
 
         return new JsonResponse(['success' => true, 'path' => $result]);
     }
@@ -137,7 +137,7 @@ class ReportsController extends AbstractController
             );
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                'certifed_ua_pl.xlsx'
+                $file . '.xlsx'
             );
             return $response;
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Reports;
+namespace App\Reports\Exception;
 
 class MissingParameterException extends \Exception
 {

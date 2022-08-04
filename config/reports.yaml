@@ -6,5 +6,10 @@ services:
     arguments:
       $reports:
         - '@App\Reports\CertifiedUaPlReport\CertifiedUaPlReport'
+        - '@App\Reports\PerStaffReport\PerStaffReport'
 
   App\Reports\CertifiedUaPlReport\CertifiedUaPlReport: ~
+  App\Reports\PerStaffReport\PerStaffReport: ~
+
+  App\Reports\PerStaffReport\PerStaffReportForm:
+    autoconfigure: true

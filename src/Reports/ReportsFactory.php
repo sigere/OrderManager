@@ -12,19 +12,19 @@ class ReportsFactory
     public function getAvailableReports() : array
     {
         $result = [];
-        /** @var ReportInterface $report */
+        /** @var AbstractReport $report */
         foreach ($this->reports as $report) {
-            $result[$report::getName()] = $report::getNameForUI();
+            $result[$report->getName()] = $report->getNameForUI();
         }
 
         return $result;
     }
 
-    public function getReport(string $name) : ?ReportInterface
+    public function getReport(string $name) : ?AbstractReport
     {
-        /** @var ReportInterface $report */
+        /** @var AbstractReport $report */
         foreach ($this->reports as $report) {
-            if ($report::getName() === $name) {
+            if ($report->getName() === $name) {
                 return $report;
             }
         }

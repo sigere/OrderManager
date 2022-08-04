@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Reports\CertifiedUaPlReport;
+namespace App\Reports\PerStaffReport;
 
 use App\Entity\Order;
 use App\Reports\AbstractReport;
 use App\Reports\Exception\MissingParameterException;
-use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
 use Exception;
 
-class CertifiedUaPlReport extends AbstractReport
+class PerStaffReport extends AbstractReport
 {
-    public const NAME = "certified_ua_pl";
-    public const NAME_FOR_UI = "Przysięgłe UA/PL";
+    public const NAME = "per_staff";
+    public const NAME_FOR_UI = "Dla pracownika";
 
     public function __construct(
-        private LangRepository $langRepository,
         private OrderRepository $orderRepository
     ) {
     }
@@ -30,21 +28,16 @@ class CertifiedUaPlReport extends AbstractReport
         return self::NAME_FOR_UI;
     }
 
-    /**
-     * @return string
-     */
     public function getFormFQCN(): string
     {
-        return CertifiedUaPlReportForm::class;
+        return PerStaffReportForm::class;
     }
 
-    /**
-     * @throws Exception
-     */
     public function configure(mixed $data): void
     {
         if (!isset($data['dateFrom']) ||
-            !isset($data['dateTo'])) {
+            !isset($data['dateTo']) ||
+            !isset($data['staff'])) {
             throw new MissingParameterException();
         }
 
@@ -57,61 +50,20 @@ class CertifiedUaPlReport extends AbstractReport
         if ($to) {
             $this->config['dateTo'] = $to;
         }
+
+        $this->config['staff'] = $data['staff'];
     }
 
-    /**
-     * @return array
-     * @throws Exception
-     */
     public function getData(): array
     {
         if (!isset($this->config)) {
             throw new Exception('Report not configured.');
         }
+
         return $this->getArray();
     }
 
-    private function getOrders()
-    {
-        $ua = $this->langRepository->findOneBy(['short' => 'UA']);
-        $pl = $this->langRepository->findOneBy(['short' => 'PL']);
-
-        $queryBuilder = $this->orderRepository->createQueryBuilder('o');
-        $queryBuilder = $queryBuilder
-            ->andWhere('o.deletedAt is null')
-            ->andWhere('o.certified = 1')
-            ->andWhere(
-                $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('o.baseLang', ':pl'),
-                        $queryBuilder->expr()->eq('o.targetLang', ':ua')
-                    ),
-                    $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('o.baseLang', ':ua'),
-                        $queryBuilder->expr()->eq('o.targetLang', ':pl')
-                    )
-                )
-            )
-            ->setParameter('ua', $ua)
-            ->setParameter('pl', $pl)
-            ->setMaxResults(1000);
-
-        if (isset($this->config['from']) && $this->config['from']) {
-            $queryBuilder = $queryBuilder
-                ->andWhere('o.deadline > :from')
-                ->setParameter('from', $this->config['from']);
-        }
-
-        if (isset($this->config['to']) && $this->config['to']) {
-            $queryBuilder = $queryBuilder
-                ->andWhere('o.deadline < :to')
-                ->setParameter('to', $this->config['to']);
-        }
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-
-    private function getArray() : array
+    private function getArray(): array
     {
         $orders = $this->getOrders();
 
@@ -154,5 +106,24 @@ class CertifiedUaPlReport extends AbstractReport
         ];
 
         return array_merge($header, $table);
+    }
+
+    private function getOrders(): array
+    {
+        return $this->orderRepository
+            ->createQueryBuilder('o')
+            ->select('o, c, bl, tl')
+            ->innerJoin('o.client', 'c')
+            ->innerJoin('o.baseLang', 'bl')
+            ->innerJoin('o.targetLang', 'tl')
+            ->andWhere('o.staff = :staff')
+            ->andWhere('o.deletedAt is null')
+            ->andWhere('o.deadline >= :dateFrom')
+            ->andWhere('o.deadline <= :dateTo')
+            ->setParameter('staff', $this->config['staff'])
+            ->setParameter('dateFrom', $this->config['dateFrom'])
+            ->setParameter('dateTo', $this->config['dateTo'])
+            ->getQuery()
+            ->getResult();
     }
 }
