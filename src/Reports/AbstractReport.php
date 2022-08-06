@@ -10,7 +10,7 @@ use Shuchkin\SimpleXLSXGen;
 abstract class AbstractReport
 {
     public const GENERATED_FILES_PATH = "/var/www/OrderManager/var/tmp";
-    protected array $config = [];
+    protected array $config;
 
     /**
      * @return string
