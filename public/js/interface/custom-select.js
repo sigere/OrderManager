@@ -8,6 +8,14 @@
                 return;
             }
 
+            let self = this;
+            let boundListener = scrollToElement.bind(self);
+            $.extend(self, {
+                removeListener: function () {
+                    document.body.removeEventListener('keypress', boundListener);
+                }
+            });
+
             let $this = $(this);
             let numberOfOptions = $(this).children("option").length;
             let currentText = $(this).find(":selected").text();
@@ -34,8 +42,11 @@
 
             $styledSelect.click(function(e) {
                 e.stopPropagation();
+                document.body.addEventListener('keypress', boundListener);
                 $("div.select-styled.active").not(this).each(function(){
                     $(this).removeClass("active").next("ul.select-options").hide();
+                    let listenerHolder = $(this).prev("select")[0];
+                    listenerHolder.removeListener();
                 });
                 $(this).toggleClass("active").next("ul.select-options").toggle();
             });
@@ -49,10 +60,24 @@
             });
 
             $(document).click(function() {
+                document.body.removeEventListener('keypress', boundListener);
                 $styledSelect.removeClass("active");
                 $list.hide();
             });
             $styledSelect.text(currentText);
         });
     });
+
+    function scrollToElement (e) {
+        let letter = e.key.toUpperCase();
+        let $div = $(this).next().next();
+        let $children = $div.children();
+        for (let i=0; i<$children.length; i++) {
+            let currentFirstLetter = Array.from($children[i].innerHTML)[0].toUpperCase();
+            if (currentFirstLetter === letter) {
+                $div[0].scrollTop = $children[i].offsetTop - 20;
+                return;
+            }
+        }
+    }
 })(window, jQuery);
