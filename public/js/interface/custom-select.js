@@ -12,7 +12,7 @@
             let boundListener = scrollToElement.bind(self);
             $.extend(self, {
                 removeListener: function () {
-                    document.body.removeEventListener('keypress', boundListener);
+                    document.body.removeEventListener("keypress", boundListener);
                 }
             });
 
@@ -42,7 +42,7 @@
 
             $styledSelect.click(function(e) {
                 e.stopPropagation();
-                document.body.addEventListener('keypress', boundListener);
+                document.body.addEventListener("keypress", boundListener);
                 $("div.select-styled.active").not(this).each(function(){
                     $(this).removeClass("active").next("ul.select-options").hide();
                     let listenerHolder = $(this).prev("select")[0];
@@ -60,7 +60,7 @@
             });
 
             $(document).click(function() {
-                document.body.removeEventListener('keypress', boundListener);
+                document.body.removeEventListener("keypress", boundListener);
                 $styledSelect.removeClass("active");
                 $list.hide();
             });
