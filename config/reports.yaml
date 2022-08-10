@@ -7,9 +7,11 @@ services:
       $reports:
         - '@App\Reports\CertifiedUaPlReport\CertifiedUaPlReport'
         - '@App\Reports\PerStaffReport\PerStaffReport'
+        - '@App\Reports\PerEachStaffReport\PerEachStaffReport'
 
   App\Reports\CertifiedUaPlReport\CertifiedUaPlReport: ~
   App\Reports\PerStaffReport\PerStaffReport: ~
+  App\Reports\PerEachStaffReport\PerEachStaffReport: ~
 
   App\Reports\PerStaffReport\PerStaffReportForm:
     autoconfigure: true

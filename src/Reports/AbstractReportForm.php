@@ -4,6 +4,7 @@ namespace App\Reports;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +25,7 @@ abstract class AbstractReportForm extends AbstractType
         }
 
         $defaults['attr']['data-url'] = '/reports/execute/' . $this->getReportName();
+        $defaults['attr']['data-report-id'] = $this->getReportName();
         $defaults['attr']['data-method'] = 'GET';
         $defaults['method'] = "GET";
 
@@ -40,6 +42,10 @@ abstract class AbstractReportForm extends AbstractType
             ->add('dateTo', DateType::class, [
                 'widget' => 'single_text',
                 'data' => new \DateTime('last day of this month')
+            ])
+            ->add('execute', SubmitType::class, [
+                'attr' => ['class' => 'btn btn-primary'],
+                'priority' => -1
             ])
         ;
     }

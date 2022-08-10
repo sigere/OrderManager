@@ -24,17 +24,19 @@
             let self = this;
             let reportId = $(e.currentTarget).data("report-id");
             let url = "/reports/execute/" + reportId;
-            this.currentReport = reportId;
+            this.popupManager.default();
             this.popupManager.open();
             $.ajax({
                 url: url,
                 method: "POST",
                 success: function (data) {
-                    let $handle = self.popupManager.display(data);
-                    $handle.find("form").on(
-                        "submit",
-                        self.reportFormSubmit.bind(self)
-                    );
+                    executeAfter(function() {
+                        let $handle = self.popupManager.display(data);
+                        $handle.find("form").on(
+                            "submit",
+                            self.reportFormSubmit.bind(self)
+                        );
+                    });
                 },
                 error: function (jqXHR) {
                     console.error(jqXHR);
@@ -54,7 +56,7 @@
                 success: function (data) {
                     if (typeof data === "object" && data.path) {
                         console.log(data.path);
-                        window.open("/reports/download/" + data.path, "_blank").focus();
+                        window.open("/reports/download/" + data.path);
                         return;
                     }
                     console.error("Invalid response", data);
@@ -71,6 +73,7 @@
             let self = this;
             let data = new FormData(e.currentTarget);
             this.currentReportParameters = data;
+            this.currentReport = $(e.currentTarget).data("report-id");
             let url = $(e.currentTarget).data("url");
             let method = $(e.currentTarget).data("method");
             if (method === "GET" || method === "get") {

@@ -1,0 +1,25 @@
+.icon-link-container {
+    height: 20px;
+    display: flex;
+    flex-direction: row;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 1px;
+    position: relative;
+    background-color: white;
+    color: var(--color-background);
+    width: fit-content;
+    border-radius: 5px;
+}
+
+.icon-link-container svg {
+    height: 15px;
+    width: auto;
+    padding-top: 2px;
+}
+
+.icon-link-text {
+    color: black;
+    margin-left: 2px;
+    font-weight: 400;
+}

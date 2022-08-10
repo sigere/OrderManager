@@ -24,6 +24,7 @@ services:
             - '../src/Service/Reports/'
             - '../src/Service/OptionsProvider/'
             - '../src/Reports/'
+            - '../src/Doctrine'
 
     App\Controller\:
         resource: '../src/Controller/'

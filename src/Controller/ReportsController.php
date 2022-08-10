@@ -88,10 +88,10 @@ class ReportsController extends AbstractController
             ]);
         }
 
-        return $this->render(
-            "reports/form.html.twig",
-            ['form' => $form->createView()]
-        );
+        return $this->render("reports/form.html.twig", [
+            'form' => $form->createView(),
+            'reportName' => $service->getNameForUI()
+            ]);
     }
 
     /**

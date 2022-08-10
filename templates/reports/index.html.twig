@@ -33,9 +33,9 @@ $(document).ready(function (){
                     Raporty
                     <div style="clear: both;"></div>
                 </header>
-                <div class="col-content" id="reports-content" style="width: auto">
+                <div class="col-content" id="reports-content">
                         {% for key, report in reports %}
-                            <div class="js-reports-list-element" data-report-id="{{ key }}">
+                            <div class="reports-list-element js-reports-list-element" data-report-id="{{ key }}">
                                 {{ report }}
                             </div>
                         {% endfor %}
@@ -45,14 +45,14 @@ $(document).ready(function (){
         <div class="col-lg-9" style="height: 100%;">
             <div class="column mid-col js-mid-col">
                 <header>
-                    Dane i podgląd
+                    Podgląd
                     <span class="js-subject-id"></span>
                     <div class="js-burger">
                         {% include 'burger.html.twig' with {'options': null} %}
                     </div>
                 </header>
                 <div class="col-content js-col-content">
-                    <div class="alert alert-info">{{ "Select entry to display details." | trans }}</div>
+                    <div class="alert alert-info">{{ "Select report to execute." | trans }}</div>
                 </div>
             </div>
         </div>

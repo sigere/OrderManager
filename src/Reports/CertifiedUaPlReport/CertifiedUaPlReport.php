@@ -5,8 +5,8 @@ namespace App\Reports\CertifiedUaPlReport;
 use App\Entity\Order;
 use App\Reports\AbstractReport;
 use App\Reports\Exception\MissingParameterException;
-use App\Repository\LangRepository;
 use App\Repository\OrderRepository;
+use DateTime;
 use Exception;
 
 class CertifiedUaPlReport extends AbstractReport
@@ -15,7 +15,6 @@ class CertifiedUaPlReport extends AbstractReport
     public const NAME_FOR_UI = "Przysięgłe UA/PL";
 
     public function __construct(
-        private LangRepository $langRepository,
         private OrderRepository $orderRepository
     ) {
     }
@@ -55,6 +54,8 @@ class CertifiedUaPlReport extends AbstractReport
 
         $to = $data['dateTo'];
         if ($to) {
+            /** @var DateTime $to */
+            $to->modify('+1 day');
             $this->config['dateTo'] = $to;
         }
     }
@@ -73,42 +74,33 @@ class CertifiedUaPlReport extends AbstractReport
 
     private function getOrders()
     {
-        $ua = $this->langRepository->findOneBy(['short' => 'UA']);
-        $pl = $this->langRepository->findOneBy(['short' => 'PL']);
-
         $queryBuilder = $this->orderRepository->createQueryBuilder('o');
-        $queryBuilder = $queryBuilder
+        return $queryBuilder
+            ->innerJoin('o.baseLang', 'bl')
+            ->innerJoin('o.targetLang', 'tl')
             ->andWhere('o.deletedAt is null')
             ->andWhere('o.certified = 1')
             ->andWhere(
                 $queryBuilder->expr()->orX(
                     $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('o.baseLang', ':pl'),
-                        $queryBuilder->expr()->eq('o.targetLang', ':ua')
+                        $queryBuilder->expr()->eq('bl.short', ':pl'),
+                        $queryBuilder->expr()->eq('tl.short', ':ua')
                     ),
                     $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('o.baseLang', ':ua'),
-                        $queryBuilder->expr()->eq('o.targetLang', ':pl')
+                        $queryBuilder->expr()->eq('bl.short', ':ua'),
+                        $queryBuilder->expr()->eq('tl.short', ':pl')
                     )
                 )
             )
-            ->setParameter('ua', $ua)
-            ->setParameter('pl', $pl)
-            ->setMaxResults(1000);
-
-        if (isset($this->config['from']) && $this->config['from']) {
-            $queryBuilder = $queryBuilder
-                ->andWhere('o.deadline > :from')
-                ->setParameter('from', $this->config['from']);
-        }
-
-        if (isset($this->config['to']) && $this->config['to']) {
-            $queryBuilder = $queryBuilder
-                ->andWhere('o.deadline < :to')
-                ->setParameter('to', $this->config['to']);
-        }
-
-        return $queryBuilder->getQuery()->getResult();
+            ->andWhere('o.deadline > :from')
+            ->setParameter('from', $this->config['dateFrom'])
+            ->andWhere('o.deadline < :to')
+            ->setParameter('to', $this->config['dateTo'])
+            ->setParameter('ua', 'UA')
+            ->setParameter('pl', 'PL')
+            ->setMaxResults(1000)
+            ->getQuery()
+            ->getResult();
     }
 
     private function getArray() : array
