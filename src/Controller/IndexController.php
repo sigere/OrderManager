@@ -18,24 +18,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    private ?Request $request;
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private OrderRepository $orderRepository,
         private LogRepository $logRepository,
         private IndexPreferences $preferences,
         private ResponseFormatter $formatter,
-        private OptionsProviderFactory $optionsProviderFactory,
-        RequestStack $request
+        private OptionsProviderFactory $optionsProviderFactory
     ) {
-        $this->request = $request->getCurrentRequest();
     }
 
     /**
@@ -100,10 +95,10 @@ class IndexController extends AbstractController
     /**
      * @Route("/index/filters", methods={"POST"}, name="index_filters")
      */
-    public function filters(): Response
+    public function filters(Request $request): Response
     {
         $form = $this->createForm(IndexFiltersForm::class);
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->preferences->applyForm($form->getData());
@@ -133,7 +128,7 @@ class IndexController extends AbstractController
             'dataSourceUrl' => '/order'
         ]);
 
-        $result['rowsCount'] = $this->renderView('index/rows_count.html.twig', [
+        $result['rowsCount'] = $this->renderView('rows_count.html.twig', [
             'rowsFound' => $rowsCount,
             'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
         ]);
@@ -198,7 +193,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}", methods={"PUT"}, name="order_put")
      */
-    public function update(Order $order): Response
+    public function update(Request $request, Order $order): Response
     {
         if (!in_array(
             OrderOptionsProvider::ACTION_EDIT,
@@ -221,7 +216,7 @@ class IndexController extends AbstractController
 
         $form = $this->createForm(OrderForm::class, $order, $options);
 
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $this->entityManager->persist($order);
@@ -244,7 +239,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}", methods={"DELETE"}, name="order_delete")
      */
-    public function delete(Order $order): Response
+    public function delete(Request $request, Order $order): Response
     {
         if ($order->getDeletedAt()) {
             return new Response(
@@ -259,7 +254,7 @@ class IndexController extends AbstractController
         $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
         $form = $this->createForm(DeleteEntityFrom::class, null, $options);
 
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order->setDeletedAt(new Datetime());
             $this->entityManager->persist($order);
@@ -281,7 +276,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}/restore", methods={"POST"}, name="order_restore")
      */
-    public function restore(Order $order): Response
+    public function restore(Request $request, Order $order): Response
     {
         if (!$order->getDeletedAt()) {
             return new Response(
@@ -299,7 +294,7 @@ class IndexController extends AbstractController
             ]
         ];
         $form = $this->createForm(DeleteEntityFrom::class, null, $options);
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order->setDeletedAt(null);

@@ -9,62 +9,55 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset("css/reports.css") }}"/>
     <link rel="stylesheet" href="{{ asset("css/popups.css") }}"/>
-    <link rel="stylesheet" href="{{ asset("css/filters-form.css") }}"/>
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    <script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/reports-controller.js") }}"></script>
-    <script>
-        $(document).ready(function (){
-            window.controller = new Controller($(document));
-        });
-    </script>
+{{ parent() }}
+<script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
+<script type="text/javascript" src="{{ asset("js/reports-controller.js") }}"></script>
+<script>
+$(document).ready(function (){
+    window.controller = new Controller($(document));
+});
+</script>
 {% endblock %}
 
 {% block content %}
     <div class="row">
-        <div class="col-lg-2" style=" height: 100%;">
+        <div class="col-lg-3" style=" height: 100%;">
             <div class="column left-col js-left-col">
                 <header>
                     <div class="icon" style="float: left;">
                         {% include 'icons/report.html' %}
                     </div>
-                    Dostępne raporty
+                    Raporty
                     <div style="clear: both;"></div>
                 </header>
-                <div class="col-content" id="reports-content" style="width: auto">
-                    <div class="table-container">
-                        {% include 'reports/reports.html.twig' %}
-                    </div>
+                <div class="col-content" id="reports-content">
+                        {% for key, report in reports %}
+                            <div class="reports-list-element js-reports-list-element" data-report-id="{{ key }}">
+                                {{ report }}
+                            </div>
+                        {% endfor %}
                 </div>
             </div>
         </div>
-        <div class="col-lg-7" style=" height: 100%;">
+        <div class="col-lg-9" style="height: 100%;">
             <div class="column mid-col js-mid-col">
                 <header>
-                    Dane i podgląd
-                </header>
-                <div class="col-content">
-                    <div id="form-preview-content-form" style="height: 100px;">
-                        <div class="alert alert-info">Wybierz raport, aby go wykonać.</div>
+                    Podgląd
+                    <span class="js-subject-id"></span>
+                    <div class="js-burger">
+                        {% include 'burger.html.twig' with {'options': null} %}
                     </div>
-                    <div>
-                        <div id="form-preview-content-preview">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3" style=" height: 100%;">
-            <div class="column right-col">
-                <header>
-                    Szczegóły raportu
                 </header>
-                <div class="col-content" id="details-content" style="">
-                    <div class="alert alert-info">Wybierz raport, aby wyświetlić jego szczegóły</div>
+                <div class="col-content js-col-content">
+                    <div class="table-container js-table-container">
+                        <div class="alert alert-info">{{ "Select report to execute." | trans }}</div>
+                    </div>
+                    <div class="rows-count-container js-rows-count-container">
+                        {% include 'rows_count.html.twig' %}
+                    </div>
                 </div>
             </div>
         </div>

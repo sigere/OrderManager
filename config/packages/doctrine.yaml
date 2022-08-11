@@ -27,3 +27,5 @@ doctrine:
             string_functions:
                 MONTH: DoctrineExtensions\Query\Mysql\Month
                 YEAR: DoctrineExtensions\Query\Mysql\Year
+            numeric_functions:
+                round: App\Doctrine\Round

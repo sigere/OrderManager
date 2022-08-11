@@ -35,7 +35,7 @@ class FakturowniaProviderTest extends TestCase
         ]);
     }
 
-    public function testPayload()
+    public function test_payload_is_valid()
     {
         $client = $this->client;
         $company = $this->company;
