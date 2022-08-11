@@ -5,7 +5,8 @@
         this.$wrapper = $wrapper;
         this.currentReport = null;
         this.currentReportParameters = null;
-        this.$content = $wrapper.find(".js-col-content");
+        this.$content = $wrapper.find(".js-table-container");
+        this.$rowsCountContainer = $wrapper.find(".js-rows-count-container");
 
         this.popupManager = new PopupManager(
             $("body")
@@ -95,6 +96,10 @@
                         if (typeof data === "object" && data.content) {
                             self.onSuccessExecuteResponse(data.content);
                             self.popupManager.close();
+
+                            if (data.rowsCount) {
+                                self.$rowsCountContainer.html(data.rowsCount);
+                            }
 
                             if (data.burger) {
                                 let $burger = self.$wrapper.find(".js-burger");

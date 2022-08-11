@@ -32,16 +32,27 @@ abstract class AbstractReportForm extends AbstractType
         $resolver->setDefaults($defaults);
     }
 
-    final protected function addDateIntervalFields(FormBuilderInterface $builder)
-    {
+    final protected function addDateIntervalFields(
+        FormBuilderInterface $builder,
+        \DateTime $defaultFrom = null,
+        \DateTime $defaultTo = null
+    ) {
+        if ($defaultFrom === null) {
+            $defaultFrom = new \DateTime('first day of last month');
+        }
+
+        if ($defaultTo === null) {
+            $defaultTo = new \DateTime('last day of last month');
+        }
+
         $builder
             ->add('dateFrom', DateType::class, [
                 'widget' => 'single_text',
-                'data' => new \DateTime('first day of this month')
+                'data' => $defaultFrom
             ])
             ->add('dateTo', DateType::class, [
                 'widget' => 'single_text',
-                'data' => new \DateTime('last day of this month')
+                'data' => $defaultTo
             ])
             ->add('execute', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-primary'],

@@ -212,6 +212,23 @@ a {
 
 /*-- others --*/
 
+.rows-count-container {
+  height: 25px;
+}
+
+.rows-count-container .rows-count {
+  text-align: right;
+  padding-right: 8px;
+  font-size: 13px;
+  margin-top: 7px;
+}
+
+.rows-count svg {
+  height: 14px;
+  margin-bottom: 2px;
+  margin-right: 3px;
+}
+
 .alert {
   font-size: 13px;
   border-radius: 5px;

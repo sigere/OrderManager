@@ -14,6 +14,10 @@ class PerEachStaffReportForm extends AbstractReportForm
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->addDateIntervalFields($builder);
+        $this->addDateIntervalFields(
+            $builder,
+            new \DateTime("first day of january this year"),
+            new \DateTime()
+        );
     }
 }

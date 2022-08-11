@@ -75,12 +75,17 @@ class ReportsController extends AbstractController
                 'class' => 'js-download-link'
             ]];
 
+            $rowsCount = $service->getRowsCount();
+
             return new JsonResponse([
                 'success' => true,
-                'content' => $this->twig->render(
-                    'reports/preview.html.twig',
-                    ['data' => $data]
-                ),
+                'content' => $this->twig->render('reports/preview.html.twig', [
+                    'data' => $data,
+                ]),
+                'rowsCount' => $this->twig->render('rows_count.html.twig', [
+                    'rowsFound' => $rowsCount,
+                    'rowsShown' => min($rowsCount, 1000),
+                ]),
                 'burger' => $this->twig->render(
                     'burger.html.twig',
                     ['options' => $options]

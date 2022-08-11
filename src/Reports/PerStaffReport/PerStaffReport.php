@@ -6,7 +6,9 @@ use App\Entity\Order;
 use App\Reports\AbstractReport;
 use App\Reports\Exception\MissingParameterException;
 use App\Repository\OrderRepository;
+use DateTime;
 use Exception;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PerStaffReport extends AbstractReport
 {
@@ -14,7 +16,8 @@ class PerStaffReport extends AbstractReport
     public const NAME_FOR_UI = "Dla pracownika";
 
     public function __construct(
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private TranslatorInterface $translator
     ) {
     }
 
@@ -48,6 +51,8 @@ class PerStaffReport extends AbstractReport
 
         $to = $data['dateTo'];
         if ($to) {
+            /** @var DateTime $to */
+            $to->modify('+1 day');
             $this->config['dateTo'] = $to;
         }
 
@@ -84,7 +89,7 @@ class PerStaffReport extends AbstractReport
                 $order->getPages(),
                 $order->getPrice(),
                 $order->getNetto(),
-                (string)$order->getState()
+                $this->translator->trans((string)$order->getState())
             ];
             $sumOfNetto += $order->getNetto();
         }
@@ -125,5 +130,21 @@ class PerStaffReport extends AbstractReport
             ->setParameter('dateTo', $this->config['dateTo'])
             ->getQuery()
             ->getResult();
+    }
+
+    public function getRowsCount(): int
+    {
+        return $this->orderRepository
+            ->createQueryBuilder('o')
+            ->select('count(o.id)')
+            ->andWhere('o.staff = :staff')
+            ->andWhere('o.deletedAt is null')
+            ->andWhere('o.deadline >= :dateFrom')
+            ->andWhere('o.deadline <= :dateTo')
+            ->setParameter('staff', $this->config['staff'])
+            ->setParameter('dateFrom', $this->config['dateFrom'])
+            ->setParameter('dateTo', $this->config['dateTo'])
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

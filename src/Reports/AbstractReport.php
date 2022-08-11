@@ -62,4 +62,9 @@ abstract class AbstractReport
      * @return string
      */
     abstract public function getFormFQCN() : string;
+
+    /**
+     * @return int
+     */
+    abstract public function getRowsCount(): int;
 }

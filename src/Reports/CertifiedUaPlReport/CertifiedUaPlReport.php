@@ -8,6 +8,7 @@ use App\Reports\Exception\MissingParameterException;
 use App\Repository\OrderRepository;
 use DateTime;
 use Exception;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CertifiedUaPlReport extends AbstractReport
 {
@@ -15,7 +16,8 @@ class CertifiedUaPlReport extends AbstractReport
     public const NAME_FOR_UI = "Przysięgłe UA/PL";
 
     public function __construct(
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private TranslatorInterface $translator
     ) {
     }
 
@@ -76,8 +78,11 @@ class CertifiedUaPlReport extends AbstractReport
     {
         $queryBuilder = $this->orderRepository->createQueryBuilder('o');
         return $queryBuilder
+            ->select('o, c, bl, tl, s')
+            ->innerJoin('o.client', 'c')
             ->innerJoin('o.baseLang', 'bl')
             ->innerJoin('o.targetLang', 'tl')
+            ->innerJoin('o.staff', 's')
             ->andWhere('o.deletedAt is null')
             ->andWhere('o.certified = 1')
             ->andWhere(
@@ -93,8 +98,8 @@ class CertifiedUaPlReport extends AbstractReport
                 )
             )
             ->andWhere('o.deadline > :from')
-            ->setParameter('from', $this->config['dateFrom'])
             ->andWhere('o.deadline < :to')
+            ->setParameter('from', $this->config['dateFrom'])
             ->setParameter('to', $this->config['dateTo'])
             ->setParameter('ua', 'UA')
             ->setParameter('pl', 'PL')
@@ -124,7 +129,7 @@ class CertifiedUaPlReport extends AbstractReport
                 $order->getPages(),
                 $order->getPrice(),
                 $order->getNetto(),
-                (string)$order->getState()
+                $this->translator->trans((string)$order->getState())
             ];
             $sumOfNetto += $order->getNetto();
         }
@@ -139,12 +144,43 @@ class CertifiedUaPlReport extends AbstractReport
             'Z',
             'Na',
             'UW',
-            'L_str',
+            'L. str.',
             'Cena',
             'Netto',
             'Status'
         ];
 
         return array_merge($header, $table);
+    }
+
+    public function getRowsCount(): int
+    {
+        $queryBuilder = $this->orderRepository->createQueryBuilder('o');
+        return $queryBuilder
+            ->select('COUNT(o.id)')
+            ->innerJoin('o.baseLang', 'bl')
+            ->innerJoin('o.targetLang', 'tl')
+            ->andWhere('o.deletedAt is null')
+            ->andWhere('o.certified = 1')
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('bl.short', ':pl'),
+                        $queryBuilder->expr()->eq('tl.short', ':ua')
+                    ),
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('bl.short', ':ua'),
+                        $queryBuilder->expr()->eq('tl.short', ':pl')
+                    )
+                )
+            )
+            ->andWhere('o.deadline > :from')
+            ->andWhere('o.deadline < :to')
+            ->setParameter('from', $this->config['dateFrom'])
+            ->setParameter('to', $this->config['dateTo'])
+            ->setParameter('ua', 'UA')
+            ->setParameter('pl', 'PL')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

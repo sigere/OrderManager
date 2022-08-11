@@ -52,7 +52,12 @@ $(document).ready(function (){
                     </div>
                 </header>
                 <div class="col-content js-col-content">
-                    <div class="alert alert-info">{{ "Select report to execute." | trans }}</div>
+                    <div class="table-container js-table-container">
+                        <div class="alert alert-info">{{ "Select report to execute." | trans }}</div>
+                    </div>
+                    <div class="rows-count-container js-rows-count-container">
+                        {% include 'rows_count.html.twig' %}
+                    </div>
                 </div>
             </div>
         </div>

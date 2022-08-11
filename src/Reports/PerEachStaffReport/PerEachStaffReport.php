@@ -5,7 +5,9 @@ namespace App\Reports\PerEachStaffReport;
 use App\Reports\AbstractReport;
 use App\Reports\Exception\MissingParameterException;
 use App\Repository\OrderRepository;
+use DateTime;
 use Exception;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PerEachStaffReport extends AbstractReport
 {
@@ -13,7 +15,8 @@ class PerEachStaffReport extends AbstractReport
     public const NAME_FOR_UI = "Dla wszystkich pracowników";
 
     public function __construct(
-        private OrderRepository $orderRepository
+        private OrderRepository $orderRepository,
+        private TranslatorInterface $translator
     ) {
     }
 
@@ -46,6 +49,8 @@ class PerEachStaffReport extends AbstractReport
 
         $to = $data['dateTo'];
         if ($to) {
+            /** @var DateTime $to */
+            $to->modify('+1 day');
             $this->config['dateTo'] = $to;
         }
     }
@@ -88,5 +93,20 @@ class PerEachStaffReport extends AbstractReport
         ];
 
         return array_merge($table, $array);
+    }
+
+    public function getRowsCount(): int
+    {
+        return $this->orderRepository
+            ->createQueryBuilder('o')
+            ->select("COUNT(DISTINCT(s.id))")
+            ->innerJoin('o.staff', 's')
+            ->andWhere('o.deletedAt is null')
+            ->andWhere('o.deadline >= :dateFrom')
+            ->andWhere('o.deadline <= :dateTo')
+            ->setParameter('dateFrom', $this->config['dateFrom'])
+            ->setParameter('dateTo', $this->config['dateTo'])
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }
