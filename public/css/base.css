@@ -320,14 +320,6 @@ input[type="radio"] {
   margin-bottom: 10px;
 }
 
-.search-form input[type="text"] {
-  /*float: right;*/
-}
-
-.search-form textarea {
-  /*float: right;*/
-}
-
 .search-form button {
   float: right;
   margin-top: 10px;
