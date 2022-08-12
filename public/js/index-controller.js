@@ -24,36 +24,17 @@
             $("body")
         );
 
+        this.searchController = new SearchController(
+            $(".js-search-link"),
+            this,
+            "/search"
+        );
+
         this._initListeners.bind(this)();
         window.onpopstate = _onPopState.bind(this);
     };
 
     $.extend(window.Controller.prototype, {
-        searchOrder: function () {
-            this.popupManager.open();
-            let self = this;
-            $.ajax({
-                url: "/locate",
-                method: "POST",
-                success: function (data) {
-                    executeAfter( function () {
-                        let $handle = self.popupManager.display(data);
-                        if (!$handle) {
-                            return;
-                        }
-                        $handle.find("form").on(
-                            "submit",
-                            self.formSubmit.bind(self)
-                        );
-                    });
-                },
-                error: function (jqXHR) {
-                    console.error(jqXHR.responseText);
-                    self.popupManager.display(jqXHR.responseText);
-                }
-            });
-        },
-
         addOrder: function () {
             this.popupManager.open();
 
@@ -226,12 +207,6 @@
         },
 
         _initListeners: function () {
-            this.$wrapper.on(
-                "click",
-                ".js-search-order-link",
-                this.searchOrder.bind(this)
-            );
-
             this.$wrapper.on(
                 "click",
                 ".js-add-order-link",

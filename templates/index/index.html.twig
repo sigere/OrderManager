@@ -15,6 +15,7 @@
 
 {% block javascript %}
     {{ parent() }}
+    <script type="text/javascript" src="{{ asset("js/search-controller.js") }}"></script>
     <script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
     <script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
     <script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
@@ -60,7 +61,7 @@
                     <div style="clear: both;"></div>
                     {% include 'burger.html.twig' with {'flat': true, 'options': [
                         {'label': "Add order", 'icon': 'add', 'class': 'js-add-order-link'},
-                        {'label': "Locate", 'icon': 'search', 'class': 'js-search-order-link'}
+                        {'label': "Search", 'icon': 'search', 'class': 'js-search-link'}
                     ]} %}
                 </header>
                 <div class="col-content">

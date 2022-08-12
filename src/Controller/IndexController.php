@@ -64,17 +64,19 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/locate", methods={"POST"}, name="search_post")
+     * @Route("/search", methods={"POST"}, name="search_post")
      */
     public function search(Request $request): Response
     {
         $id = $request->get('id');
+        $text = $request->get('text');
+
         if ($id) {
             $order = $this->orderRepository->findOneBy(['id' => $id]);
             if (!$order) {
-                return $this->render('index/locate_form.html.twig', [
+                return $this->render('index/search_form.html.twig', [
                     'entity' => 'order',
-                    'dataUrl' => '/locate',
+                    'dataUrl' => '/search',
                     'errors' => ['Order not found.']
                 ]);
             }
@@ -84,11 +86,42 @@ class IndexController extends AbstractController
                 200,
                 ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
+        } elseif ($text) {
+            $orders = $this->orderRepository->searchByText($text);
+
+            $count = count($orders);
+            $errors = [];
+            if ($count == 0) {
+                return $this->render('index/search_form.html.twig', [
+                    'entity' => 'order',
+                    'dataUrl' => '/search',
+                    'errors' => ['Order not found.']
+                ]);
+            } elseif ($count > 30) {
+                $errors = [
+                    "Found over 30 results.",
+                    "Shown are only last 30 ordered by deadline."
+                ];
+            }
+
+            return $this->render("index/search_form.html.twig", [
+                'entity' => 'order',
+                'dataUrl' => '/search',
+                'errors' => $errors,
+                'text' => $text,
+                'orders' => $orders
+            ]);
+        } elseif ($id !== null || $text !== null) {
+            return $this->render('index/search_form.html.twig', [
+                'entity' => 'order',
+                'dataUrl' => '/search',
+                'errors' => ['You need to fill at least one field.']
+            ]);
         }
 
-        return $this->render('index/locate_form.html.twig', [
+        return $this->render('index/search_form.html.twig', [
             'entity' => 'order',
-            'dataUrl' => '/locate',
+            'dataUrl' => '/search',
         ]);
     }
 
