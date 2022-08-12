@@ -40,7 +40,7 @@
                     {% include 'icons/repertory_entry.html' %}
                 {% endif %}
             </td>
-            <td>{{ order.id }}</td>
+            <td class="clickable-row">{{ order.id }}</td>
 
             {% if 'adoption' in preferences.columns %}
                 <td class="clickable-row">{{ order.adoption | date('d.m.Y H:i') }}</td>

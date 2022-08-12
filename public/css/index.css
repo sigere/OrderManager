@@ -83,6 +83,21 @@
     font-size: 12px;
 }
 
+/* ----------- others ------------*/
+
+.search-form label {
+    width: 300px;
+    overflow: hidden;
+}
+
+.search-form input {
+    width: 200px;
+}
+
+.search-form-container .entity-table  {
+    font-size: 0.8rem;
+}
+
 /* ---------- tmp fix ----------*/
 .js-no-transformation {
     display: block !important;

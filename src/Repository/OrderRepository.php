@@ -120,4 +120,25 @@ class OrderRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param string $text
+     * @return Order[]
+     */
+    public function searchByText(string $text): array
+    {
+        $queryBuilder = $this->createQueryBuilder('o');
+        return $queryBuilder
+            ->select('o, c')
+            ->innerJoin('o.client', 'c')
+            ->andWhere($queryBuilder->expr()->orX(
+                'o.topic LIKE :text',
+                'o.info LIKE :text'
+            ))
+            ->setParameter('text', '%' . $text . '%')
+            ->orderBy('o.deadline', 'DESC')
+            ->setMaxResults(31)
+            ->getQuery()
+            ->getResult();
+    }
 }

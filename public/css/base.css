@@ -306,22 +306,31 @@ input[type="radio"] {
   animation: spin 1s linear infinite;
 }
 
-.locate-form .error {
+.search-form .error {
   color: var(--color-warning);
 }
 
-.locate-form input {
+.search-form input {
   background-color: var(--color-burger);
   color: white;
   border: none;
   padding: 2px;
   border-radius: 5px;
   margin-left: 10px;
+  margin-bottom: 10px;
 }
 
-.locate-form button {
+.search-form input[type="text"] {
+  /*float: right;*/
+}
+
+.search-form textarea {
+  /*float: right;*/
+}
+
+.search-form button {
   float: right;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 /* --- colors --- */

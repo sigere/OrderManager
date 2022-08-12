@@ -73,7 +73,7 @@
     scrollbar-width: none; /* Firefox */
 }
 
-.mid-col .clickable-row {
+.clickable-row {
     cursor: pointer;
 }
 
