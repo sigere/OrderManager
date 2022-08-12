@@ -56,10 +56,20 @@
         _setCurrentSubject: function (subject) {
             this.$table.find(".active-row").removeClass("active-row");
 
-            this.controller.currentSubject = subject;
+            if(subject.row === null) {
+                let $row = this.$table.find(
+                    "[data-subject-id=\"" + subject.id + "\"][data-subject-type=\"" + subject.type + "\"]"
+                );
+                if ($row.length === 1) {
+                    subject.row = $row;
+                }
+            }
+
             if (subject.row) {
                 subject.row.addClass("active-row");
             }
+
+            this.controller.currentSubject = subject;
         },
 
         applyTableSorter: function () {

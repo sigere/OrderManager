@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\CertifiedOrder;
 use App\Entity\Client;
 use App\Entity\Company;
 use App\Entity\Lang;
@@ -11,7 +10,6 @@ use App\Entity\Order;
 use App\Entity\RepertoryEntry;
 use App\Entity\Staff;
 use App\Entity\User;
-use App\Repository\RepertoryEntryRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;

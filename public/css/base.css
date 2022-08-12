@@ -212,6 +212,23 @@ a {
 
 /*-- others --*/
 
+.rows-count-container {
+  height: 25px;
+}
+
+.rows-count-container .rows-count {
+  text-align: right;
+  padding-right: 8px;
+  font-size: 13px;
+  margin-top: 7px;
+}
+
+.rows-count svg {
+  height: 14px;
+  margin-bottom: 2px;
+  margin-right: 3px;
+}
+
 .alert {
   font-size: 13px;
   border-radius: 5px;
@@ -289,22 +306,23 @@ input[type="radio"] {
   animation: spin 1s linear infinite;
 }
 
-.locate-form .error {
+.search-form .error {
   color: var(--color-warning);
 }
 
-.locate-form input {
+.search-form input {
   background-color: var(--color-burger);
   color: white;
   border: none;
   padding: 2px;
   border-radius: 5px;
   margin-left: 10px;
+  margin-bottom: 10px;
 }
 
-.locate-form button {
+.search-form button {
   float: right;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 /* --- colors --- */

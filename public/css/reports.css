@@ -17,3 +17,19 @@
     overflow-y: scroll;
     height: 630px;
 }
+
+.reports-list-element {
+    width: 250px;
+    cursor: pointer;
+    background: var(--color-header);
+    border-radius: 6px;
+    height: 35px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+}
+
+.report-form label {
+    margin-bottom: 10px;
+    margin-right: 20px;
+}

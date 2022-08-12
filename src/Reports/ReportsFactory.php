@@ -2,36 +2,33 @@
 
 namespace App\Reports;
 
-use App\Repository\LangRepository;
-use App\Repository\OrderRepository;
-use Twig;
-
 class ReportsFactory
 {
-    const REPORTS = [
-        [
-            'id' => 'CERTIFIED_UA_PL',
-            'name' => 'Albert',
-            'details' => 'Tłumaczenia przysięgłe pl->ua i ua->pl',
-        ]
-    ];
-
     public function __construct(
-        private OrderRepository $orderRepository,
-        private LangRepository $langRepository,
-        private Twig\Environment $twig
+        private array $reports
     ) {
     }
 
-    public function getReportService(string $report) : ?ReportInterface
+    public function getAvailableReports() : array
     {
-        return match ($report) {
-            self::REPORTS[0]['id'] => new CertifiedUaPlReport(
-                $this->langRepository,
-                $this->orderRepository,
-                $this->twig
-            ),
-            default => null
-        };
+        $result = [];
+        /** @var AbstractReport $report */
+        foreach ($this->reports as $report) {
+            $result[$report->getName()] = $report->getNameForUI();
+        }
+
+        return $result;
+    }
+
+    public function getReport(string $name) : ?AbstractReport
+    {
+        /** @var AbstractReport $report */
+        foreach ($this->reports as $report) {
+            if ($report->getName() === $name) {
+                return $report;
+            }
+        }
+
+        return null;
     }
 }

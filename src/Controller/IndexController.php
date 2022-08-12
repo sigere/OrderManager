@@ -18,24 +18,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    private ?Request $request;
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private OrderRepository $orderRepository,
         private LogRepository $logRepository,
         private IndexPreferences $preferences,
         private ResponseFormatter $formatter,
-        private OptionsProviderFactory $optionsProviderFactory,
-        RequestStack $request
+        private OptionsProviderFactory $optionsProviderFactory
     ) {
-        $this->request = $request->getCurrentRequest();
     }
 
     /**
@@ -69,17 +64,19 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/locate", methods={"POST"}, name="search_post")
+     * @Route("/search", methods={"POST"}, name="search_post")
      */
     public function search(Request $request): Response
     {
         $id = $request->get('id');
+        $text = $request->get('text');
+
         if ($id) {
             $order = $this->orderRepository->findOneBy(['id' => $id]);
             if (!$order) {
-                return $this->render('index/locate_form.html.twig', [
+                return $this->render('index/search_form.html.twig', [
                     'entity' => 'order',
-                    'dataUrl' => '/locate',
+                    'dataUrl' => '/search',
                     'errors' => ['Order not found.']
                 ]);
             }
@@ -89,21 +86,52 @@ class IndexController extends AbstractController
                 200,
                 ['Set-Current-Subject' => 'order/' . $order->getId()]
             );
+        } elseif ($text) {
+            $orders = $this->orderRepository->searchByText($text);
+
+            $count = count($orders);
+            $errors = [];
+            if ($count == 0) {
+                return $this->render('index/search_form.html.twig', [
+                    'entity' => 'order',
+                    'dataUrl' => '/search',
+                    'errors' => ['Order not found.']
+                ]);
+            } elseif ($count > 30) {
+                $errors = [
+                    "Found over 30 results.",
+                    "Shown are only last 30 ordered by deadline."
+                ];
+            }
+
+            return $this->render("index/search_form.html.twig", [
+                'entity' => 'order',
+                'dataUrl' => '/search',
+                'errors' => $errors,
+                'text' => $text,
+                'orders' => $orders
+            ]);
+        } elseif ($id !== null || $text !== null) {
+            return $this->render('index/search_form.html.twig', [
+                'entity' => 'order',
+                'dataUrl' => '/search',
+                'errors' => ['You need to fill at least one field.']
+            ]);
         }
 
-        return $this->render('index/locate_form.html.twig', [
+        return $this->render('index/search_form.html.twig', [
             'entity' => 'order',
-            'dataUrl' => '/locate',
+            'dataUrl' => '/search',
         ]);
     }
 
     /**
      * @Route("/index/filters", methods={"POST"}, name="index_filters")
      */
-    public function filters(): Response
+    public function filters(Request $request): Response
     {
         $form = $this->createForm(IndexFiltersForm::class);
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->preferences->applyForm($form->getData());
@@ -133,7 +161,7 @@ class IndexController extends AbstractController
             'dataSourceUrl' => '/order'
         ]);
 
-        $result['rowsCount'] = $this->renderView('index/rows_count.html.twig', [
+        $result['rowsCount'] = $this->renderView('rows_count.html.twig', [
             'rowsFound' => $rowsCount,
             'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
         ]);
@@ -198,7 +226,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}", methods={"PUT"}, name="order_put")
      */
-    public function update(Order $order): Response
+    public function update(Request $request, Order $order): Response
     {
         if (!in_array(
             OrderOptionsProvider::ACTION_EDIT,
@@ -221,7 +249,7 @@ class IndexController extends AbstractController
 
         $form = $this->createForm(OrderForm::class, $order, $options);
 
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
             $this->entityManager->persist($order);
@@ -244,7 +272,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}", methods={"DELETE"}, name="order_delete")
      */
-    public function delete(Order $order): Response
+    public function delete(Request $request, Order $order): Response
     {
         if ($order->getDeletedAt()) {
             return new Response(
@@ -259,7 +287,7 @@ class IndexController extends AbstractController
         $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
         $form = $this->createForm(DeleteEntityFrom::class, null, $options);
 
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order->setDeletedAt(new Datetime());
             $this->entityManager->persist($order);
@@ -281,7 +309,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/order/{id}/restore", methods={"POST"}, name="order_restore")
      */
-    public function restore(Order $order): Response
+    public function restore(Request $request, Order $order): Response
     {
         if (!$order->getDeletedAt()) {
             return new Response(
@@ -299,7 +327,7 @@ class IndexController extends AbstractController
             ]
         ];
         $form = $this->createForm(DeleteEntityFrom::class, null, $options);
-        $form->handleRequest($this->request);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order->setDeletedAt(null);

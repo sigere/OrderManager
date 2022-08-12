@@ -1,0 +1,61 @@
+<div class="search-form-container">
+    <div class="search-form">
+        <form id="search-entity-form" method="POST" data-url="{{ dataUrl }}" data-method="POST">
+            {% if errors is defined %}
+                {% for error in errors %}
+                    <span class="error">{{ error | trans }}</span><br/>
+                {%  endfor %}
+            {% endif %}
+            
+            <label for="search-form-id">Id to dokładnie:</label>
+            <input id="search-form-id" type="text" class="search-form-id" name="id" autocomplete="off">
+
+            <br/>
+
+            <label for="search-form-text">Tytuł lub notatki zawiarają:</label>
+            <input id="search-form-text" type="text" class="search-form-text" name="text" autocomplete="off"
+                   {%  if text is defined %}value="{{ text }}"{% endif %}>
+            
+            <div class="search-form-submit-container">
+                <button type="submit" class="btn btn-primary">{{ 'Search' | trans }}</button>
+            </div>
+        </form>
+    </div>
+    {% if orders is defined %}
+        <div>
+            <table class="table table-dark entity-table">
+                <thead>
+                <tr>
+                    <th class="entity-table icon-col"></th>
+                    <th class="entity-table icon-col"></th>
+                    <th>id</th>
+                    <th>Klient</th>
+                    <th>Temat</th>
+                    <th>Termin</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                <tr data-subject-id="{{ order.id }}" data-subject-type="order">
+                    <td class="entity-table icon-col clickable-row" style="white-space: nowrap;"
+                        title="{{ order.warnings | join(" ") }}">
+                        {% if order.getWarnings is not empty %}
+                            {% include 'icons/notice.html' %}
+                        {% endif %}
+                    </td>
+                    <td class="entity-table icon-col clickable-row" style="white-space: nowrap;">
+                        {% if order.repertoryEntry is not null %}
+                            {% include 'icons/repertory_entry.html' %}
+                        {% endif %}
+                    </td>
+                    <td class="clickable-row">{{ order.id }}</td>
+                    <td class="clickable-row">{{ order.client }}</td>
+                    <td class="clickable-row">{{ order.topic | u.truncate(50, '...') }}</td>
+                    <td class="clickable-row">{{ order.deadline | date('d.m.Y') }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>

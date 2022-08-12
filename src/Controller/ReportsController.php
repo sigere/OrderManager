@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Reports\AbstractReportForm;
+use App\Reports\Exception\MissingParameterException;
 use App\Reports\ReportsFactory;
+use App\Service\ResponseFormatter;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -20,7 +23,8 @@ class ReportsController extends AbstractController
 {
     public function __construct(
         private ReportsFactory $factory,
-        private Twig\Environment $twig
+        private Twig\Environment $twig,
+        private ResponseFormatter $formatter
     ) {
     }
 
@@ -31,104 +35,117 @@ class ReportsController extends AbstractController
     {
         return $this->render(
             'reports/index.html.twig',
-            ['reports' => ReportsFactory::REPORTS]
+            ['reports' => $this->factory->getAvailableReports()]
         );
     }
 
     /**
-     * @Route("/api/form/{report}", name="reports_form_report")
+     * @param Request $request
+     * @param $report
+     * @return Response
+     * @throws MissingParameterException
+     * @throws Twig\Error\LoaderError
+     * @throws Twig\Error\RuntimeError
+     * @throws Twig\Error\SyntaxError
+     * @Route("/execute/{report}", methods={"GET", "POST"}, name="reports_execute")
      */
-    public function getForm($report): JsonResponse
+    public function execute(Request $request, $report): Response
     {
-        $service = $this->factory->getReportService($report);
-        return new JsonResponse([
-            'success' => true,
-            'form' => $service->renderForm()
-        ]);
-    }
-
-    /**
-     * @Route("/api/details/{report}", name="reports_form_details")
-     */
-    public function getDetails($report): JsonResponse
-    {
-        foreach (ReportsFactory::REPORTS as $rep) {
-            if ($rep['id'] == $report) {
-                return new JsonResponse([
-                    'success' => true,
-                    'details' => $rep['details']
-                ]);
-            }
+        $service = $this->factory->getReport($report);
+        if (!$service) {
+            return new Response(
+                $this->formatter->error("Nie znaleziono raportu \"" . $report),
+                403
+            );
         }
-        return new JsonResponse(['success' => false, 'error' => 'Report not found.']);
+
+        $formFQCN = $service->getFormFQCN();
+        if (!is_subclass_of($formFQCN, AbstractReportForm::class)) {
+            throw new Exception($formFQCN . " must extend " . AbstractReportForm::class);
+        }
+
+        $form = $this->createForm($formFQCN);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $service->configure($form->getData());
+            $data = $service->getData();
+            $options = [[
+                'label' => 'Download',
+                'icon' => 'download',
+                'class' => 'js-download-link'
+            ]];
+
+            $rowsCount = $service->getRowsCount();
+
+            return new JsonResponse([
+                'success' => true,
+                'content' => $this->twig->render('reports/preview.html.twig', [
+                    'data' => $data,
+                ]),
+                'rowsCount' => $this->twig->render('rows_count.html.twig', [
+                    'rowsFound' => $rowsCount,
+                    'rowsShown' => min($rowsCount, 1000),
+                ]),
+                'burger' => $this->twig->render(
+                    'burger.html.twig',
+                    ['options' => $options]
+                )
+            ]);
+        }
+
+        return $this->render("reports/form.html.twig", [
+            'form' => $form->createView(),
+            'reportName' => $service->getNameForUI()
+            ]);
     }
 
     /**
      * @param Request $request
      * @param $report
-     * @return JsonResponse
+     * @return Response
      * @throws Exception
-     * @Route("/api/preview/{report}", name="reports_preview_report")
+     * @Route("/export/{report}", methods={"GET"}, name="reports_export")
      */
-    public function getPreview(Request $request, $report): JsonResponse
+    public function export(Request $request, $report): Response
     {
-        $service = $this->factory->getReportService($report);
+        $service = $this->factory->getReport($report);
 
         if (!$service) {
-            return new JsonResponse(['success' => false, 'error' => 'Report type not found.']);
+            return new Response(
+                $this->formatter->error("Nie znaleziono raportu \"" . $report),
+                400
+            );
         }
 
-        $service->configure($request);
+        $formFQCN = $service->getFormFQCN();
+        $form = $this->createForm($formFQCN);
+        $form->handleRequest($request);
+        $service->configure($form->getData());
 
-        $preview = $service->getPreview();
-
-        return  new JsonResponse([
-            'success' => true,
-            'preview' => $this->twig->render('reports/preview.html.twig', ['preview' => $preview])
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     * @param $report
-     * @return JsonResponse
-     * @throws Exception
-     * @Route("/api/export/{report}", name="reports_export_report")
-     */
-    public function export(Request $request, $report): JsonResponse
-    {
-        $service = $this->factory->getReportService($report);
-
-        if (!$service) {
-            return new JsonResponse(['success' => false, 'error' => 'Report type not found.']);
-        }
-
-        $service->configure($request);
-
-        $result = $service->export();
+        $result = $service->exportToXLSX();
 
         return new JsonResponse(['success' => true, 'path' => $result]);
     }
 
     /**
-     * @param $report
+     * @param $file
      * @return Response
-     * @Route("/api/get/{report}", name="reports_get_report")
+     * @Route("/download/{file}", name="reports_download")
      */
-    public function getReport($report) : Response
+    public function download($file) : Response
     {
-        if (file_exists('../var/tmp/' . $report)) {
+        if (file_exists('../var/tmp/' . $file)) {
             $response = new BinaryFileResponse(
-                '../var/tmp/' . $report,
+                '../var/tmp/' . $file,
                 200,
                 ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
             );
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                'certifed_ua_pl.xlsx'
+                $file . '.xlsx'
             );
             return $response;
         }
-        return new JsonResponse(['success' => false, 'error' => 'File "' . $report . '" not found.']);
+        return new JsonResponse(['success' => false, 'error' => 'File "' . $file . '" not found.']);
     }
 }

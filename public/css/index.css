@@ -65,23 +65,6 @@
     margin-left: 40%;
 }
 
-.mid-col .rows-count-container {
-    height: 25px;
-}
-
-.mid-col .rows-count-container .rows-count {
-    text-align: right;
-    padding-right: 8px;
-    font-size: 13px;
-    margin-top: 7px;
-}
-
-.mid-col .rows-count svg {
-    height: 14px;
-    margin-bottom: 2px;
-    margin-right: 3px;
-}
-
 /* -----------right-col-------------- */
 
 
@@ -98,6 +81,21 @@
 
 .right-col .logs tbody {
     font-size: 12px;
+}
+
+/* ----------- others ------------*/
+
+.search-form label {
+    width: 300px;
+    overflow: hidden;
+}
+
+.search-form input {
+    width: 200px;
+}
+
+.search-form-container .entity-table  {
+    font-size: 0.8rem;
 }
 
 /* ---------- tmp fix ----------*/

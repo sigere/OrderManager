@@ -16,10 +16,13 @@
 .col-content {
     padding: 5px 10px 0;
     font-size: 12px;
-    width: min-content;
+    width: auto;
     margin: auto;
     height: calc(100% - 75px);
+}
 
+.left-col .col-content {
+    width: min-content;
 }
 
 .col-content h6 {
@@ -70,7 +73,7 @@
     scrollbar-width: none; /* Firefox */
 }
 
-.mid-col .clickable-row {
+.clickable-row {
     cursor: pointer;
 }
 

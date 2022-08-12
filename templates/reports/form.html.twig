@@ -1,0 +1,23 @@
+<div class="entity-form-container">
+    <h4>{{ reportName }}</h4>
+    {{ form_start(form) }}
+    {% for row in form %}
+        {% if not loop.last %}
+            <div class="entity-form-row">
+                <div class="entity-form-label">
+                    {{ form_label(row, null) }}
+                    {% if row.vars.required is defined and row.vars.required %}*{% endif %}
+                </div>
+                <div class="entity-form-widget">
+                    {{ form_widget(row) }}
+                </div>
+                <div style="clear: both;"></div>
+                {% if row.errors is defined %}
+                    <span class="error">{{ form_errors(row) }}</span>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div style="clear: both;"></div>
+    {{ form_end(form) }}
+</div>

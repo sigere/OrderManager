@@ -16,6 +16,19 @@ services:
       - order_manager
     volumes:
       - data-db:/var/lib/mysql
+
+  db_test:
+    container_name: om_db_test
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: order_manager
+      MYSQL_USER: order_manager
+      MYSQL_PASSWORD: 12345
+    networks:
+      - order_manager
+
   php:
     container_name: om_php
     build:
