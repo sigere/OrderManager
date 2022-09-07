@@ -21,6 +21,8 @@ use Twig;
  */
 class ReportsController extends AbstractController
 {
+    public const LIMIT = 100;
+
     public function __construct(
         private ReportsFactory $factory,
         private Twig\Environment $twig,
@@ -68,7 +70,7 @@ class ReportsController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $service->configure($form->getData());
-            $data = $service->getData();
+            $data = $service->getData(self::LIMIT);
             $options = [[
                 'label' => 'Download',
                 'icon' => 'download',
@@ -84,7 +86,7 @@ class ReportsController extends AbstractController
                 ]),
                 'rowsCount' => $this->twig->render('rows_count.html.twig', [
                     'rowsFound' => $rowsCount,
-                    'rowsShown' => min($rowsCount, 1000),
+                    'rowsShown' => min($rowsCount, self::LIMIT),
                 ]),
                 'burger' => $this->twig->render(
                     'burger.html.twig',
@@ -142,7 +144,7 @@ class ReportsController extends AbstractController
             );
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $file . '.xlsx'
+                $file
             );
             return $response;
         }

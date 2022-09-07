@@ -41,6 +41,7 @@ services:
       - .:/var/www/OrderManager
     depends_on:
       - db
+
   nginx:
     container_name: om_nginx
     image: nginx:stable-alpine

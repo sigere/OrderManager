@@ -65,12 +65,15 @@
 }
 
 .mid-col .table-container::-webkit-scrollbar {
-    display: none; /* chrome, safari, opera*/
+    width: 14px;
+    border-radius: 10px;
 }
 
-.mid-col .table-container {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+.mid-col .table-container::-webkit-scrollbar-thumb {
+    border: 2px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #AAAAAA;
 }
 
 .clickable-row {
