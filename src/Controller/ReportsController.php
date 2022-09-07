@@ -21,7 +21,7 @@ use Twig;
  */
 class ReportsController extends AbstractController
 {
-    public const LIMIT = 1200;
+    public const LIMIT = 100;
 
     public function __construct(
         private ReportsFactory $factory,
@@ -144,7 +144,7 @@ class ReportsController extends AbstractController
             );
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $file . '.xlsx'
+                $file
             );
             return $response;
         }

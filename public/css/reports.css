@@ -11,11 +11,21 @@
 #form-preview-content {
     width: auto;
 }
-#form-preview-content-preview {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    overflow-y: scroll;
-    height: 630px;
+
+.mid-col .table-container::-webkit-scrollbar {
+    width: 14px;
+    border-radius: 10px;
+    display: initial;
+}
+
+.mid-col .table-container::-webkit-scrollbar-thumb {
+    border: 2px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #AAAAAA;
+
+    /*-ms-overflow-style: initial;*/
+    /*scrollbar-width: initial;*/
 }
 
 .reports-list-element {
