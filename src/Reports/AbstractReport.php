@@ -53,10 +53,11 @@ abstract class AbstractReport
     abstract public function configure(mixed $data) : void;
 
     /**
+     * @param int|null $limit
      * @return array
      * @throws Exception
      */
-    abstract public function getData() : array;
+    abstract public function getData(?int $limit = null) : array;
 
     /**
      * @return string

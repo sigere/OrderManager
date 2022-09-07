@@ -55,16 +55,16 @@ class PerEachStaffReport extends AbstractReport
         }
     }
 
-    public function getData(): array
+    public function getData(?int $limit = null): array
     {
         if (!isset($this->config)) {
             throw new Exception('Report not configured.');
         }
 
-        return $this->getArray();
+        return $this->getArray($limit);
     }
 
-    private function getArray(): array
+    private function getArray(?int $limit): array
     {
         $array = $this->orderRepository
             ->createQueryBuilder('o')
@@ -80,7 +80,13 @@ class PerEachStaffReport extends AbstractReport
             ->andWhere('o.deadline >= :dateFrom')
             ->andWhere('o.deadline <= :dateTo')
             ->setParameter('dateFrom', $this->config['dateFrom'])
-            ->setParameter('dateTo', $this->config['dateTo'])
+            ->setParameter('dateTo', $this->config['dateTo']);
+
+        if ($limit !== null) {
+            $array = $array->setMaxResults($limit);
+        }
+
+        $array = $array
             ->getQuery()
             ->getResult();
 

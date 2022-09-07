@@ -63,15 +63,16 @@ class CertifiedUaPlReport extends AbstractReport
     }
 
     /**
+     * @param int|null $limit
      * @return array
      * @throws Exception
      */
-    public function getData(): array
+    public function getData(?int $limit = null): array
     {
         if (!isset($this->config)) {
             throw new Exception('Report not configured.');
         }
-        return $this->getArray();
+        return $this->getArray($limit);
     }
 
     private function getOrders()
@@ -108,30 +109,35 @@ class CertifiedUaPlReport extends AbstractReport
             ->getResult();
     }
 
-    private function getArray() : array
+    private function getArray(?int $limit) : array
     {
         $orders = $this->getOrders();
+        $limit = $limit === null ? PHP_INT_MAX : $limit;
 
         $table = [];
         $sumOfNetto = 0;
 
+        $i = 0;
         /** @var Order $order */
         foreach ($orders as $order) {
-            $table[] = [
-                $order->getId(),
-                $order->getDeadline()->format('d.m.Y h:i'),
-                (string)$order->getClient(),
-                $order->getTopic(),
-                (string)$order->getStaff(),
-                (string)$order->getBaseLang(),
-                (string)$order->getTargetLang(),
-                $order->getCertified() ? 'tak' : 'nie',
-                $order->getPages(),
-                $order->getPrice(),
-                $order->getNetto(),
-                $this->translator->trans((string)$order->getState())
-            ];
             $sumOfNetto += $order->getNetto();
+
+            if ($i++ <= $limit) {
+                $table[] = [
+                    $order->getId(),
+                    $order->getDeadline()->format('d.m.Y h:i'),
+                    (string)$order->getClient(),
+                    $order->getTopic(),
+                    (string)$order->getStaff(),
+                    (string)$order->getBaseLang(),
+                    (string)$order->getTargetLang(),
+                    $order->getCertified() ? 'tak' : 'nie',
+                    $order->getPages(),
+                    $order->getPrice(),
+                    $order->getNetto(),
+                    $this->translator->trans((string)$order->getState())
+                ];
+            }
         }
         $header = [];
         $header[] = array_merge(array_fill(0, 10, ''), [$sumOfNetto, '']);
