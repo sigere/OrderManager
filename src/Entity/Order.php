@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\OrderRepository;
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -116,9 +117,10 @@ class Order
     private $settledAt;
 
     /**
-     * @ORM\OneToOne(targetEntity=RepertoryEntry::class, mappedBy="order", cascade={"persist", "remove"})
+     * @var Collection<int, RepertoryEntry>
+     * @ORM\OneToMany(targetEntity=RepertoryEntry::class, mappedBy="order")
      */
-    private ?RepertoryEntry $repertoryEntry;
+    private Collection $repertoryEntries;
 
     public function __construct()
     {
@@ -186,8 +188,12 @@ class Order
         }
 
         $result = round($this->price * $this->pages, 2);
-        $result += $this->repertoryEntry?->getAdditionalFee() ?? 0.0;
         $result += $this->additionalFee ?? 0.0;
+
+        /** @var RepertoryEntry $repertoryEntry */
+        foreach ($this->getRepertoryEntries() as $repertoryEntry) {
+            $result += $repertoryEntry->getAdditionalFee() ?? 0.0;
+        }
 
         return $result;
     }
@@ -393,24 +399,14 @@ class Order
         return $this;
     }
 
-    public function getRepertoryEntry(): ?RepertoryEntry
+    public function getRepertoryEntries(): Collection
     {
-        return $this->repertoryEntry;
+        return $this->repertoryEntries;
     }
 
-    public function setRepertoryEntry(?RepertoryEntry $repertoryEntry): self
+    public function setRepertoryEntries(Collection $repertoryEntries): Order
     {
-        // unset the owning side of the relation if necessary
-        if ($repertoryEntry === null && $this->repertoryEntry !== null) {
-            $this->repertoryEntry->setOrder(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($repertoryEntry !== null && $repertoryEntry->getOrder() !== $this) {
-            $repertoryEntry->setOrder($this);
-        }
-
-        $this->repertoryEntry = $repertoryEntry;
+        $this->repertoryEntries = $repertoryEntries;
 
         return $this;
     }

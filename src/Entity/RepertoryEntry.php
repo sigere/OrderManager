@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\RepertoryEntryRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,19 +19,19 @@ class RepertoryEntry
     private int $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=Order::class, inversedBy="repertoryEntry", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Order::class, inversedBy="repertoryEntries")
      */
-    private ?Order $order;
+    private ?Order $order = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $documentIssuer;
+    private ?string $documentIssuer = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $comments;
+    private ?string $comments = null;
 
     /**
      * @ORM\Column(type="integer")
@@ -76,9 +75,6 @@ class RepertoryEntry
         $this->copies = 0;
         $this->copyPrice = 0.0;
         $this->createdAt = new \DateTimeImmutable();
-        $this->order = null;
-        $this->documentIssuer = null;
-        $this->comments = null;
     }
 
     /**

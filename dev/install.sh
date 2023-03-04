@@ -10,8 +10,8 @@ echo "----- Create .composer directory -----"
 docker-compose exec php mkdir -p /var/www/.composer
 docker-compose exec php chown www-data:www-data /var/www/.composer
 
-echo "----- Create .env.local.php-----"
-docker-compose exec -u www-data php cp dev/.env.local.php ./.env.local.php
+echo "----- Create .env -----"
+docker-compose exec -u www-data php cp ./.env.example ./.env
 
 echo "----- Composer install -----"
 docker-compose exec -u www-data php composer install
