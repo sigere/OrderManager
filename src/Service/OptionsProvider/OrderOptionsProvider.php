@@ -57,11 +57,13 @@ class OrderOptionsProvider implements OptionsProviderInterface
         }
 
         if ($object->getCertified()) {
-            if (!$object->getRepertoryEntry()) {
-                $result[] = self::ACTION_CREATE_ENTRY;
-            } else {
-                $result[] = self::ACTION_EDIT_ENTRY;
-            }
+            $result[] = self::ACTION_CREATE_ENTRY;
+
+//            if (!$object->getRepertoryEntry()) {
+//                $result[] = self::ACTION_CREATE_ENTRY;
+//            } else {
+//                $result[] = self::ACTION_EDIT_ENTRY;
+//            }
         }
 
         if (!$object->getDeletedAt()) {
