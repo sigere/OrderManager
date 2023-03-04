@@ -11,5 +11,6 @@ jobs:
 
       - name: Unit
         run: |
+          cp .env.example .env
           composer install --no-interaction
           php ./bin/phpunit -c ./tests/phpunit.xml.dist
