@@ -1,0 +1,10 @@
+services:
+   php:
+      build:
+         context: ./.docker/php
+      volumes:
+         - .:/var/www/OrderManager
+         - /home
+      ports:
+         - '80:80'
+         - '443:443'
