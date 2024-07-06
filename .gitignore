@@ -1,17 +1,2 @@
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
-
 .idea
-src/Controller/FixController.php
 
-###> symfony/phpunit-bridge ###
-tests/.phpunit.result.cache
-tests/phpunit.xml
-###< symfony/phpunit-bridge ###
