@@ -4,7 +4,11 @@ services:
          context: ./.docker/php
       volumes:
          - .:/var/www/OrderManager
-         - /home
       ports:
-         - '80:80'
+         - '8000:8000'
          - '443:443'
+
+   node:
+      image: node:20.15.0
+      volumes:
+         - .:/var/www/OrderManager
