@@ -1,0 +1,70 @@
+.overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
+.popup {
+  display: block;
+  background-color: var(--color-background);
+  position: absolute;
+  opacity: 0;
+  max-height: calc(100% - 120px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 10px;
+  transition: all 0.4s;
+  z-index: -1;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.popup::-webkit-scrollbar {
+  display: none; /* chrome, safari, opera*/
+}
+
+.popup.active {
+  z-index: 2;
+  opacity: 1;
+  display: block;
+}
+
+.popup-content {
+  max-height: 70vh;
+  overflow-y: scroll;
+  /* border: 1px solid red; */
+}
+
+.popup .alert {
+  margin: 0;
+}
+
+.popup form {
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=time] {
+  margin-left: 10px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

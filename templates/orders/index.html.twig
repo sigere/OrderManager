@@ -7,26 +7,12 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset("css/index.css") }}"/>
-    <link rel="stylesheet" href="{{ asset("css/popups.css") }}"/>
-    <link rel="stylesheet" href="{{ asset("css/entity_table.css") }}"/>
-    <link rel="stylesheet" href="{{ asset("css/filters-form.css") }}"/>
+
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    <script type="text/javascript" src="{{ asset("js/search-controller.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/filters-controller.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/content-table-controller.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/details-controller.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/popup-manager.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/index-controller.js") }}"></script>
-    <script type="text/javascript" src="{{ asset("js/interface/custom-select.js") }}"></script>
-    <script>
-        $(document).ready(function (){
-            window.controller = new Controller($(document));
-        });
-    </script>
+{{ parent() }}
+
 {% endblock %}
 
 {% block content %}
@@ -36,18 +22,8 @@
                 <header>
                     Filtruj
                 </header>
-                <div class="col-content" id="filters-content">
-                    {{ form_start(filtersForm) }}
-                    {% for row in filtersForm %}
-                        {% if not loop.last %}
-
-                            {{ form_widget(row) }}
-                            {{ form_label(row) }}
-
-                        {% endif %}
-                    {% endfor %}
-                    <button type="submit" class="btn btn-primary">Wykonaj</button>
-                    {{ form_end(filtersForm) }}
+                <div class="col-content" id="filters-content" data-controller="filters">
+                    {{ include('icons/loading.html') }}
                 </div>
             </div>
         </div>
@@ -66,10 +42,11 @@
                 </header>
                 <div class="col-content">
                     <div class="table-container js-table-container">
-                        {% include 'index/orders_table.html.twig' %}
+                        {#                        {% include 'index/orders_table.html.twig' %} #}
+                            {{ include('icons/loading.html') }}
                     </div>
                     <div class="rows-count-container js-rows-count-container">
-                        {% include 'rows_count.html.twig' %}
+                        {#                        {% include 'rows_count.html.twig' %} #}
                     </div>
                 </div>
             </div>
@@ -84,12 +61,12 @@
                             {% endif %}
                     </span>
                     <div class="js-burger">
-                        {% include 'burger.html.twig' %}
+                        {#                        {% include 'burger.html.twig' %} #}
                     </div>
                 </header>
                 <div class="col-content" id="details-content">
                     {% if details['order'] %}
-                        {% include 'index/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %}
+                        {#                        {% include 'index/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %} #}
                     {% else %}
                         <div class="alert alert-info">{{ "Select order to display details." | trans }}</div>
                     {% endif %}

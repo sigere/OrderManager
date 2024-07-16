@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}Menedżer Zleceń
+        {% endblock %}
+    </title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset("img/icon.png") }}"/>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+
+{#        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"#}
+{#              integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"#}
+{#              crossorigin="anonymous">#}
+{#        <link rel="preconnect" href="https://fonts.gstatic.com">#}
+{#        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet">#}
+{#        <link rel="stylesheet" href="{{ asset("css/base.css") }}"/>#}
+{#        <link rel="stylesheet" href="{{ asset("css/content.css") }}"/>#}
+{#        <link rel="stylesheet" href="{{ asset("css/burger.css") }}"/>#}
+{#        <link rel="stylesheet" href="{{ asset("css/entity_form.css") }}"/>#}
+    {% endblock %}
+</head>
+{% block body %}
+    <body style="overflow-x: hidden;">
+    {% block header %}
+        <header class="navbar sticky-top flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand" id="title" href="{{ path('orders') }}">
+                <img src="{{ asset('img/logo.svg') }}"/>
+            </a>
+            <ul class="navbar-nav px-3">
+                <li class="nav-item text-nowrap nav-link">
+                    <img src="{{ asset('img/kadamaxo.png') }}" height="25px"/>
+{#                    <span style="display: inline-block;">Kadamaxo | {{ app.user.firstName }} {{ app.user.lastName }} |</span>#}
+                    <a style="display: inline-block;" class="nav-link" href="/logout">
+                        wyloguj
+                    </a>
+                </li>
+            </ul>
+        </header>
+    {% endblock %}
+    <div class="wrapper">
+        <div class="overlay js-overlay"></div>
+        {% block nav %}
+            <nav data-controller="sidebar" id="sidebar" class="active">
+                <ul class="list-unstyled components">
+                    <li {% if app.request.attributes.get('_route') == "orders" %}class="current-tab"{% endif %}>
+                        <a href="{{ path('orders') }}">
+                            <div id="nav-home" class="item-container">
+                                {%  include 'icons/order.html' %}
+                                <h6>Zlecenia</h6>
+                            </div>
+                        </a>
+                    </li>
+{#                    <li {% if app.request.attributes.get('_route') == "repertory" %}class="current-tab"{% endif %}>#}
+{#                        <a href="{{ path('repertory') }}">#}
+{#                            <div id="nav-tasks" class="item-container">#}
+{#                                {%  include 'icons/repertory_entry.html' %}#}
+{#                                <h6>Repertorium</h6>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li {% if app.request.attributes.get('_route') == "clients" %}class="current-tab"{% endif %}>#}
+{#                        <a href="{{ path('clients') }}">#}
+{#                            <div id="nav-clients" class="item-container">#}
+{#                                {%  include 'icons/client.html' %}#}
+{#                                <h6>Klienci</h6>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li {% if app.request.attributes.get('_route') == "invoices" %}class="current-tab"{% endif %}>#}
+{#                        <a href="{{ path('invoices') }}">#}
+{#                            <div id="nav-invoices" class="item-container">#}
+{#                                {%  include 'icons/invoice.html' %}#}
+{#                                <h6>Faktury</h6>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li {% if app.request.attributes.get('_route') == "tasks" %}class="current-tab"{% endif %}>#}
+{#                        <a href="{{ path('tasks') }}">#}
+{#                            <div id="nav-tasks" class="item-container">#}
+{#                                {%  include 'icons/task.html' %}#}
+{#                                <h6>Zadania</h6>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li {% if app.request.attributes.get('_route') == "reports" %}class="current-tab"{% endif %}>#}
+{#                        <a href="{{ path('reports') }}">#}
+{#                            <div id="nav-tasks" class="item-container">#}
+{#                                {%  include 'icons/report.html' %}#}
+{#                                <h6>Raporty</h6>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
+                </ul>
+            </nav>
+        {% endblock %}
+        <div class="container-fluid" id="content">
+            {% block content %}{% endblock %}
+        </div>
+{#        {% block popups %}#}
+{#            <div class="popup js-popup">#}
+{#                <div id="center-popup-content">#}
+{#                    {% include 'icons/loading.html' %}#}
+{#                </div>#}
+{#            </div>#}
+{#        {% endblock %}#}
+    </div>
+    </body>
+{% endblock %}
+{% block javascript %}
+{{ encore_entry_script_tags('app') }}
+
+{#<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>#}
+{#<script type="text/javascript" src="{{ asset("js/base.js") }}"></script>#}
+{#    <script type="text/javascript" src="{{ asset("js/lib/jquery.tablesorter.min.js") }}"></script>#}
+{#    <script type="text/javascript" src="{{ asset("js/lib/jquery.query-object.js") }}"></script>#}
+{% endblock %}
+</html>

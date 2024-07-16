@@ -1,0 +1,114 @@
+/* -- filters -- */
+.filters-form .filter-columns-label {
+    background-color: var(--color-select-background);
+    margin-top: 12px;
+    width: 150px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.filters-form .filter-state-label {
+    margin-top: 12px;
+    width: 150px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.filters-form label[for="index_filters_form_adoption"] {
+    margin-top: 20px;
+}
+
+.filters-form label[for="index_filters_form_staff"] {
+    margin-bottom: 15px;
+}
+
+.filters-form #index_filters_form_date-type {
+    margin-top: 15px;
+}
+
+.filters-form input[name="index_filters_form[date-from]"]{
+    margin-top: 15px;
+}
+
+.filters-form div[id="index_filters_form_date-type"] {
+    margin-top: 10px;
+}
+
+.filters-form label[for="index_filters_form_date-type_0"],
+.filters-form label[for="index_filters_form_date-type_1"] {
+    display: inline;
+}
+
+.filters-form label[for="index_filters_form_date-type_0"]::after,
+.filters-form label[for="index_filters_form_date-type_1"]::after {
+    content: "\a";
+    white-space: pre;
+}
+
+.filters-form input[name="index_filters_form[date-to]"] {
+    margin-top: 15px;
+}
+
+
+/* --------mid-column-------------- */
+
+.mid-col .table-container {
+    height: calc(100% - 5px);
+}
+
+.reload-placeholder svg {
+    width: 20px;
+    margin-left: 40%;
+}
+
+/* -----------right-col-------------- */
+
+
+.right-col .invoice {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.right-col .logs thead {
+    font-size: 12px;
+    color: var(--color-property-label);
+}
+
+.right-col .logs tbody {
+    font-size: 12px;
+}
+
+/* ----------- others ------------*/
+
+.search-form label {
+    width: 300px;
+    overflow: hidden;
+}
+
+.search-form input {
+    width: 200px;
+}
+
+.search-form-container .entity-table  {
+    font-size: 0.8rem;
+}
+
+/* ---------- tmp fix ----------*/
+.js-no-transformation {
+    display: block !important;
+    visibility: visible !important;
+    margin-top: 15px;
+    width: 150px;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: rgb(39, 39, 39);
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,9 @@
+{{ form_start(filtersForm) }}
+    {% for row in filtersForm %}
+        {% if not loop.last %}
+            {{ form_widget(row) }}
+            {{ form_label(row) }}
+        {% endif %}
+    {% endfor %}
+<button type="submit" class="btn btn-primary">Wykonaj</button>
+{{ form_end(filtersForm) }}
