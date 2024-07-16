@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repository;
 
 use App\Entity\Client;
-use App\Entity\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -61,23 +61,20 @@ class ClientRepository extends ServiceEntityRepository
                     ->setParameter('year', $year);
 
                 if ($month) {
-                    $count = $count
-                        ->andWhere('month(o.deadline) = :month')
-                        ->setParameter('month', $month);
+                    $count = $count->andWhere('month(o.deadline) = :month')->setParameter('month', $month);
                 }
 
-                $count = $count
-                    ->andWhere('o.client = :client')
+                $count = $count->andWhere('o.client = :client')
                     ->setParameter('client', $client)
                     ->getQuery()
                     ->getSingleScalarResult();
-            } catch (NoResultException | NonUniqueResultException $e) {
+            } catch (NoResultException|NonUniqueResultException $e) {
                 $count = 0;
             }
             if ($count > 0) {
                 $result[] = [
                     'client' => $client,
-                    'count' => $count
+                    'count' => $count,
                 ];
             }
         }
