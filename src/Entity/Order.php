@@ -1,123 +1,85 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\OrderRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=OrderRepository::class)
- * @ORM\Table(name="`order`")
- */
+#[ORM\Table(name: "`order`")]
+#[ORM\Entity(repositoryClass: "OrderRepository")]
 class Order
 {
-    public const ACCEPTED = 'accepted';
-    public const DONE = 'done';
-    public const SENT = 'sent';
-    public const STATES = [self::ACCEPTED, self::DONE, self::SENT];
+    public const string ACCEPTED = 'accepted';
+    public const string DONE = 'done';
+    public const string SENT = 'sent';
+    public const array STATES = [self::ACCEPTED, self::DONE, self::SENT];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Client::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $client;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ManyToOne(targetEntity: "Client")]
+    private Client $client;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $author;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ManyToOne(targetEntity: "User")]
+    private User $author;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Staff::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $staff;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ManyToOne(targetEntity: "Staff")]
+    private Staff $staff;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Lang::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $baseLang;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ManyToOne(targetEntity: "Lang")]
+    private Lang $baseLang;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Lang::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $targetLang;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ManyToOne(targetEntity: "Lang")]
+    private Lang $targetLang;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $deletedAt;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?DateTime $deletedAt;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $certified;
+    #[ORM\Column(type: "boolean")]
+    private bool $certified;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
-     * @Assert\PositiveOrZero
-     */
-    private $pages;
+    #[Assert\PositiveOrZero]
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2, nullable: true)]
+    private ?string $pages;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
-     * @Assert\PositiveOrZero
-     */
-    private $price;
+    #[Assert\PositiveOrZero]
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2, nullable: true)]
+    private ?string $price;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
-     * @Assert\PositiveOrZero
-     */
-    private $additionalFee;
+    #[Assert\PositiveOrZero]
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2, nullable: true)]
+    private ?string $additionalFee;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=false)
-     * @Assert\NotBlank(message="Temat nie może być pusty")
-     */
-    private $topic;
+    #[Assert\NotBlank(message: "Temat nie może być pusty")]
+    #[ORM\Column(type: "string", length: 255, nullable: false)]
+    private string $topic;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $state;
+    #[ORM\Column(type: "string", length: 20)]
+    private string $state;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $info;
+    #[ORM\Column(type: "text")]
+    private string $info;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $adoption;
+    #[ORM\Column(type: "datetime")]
+    private DateTime $adoption;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $deadline;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $settledAt;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?DateTime $settledAt;
 
-    /**
-     * @ORM\OneToOne(targetEntity=RepertoryEntry::class, mappedBy="order", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: "RepertoryEntry", mappedBy: "order", cascade: ["persist", "remove"])]
     private ?RepertoryEntry $repertoryEntry;
 
     public function __construct()
@@ -142,6 +104,7 @@ class Order
         return $warnings;
     }
 
+    // todo refactor
     public function getWarnings(): array
     {
         $warnings = [];
@@ -157,8 +120,7 @@ class Order
                 if ($timeToDeadline < 0) {
                     $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
                 } elseif ($timeToDeadline < 86400) {
-                    $warnings[] =
-                        'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
+                    $warnings[] = 'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
                 }
                 break;
             case self::DONE:
@@ -190,6 +152,18 @@ class Order
         $result += $this->additionalFee ?? 0.0;
 
         return $result;
+    }
+
+    public function getAdditionalFee(): ?string
+    {
+        return $this->additionalFee;
+    }
+
+    public function setAdditionalFee(?string $additionalFee): self
+    {
+        $this->additionalFee = $additionalFee;
+
+        return $this;
     }
 
     public function getBrutto(): float
@@ -309,18 +283,6 @@ class Order
         return $this;
     }
 
-    public function getAdditionalFee(): ?string
-    {
-        return $this->additionalFee;
-    }
-
-    public function setAdditionalFee(?string $additionalFee): self
-    {
-        $this->additionalFee = $additionalFee;
-
-        return $this;
-    }
-
     public function getTopic(): ?string
     {
         return $this->topic;
@@ -357,12 +319,12 @@ class Order
         return $this;
     }
 
-    public function getAdoption()
+    public function getAdoption(): DateTime
     {
         return $this->adoption;
     }
 
-    public function setAdoption(DateTimeInterface $adoption): self
+    public function setAdoption(DateTime $adoption): self
     {
         $this->adoption = $adoption;
 

@@ -1,42 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\StaffRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=StaffRepository::class)
- */
+#[ORM\Entity(repositoryClass: "StaffRepository")]
 class Staff
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $firstName;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $lastName;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $deletedAt;
 
     public function __construct()
@@ -52,7 +39,7 @@ class Staff
 
     public function __toString(): string
     {
-        return $this->getFirstName() . ' ' . $this->getLastName();
+        return $this->getFirstName().' '.$this->getLastName();
     }
 
     public function getFirstName(): ?string

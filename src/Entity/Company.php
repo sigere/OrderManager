@@ -1,73 +1,48 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\CompanyRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CompanyRepository::class)
- */
+#[ORM\Entity(repositoryClass: "CompanyRepository")]
 class Company
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $name;
+    #[ORM\Column(type: "string", length: 100)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
-    private $nip;
+    #[ORM\Column(type: "string", length: 10)]
+    private string $nip;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $address;
+    #[ORM\Column(type: "string", length: 255)]
+    private string $address;
 
-    /**
-     * @ORM\Column(type="string", length=6)
-     */
-    private $postCode;
+    #[ORM\Column(type: "string", length: 6)]
+    private string $postCode;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $city;
+    #[ORM\Column(type: "string", length: 255)]
+    private string $city;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $bankAccount;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $bankAccount;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $issueDate;
+    #[ORM\Column(type: "date", nullable: true)]
+    private ?DateTimeInterface $issueDate;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $paymentTo;
+    #[ORM\Column(type: "date", nullable: true)]
+    private ?DateTimeInterface $paymentTo;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $rep;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $rep;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $invoiceMonth;
+    #[ORM\Column(type: "date", nullable: true)]
+    private ?DateTimeInterface $invoiceMonth;
 
     public function getId(): ?int
     {
