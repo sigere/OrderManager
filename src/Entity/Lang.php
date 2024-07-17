@@ -10,7 +10,7 @@ class Lang
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue]
     #[ORM\Id]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: "string", length: 50)]
     private string $name;

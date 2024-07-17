@@ -14,7 +14,7 @@ class Invoice
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue]
     #[ORM\Id]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: "datetime")]
     private DateTime $createdAt;

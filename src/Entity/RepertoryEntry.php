@@ -13,7 +13,7 @@ class RepertoryEntry
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue]
     #[ORM\Id]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\OneToOne(targetEntity: "Order", inversedBy: "repertoryEntry", cascade: ["persist", "remove"])]
     private ?Order $order;

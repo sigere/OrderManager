@@ -20,7 +20,7 @@ class Order
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue]
     #[ORM\Id]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\JoinColumn(nullable: false)]
     #[ManyToOne(targetEntity: "Client")]
