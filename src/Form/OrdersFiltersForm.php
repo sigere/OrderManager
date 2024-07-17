@@ -1,12 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Form;
 
 use App\Entity\Client;
-use App\Entity\Order;
 use App\Entity\Staff;
-use App\Service\UserPreferences\IndexPreferences;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UserPreferences\OrdersPreferences;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -15,9 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class IndexFiltersForm extends AbstractType
+class OrdersFiltersForm extends AbstractType
 {
-    public const DEFAULT_OPTIONS = [
+    public const array DEFAULT_OPTIONS = [
         'attr' => [
             'class' => "filters-form",
             'name' => 'index_filters_form',
@@ -27,23 +25,22 @@ class IndexFiltersForm extends AbstractType
     ];
 
     public function __construct(
-        private IndexPreferences $preferences,
-        private EntityManagerInterface $entityManager
+        private readonly OrdersPreferences $preferences,
+//        private EntityManagerInterface $entityManager
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $states = $this->preferences->getStates();
-        foreach (Order::STATES as $STATE) {
-            $builder
-                ->add($STATE, CheckboxType::class, [
-                    'label' => ucfirst($STATE),
-                    'attr' => in_array($STATE, $states) ? ['checked' => 'checked'] : [],
-                    'label_attr' => ['class' => 'filter-state-label', 'state' => $STATE],
-                    'required' => false,
-                ]);
-        }
+//        foreach (Order::STATES as $STATE) {
+//            $builder
+//                ->add($STATE, CheckboxType::class, [
+//                    'label' => ucfirst($STATE),
+//                    'attr' => in_array($STATE, $states) ? ['checked' => 'checked'] : [],
+//                    'label_attr' => ['class' => 'filter-state-label', 'state' => $STATE],
+//                    'required' => false,
+//                ]);
+//        }
 
         $builder->add('deleted', CheckboxType::class, [
             'attr' => $this->preferences->getDeleted() ? ['checked' => 'checked'] : [],
@@ -59,8 +56,8 @@ class IndexFiltersForm extends AbstractType
 
         $columns = $this->preferences->getColumns();
         $class = 'filter-columns-label';
-        foreach (IndexPreferences::COLUMNS as $key => $COLUMN) {
-            $first = array_key_first(IndexPreferences::COLUMNS) == $key;
+        foreach (OrdersPreferences::COLUMNS as $key => $COLUMN) {
+            $first = array_key_first(OrdersPreferences::COLUMNS) == $key;
             $builder
                 ->add($COLUMN, CheckboxType::class, [
                     'label' => ucfirst($COLUMN),
@@ -100,8 +97,8 @@ class IndexFiltersForm extends AbstractType
             ])
             ->add('date-type', ChoiceType::class, [
                 'choices' => [
-                    'Adoption' => IndexPreferences::DATE_TYPE_ADOPTION,
-                    'Deadline' => IndexPreferences::DATE_TYPE_DEADLINE,
+                    'Adoption' => OrdersPreferences::DATE_TYPE_ADOPTION,
+                    'Deadline' => OrdersPreferences::DATE_TYPE_DEADLINE,
                 ],
                 'attr' => ['class' => 'filter-date-type'],
                 'expanded' => true,
@@ -125,8 +122,7 @@ class IndexFiltersForm extends AbstractType
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setDefaults(self::DEFAULT_OPTIONS);
     }
 }
