@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\OrderState;
+use App\Repository\OrderRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,14 +11,9 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table(name: "`order`")]
-#[ORM\Entity(repositoryClass: "OrderRepository")]
+#[ORM\Entity(repositoryClass: OrderRepository::class)]
 class Order
 {
-    public const string ACCEPTED = 'accepted';
-    public const string DONE = 'done';
-    public const string SENT = 'sent';
-    public const array STATES = [self::ACCEPTED, self::DONE, self::SENT];
-
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue]
     #[ORM\Id]
@@ -64,8 +61,8 @@ class Order
     #[ORM\Column(type: "string", length: 255, nullable: false)]
     private string $topic;
 
-    #[ORM\Column(type: "string", length: 20)]
-    private string $state;
+    #[ORM\Column(type: "string", enumType: OrderState::class)]
+    private OrderState $state;
 
     #[ORM\Column(type: "text")]
     private string $info;
@@ -74,7 +71,7 @@ class Order
     private DateTime $adoption;
 
     #[ORM\Column(type: "datetime")]
-    private $deadline;
+    private DateTime $deadline;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTime $settledAt;
@@ -85,7 +82,7 @@ class Order
     public function __construct()
     {
         $this->deletedAt = null;
-        $this->state = self::ACCEPTED;
+        $this->state = OrderState::Accepted;
         $this->settledAt = null;
     }
 
@@ -97,7 +94,7 @@ class Order
     public function getInvoiceWarnings(): array
     {
         $warnings = $this->getWarnings();
-        if (self::SENT != $this->state) {
+        if (OrderState::Sent != $this->state) {
             $warnings[] = 'Zlecenie nie zostało wysłane.';
         }
 
@@ -108,35 +105,35 @@ class Order
     public function getWarnings(): array
     {
         $warnings = [];
-        $now = new DateTime();
-        $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
-
-        if (0 == $this->price) {
-            $warnings[] = 'Cena za stronę jest równa 0.';
-        }
-
-        switch ($this->state) {
-            case self::ACCEPTED:
-                if ($timeToDeadline < 0) {
-                    $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
-                } elseif ($timeToDeadline < 86400) {
-                    $warnings[] = 'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
-                }
-                break;
-            case self::DONE:
-                if ($timeToDeadline < 0) {
-                    $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na wykonane';
-                }
-                if (0 == $this->pages) {
-                    $warnings[] = 'Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.';
-                }
-                break;
-            case self::SENT:
-                if (0 == $this->pages) {
-                    $warnings[] = 'Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.';
-                }
-                break;
-        }
+//        $now = new DateTime();
+//        $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
+//
+//        if (0 == $this->price) {
+//            $warnings[] = 'Cena za stronę jest równa 0.';
+//        }
+//
+//        switch ($this->state) {
+//            case self::ACCEPTED:
+//                if ($timeToDeadline < 0) {
+//                    $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na przyjęte';
+//                } elseif ($timeToDeadline < 86400) {
+//                    $warnings[] = 'Pozostało mniej niż 24h do terminu zlecenia, a jego status jest ustawiony na przyjęte';
+//                }
+//                break;
+//            case self::DONE:
+//                if ($timeToDeadline < 0) {
+//                    $warnings[] = 'Minął termin zlecenia, a jego status jest ustawiony na wykonane';
+//                }
+//                if (0 == $this->pages) {
+//                    $warnings[] = 'Status zlecenia został ustawiony na wykonane, a liczba stron jest równa 0.';
+//                }
+//                break;
+//            case self::SENT:
+//                if (0 == $this->pages) {
+//                    $warnings[] = 'Status zlecenia został ustawiony na wysłane, a liczba stron jest równa 0.';
+//                }
+//                break;
+//        }
 
         return $warnings;
     }
@@ -295,12 +292,12 @@ class Order
         return $this;
     }
 
-    public function getState(): ?string
+    public function getState(): OrderState
     {
         return $this->state;
     }
 
-    public function setState(string $state): self
+    public function setState(OrderState $state): self
     {
         $this->state = $state;
 
@@ -331,12 +328,12 @@ class Order
         return $this;
     }
 
-    public function getDeadline()
+    public function getDeadline(): DateTime
     {
         return $this->deadline;
     }
 
-    public function setDeadline(DateTimeInterface $deadline): self
+    public function setDeadline(DateTime $deadline): self
     {
         $this->deadline = $deadline;
 
@@ -362,12 +359,10 @@ class Order
 
     public function setRepertoryEntry(?RepertoryEntry $repertoryEntry): self
     {
-        // unset the owning side of the relation if necessary
         if ($repertoryEntry === null && $this->repertoryEntry !== null) {
             $this->repertoryEntry->setOrder(null);
         }
 
-        // set the owning side of the relation if necessary
         if ($repertoryEntry !== null && $repertoryEntry->getOrder() !== $this) {
             $repertoryEntry->setOrder($this);
         }

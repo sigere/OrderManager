@@ -1,0 +1,71 @@
+<tr data-subject-id="{{ order.id }}" data-subject-type="order" data-controller="order-row">
+    <td class="entity-table icon-col clickable-row" style="white-space: nowrap;"
+        title="{{ order.warnings | join(" ") }}">
+        {% if order.getWarnings is not empty %}
+            {% include 'icons/notice.html' %}
+        {% endif %}
+    </td>
+    <td class="entity-table icon-col clickable-row" style="white-space: nowrap;">
+        {% if order.repertoryEntry is not null %}
+            {% include 'icons/repertory_entry.html' %}
+        {% endif %}
+    </td>
+    <td class="clickable-row">{{ order.id }}</td>
+
+    {% if 'adoption' in preferences.columns %}
+        <td class="clickable-row">{{ order.adoption | date('d.m.Y H:i') }}</td>
+    {% endif %}
+    {% if 'client' in preferences.columns %}
+        <td class="clickable-row">{{ order.client }}</td>
+    {% endif %}
+    {% if 'topic' in preferences.columns %}
+        <td class="clickable-row">{{ order.topic }}</td>
+    {% endif %}
+    {% if 'lang' in preferences.columns %}
+        <td class="clickable-row">{{ order.baseLang }}
+            ->
+            {{ order.targetLang }}</td>
+    {% endif %}
+    {% if 'deadline' in preferences.columns %}
+        <td class="clickable-row">{{ order.deadline | date('d.m.Y H:i') }}</td>
+    {% endif %}
+    {% if 'staff' in preferences.columns %}
+        <td class="clickable-row">{{ order.staff }}</td>
+    {% endif %}
+    <td class="js-update-state-cell" data-order-row-target="stateCell">
+        {% if order.deletedAt is not null %}
+            <select id="update-state-select" class="form-select"
+                    data-state="{{ order.state.value }}"
+                    disabled=""
+                    autocomplete="off"
+            >
+                <option>{{ 'deleted' | trans | capitalize }}</option>
+            </select>
+        {% elseif order.settledAt is not null %}
+            <select id="update-state-select" class="form-select"
+                    data-state="{{ order.state.value }}"
+                    disabled=""
+                    autocomplete="off"
+            >
+                <option>{{ 'setteld' | trans | capitalize }}</option>
+            </select>
+        {% else %}
+            {% set OrderState = enum('\\App\\Entity\\Enum\\OrderState') %}
+            <select id="update-state-select" class="form-select"
+                    data-state="{{ order.state.value }}"
+                    autocomplete="off"
+            >
+                {% for state in OrderState.cases() %}
+                    <option
+                            value="{{ state.value }}"
+                            {% if order.state.value == state.value %} selected {% endif %}
+                    >
+                        {{ state.value | trans | capitalize }}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endif %}
+        <label for="update-state-select">{{ 'update order\'s state' | trans | capitalize }}</label>
+        <div class="reload-placeholder" data-order-row-target="placeholder">{% include 'icons/loading.html' %}</div>
+    </td>
+</tr>

@@ -5,7 +5,7 @@ namespace App\Repository;
 
 use App\Entity\Order;
 use App\Entity\RepertoryEntry;
-use App\Service\UserPreferences\RepertoryPreferences;
+use App\UserPreferences\RepertoryPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;

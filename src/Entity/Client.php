@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ClientRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 //TODO translations
 #[UniqueEntity(fields: ["alias"], message: 'constraints.client.alias.exists', repositoryMethod: "findByAliasIgnoreCase")]
 #[UniqueEntity(fields: ["nip"], message: "Istnieje już klient o podanym NIPie!")]
-#[ORM\Entity(repositoryClass: "ClientRepository")]
+#[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
     #[ORM\Column(type: "integer")]

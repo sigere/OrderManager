@@ -5,7 +5,8 @@ namespace App\Repository;
 
 use App\Entity\Client;
 use App\Entity\Order;
-use App\UserPreferences\OrdersPreferences;
+use App\Form\Model\OrdersSearch;
+use App\Preferences\Model\OrderPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,7 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OrderRepository extends ServiceEntityRepository
 {
-    public const LIMIT = 100;
+    public const int LIMIT = 100;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -25,11 +26,11 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param OrdersPreferences $preferences
+     * @param OrderPreferences $preferences
      * @param int|null $rows
      * @return Order[]
      */
-    public function getByOrdersPreferences(OrdersPreferences $preferences, int &$rows = null): array
+    public function getByOrdersPreferences(OrderPreferences $preferences, int &$rows = null): array
     {
         $orders = $this->createQueryBuilder('o');
 
@@ -37,6 +38,10 @@ class OrderRepository extends ServiceEntityRepository
         if (empty($states) && !$preferences->getSettled() && !$preferences->getDeleted()) {
             return [];
         }
+
+        $orders
+            ->select('o', 'e')
+            ->leftJoin('o.repertoryEntry', 'e');
 
         $states = empty($states) ? ["invalid-state"] : $states;
         $statement = "o.state in (:states)";
@@ -66,12 +71,12 @@ class OrderRepository extends ServiceEntityRepository
 
         $dateType = $preferences->getDateType();
         if ($dateFrom = $preferences->getDateFrom()) {
-            $orders->andWhere('o.'.$dateType.' >= :dateFrom')->setParameter('dateFrom', $dateFrom);
+            $orders->andWhere('o.'.$dateType->value.' >= :dateFrom')->setParameter('dateFrom', $dateFrom);
         }
 
         if ($dateTo = $preferences->getDateTo()) {
             $dateTo->setTime(23, 59);
-            $orders->andWhere('o.'.$dateType.' <= :dateTo')->setParameter('dateTo', $dateTo);
+            $orders->andWhere('o.'.$dateType->value.' <= :dateTo')->setParameter('dateTo', $dateTo);
         }
 
         $rows = (clone $orders)->select('count(o.id)')->getQuery()->getSingleScalarResult();
@@ -103,7 +108,6 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $text
      * @return Order[]
      */
     public function searchByText(string $text): array
@@ -119,8 +123,20 @@ class OrderRepository extends ServiceEntityRepository
             )
             ->setParameter('text', '%'.$text.'%')
             ->orderBy('o.deadline', 'DESC')
-            ->setMaxResults(31)
+            ->setMaxResults(self::LIMIT)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return Order|Order[]
+     */
+    public function getByOrdersSearch(OrdersSearch $ordersSearch): Order|array
+    {
+        if (!empty($ordersSearch->getId())) {
+            return $this->findOneBy(['id' => $ordersSearch->getId()]);
+        }
+
+        return $this->searchByText($ordersSearch->getPhrase());
     }
 }

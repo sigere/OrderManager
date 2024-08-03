@@ -1,0 +1,3 @@
+orders:
+   filters:
+      success: 'Filters applied successfully'

@@ -1,40 +1,46 @@
 <?php
-
 declare(strict_types=1);
 
-namespace App\Service\UserPreferences;
+namespace App\UserPreferences;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractPreferences
 {
-    protected $user;
+    protected User $user;
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param Security $security
-     * @param KernelInterface $kernel
+     * @throws Exception
      */
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        Security $security,
-        KernelInterface $kernel
+        TokenStorageInterface $tokenStorage,
     ) {
-        $this->user = $security->getUser();
-        $file = $kernel->getProjectDir() . '/config/default_' . $this->getArrayKey() . '_preferences.json';
-        $config = $this->user->getPreferences()[$this->getArrayKey()]
-            ?? json_decode(
-                file_get_contents($file),
-                true
-            );
-        $this->decode($config);
+//        $user = $tokenStorage->getToken()->getUser();
+//        if (!$user instanceof User) {
+//            throw new Exception(sprintf(
+//                'User must be an instance of %s.',
+//                User::class
+//            ));
+//        }
+//
+//        $this->user = $user;
+//
+//        $file = __DIR__ . '/../Resources/default_'.$this->getArrayKey().'_preferences.json';
+//        $config = $this->user->getPreferences()[$this->getArrayKey()] ?? json_decode(
+//            file_get_contents($file), true
+//        );
+//        $this->decode($config);
     }
 
-    /**
-     * @return void
-     */
+    abstract protected function getArrayKey(): string;
+
+    abstract protected function decode(array $config): void;
+
     public function save(): void
     {
         $preferences = $this->user->getPreferences();
@@ -44,25 +50,7 @@ abstract class AbstractPreferences
         $this->entityManager->flush();
     }
 
-    /**
-     * @return string
-     */
-    abstract protected function getArrayKey(): string;
-
-    /**
-     * @return array
-     */
     abstract protected function encode(): array;
 
-    /**
-     * @param array $config
-     * @return void
-     */
-    abstract protected function decode(array $config): void;
-
-    /**
-     * @param mixed $data
-     * @return void
-     */
     abstract public function applyForm(mixed $data): void;
 }

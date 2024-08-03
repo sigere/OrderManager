@@ -1,8 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-namespace App\Service\UserPreferences;
+namespace App\UserPreferences;
 
 use App\Entity\Staff;
 

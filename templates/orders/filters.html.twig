@@ -1,9 +1,12 @@
-{{ form_start(filtersForm) }}
-    {% for row in filtersForm %}
-        {% if not loop.last %}
-            {{ form_widget(row) }}
-            {{ form_label(row) }}
-        {% endif %}
-    {% endfor %}
-<button type="submit" class="btn btn-primary">Wykonaj</button>
+{% form_theme filtersForm 'form_div_layout_override.html.twig' %}
+{{ form_start(filtersForm, {'attr': {'data-action': 'filters#submit'}}) }}
+{{ form_row(filtersForm) }}
+<div class="filters-form date-helpers" data-filters-target="dateHelpers">
+    <button class="filters-form helper" data-interval="today">{{ 'Today' | trans }}</button>
+    <button class="filters-form helper" data-interval="this_week">{{ 'This week' | trans }}</button>
+    <button class="filters-form helper" data-interval="last_week">{{ 'Last week' | trans }}</button>
+    <button class="filters-form helper" data-interval="this_month">{{ 'This month' | trans }}</button>
+    <button class="filters-form helper" data-interval="last_month">{{ 'Last month' | trans }}</button>
+</div>
+<button type="submit" class="btn btn-primary">{{ 'Execute' | trans }}</button>
 {{ form_end(filtersForm) }}

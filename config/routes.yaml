@@ -4,6 +4,12 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+preferences:
+    resource:
+        path: ../src/Preferences/Controller/
+        namespace: App\Preferences\Controller
+    type: attribute
+
 root:
     path: /
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController

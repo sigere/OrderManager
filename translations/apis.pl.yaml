@@ -1,0 +1,4 @@
+orders:
+   filters:
+      success: 'Pomyślnie zastosowano filtry'
+      fail: 'Niepoprawne dane'

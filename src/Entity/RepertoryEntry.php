@@ -38,7 +38,7 @@ class RepertoryEntry
     private ?DateTime $documentDate;
 
     #[Assert\PositiveOrZero]
-    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
+    #[ORM\Column(type: "float")]
     private float $copyPrice;
 
     #[ORM\Column(type: "datetime_immutable", nullable: false)]

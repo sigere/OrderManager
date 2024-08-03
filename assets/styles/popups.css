@@ -9,7 +9,7 @@
   display: none;
 }
 
-.overlay.active {
+.popup-wrapper.active .overlay {
   display: block;
 }
 
@@ -35,7 +35,7 @@
   display: none; /* chrome, safari, opera*/
 }
 
-.popup.active {
+.popup-wrapper.active .popup {
   z-index: 2;
   opacity: 1;
   display: block;

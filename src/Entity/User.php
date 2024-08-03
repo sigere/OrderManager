@@ -2,14 +2,18 @@
 
 namespace App\Entity;
 
+use App\Preferences\DoctrineUserListener;
+use App\Preferences\Model\Preferences;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\EntityListeners;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+#[EntityListeners([DoctrineUserListener::class])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -35,13 +39,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string", length: 100)]
     private string $lastName;
 
-    #[ORM\Column(type: "json")]
-    private array $preferences = [];
+    #[ORM\Column(name: "preferences", type: "preferences")]
+    private ?Preferences $preferences = null;
+
+//    private ?Preferences $preferences = null;
 
     #[ORM\ManyToOne(targetEntity: "Staff")]
     private Staff $staff;
+
     #[ORM\Column(type: "datetime")]
     private DateTime $createdAt;
+
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTime $deletedAt;
 
@@ -75,12 +83,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPreferences(): array
+    public function getPreferences(): ?Preferences
     {
         return $this->preferences;
     }
+//
+//    /**
+//     * @internal
+//     */
+//    public function get_preferences(): array
+//    {
+//        return $this->_preferences;
+//    }
 
-    public function setPreferences(array $preferences): User
+    public function setPreferences(?Preferences $preferences): User
     {
         $this->preferences = $preferences;
 

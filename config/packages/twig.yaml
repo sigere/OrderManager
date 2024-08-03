@@ -1,5 +1,10 @@
 twig:
     file_name_pattern: '*.twig'
+    form_themes:
+        - form_div_layout.html.twig
+        - form_div_layout_override.html.twig
+    paths:
+        'templates/form': ~
 
 when@test:
     twig:

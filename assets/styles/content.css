@@ -87,6 +87,7 @@
 }
 
 .mid-col table select:disabled {
+    color: #6c757d;
     background-color: var(--color-disabled);
 }
 

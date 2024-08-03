@@ -27,7 +27,6 @@ class Log
     private ?Order $order;
 
     #[ORM\ManyToOne(targetEntity: "Client")]
-    #[ORM\Column(type: 'string', nullable: true)]
     private ?Client $client;
 
     #[ORM\ManyToOne(targetEntity: "Task")]

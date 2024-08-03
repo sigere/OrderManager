@@ -2,51 +2,51 @@
 
 {% block title %}
     {{ parent() }}
-    - Moje zlecenia
+    - {{ 'Orders' | trans }}
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-
+    {{ encore_entry_link_tags('orders') }}
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
-
+{{ encore_entry_script_tags('orders') }}
 {% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-lg-2" style=" height: 100%;">
-            <div class="column left-col js-left-col">
-                <header>
-                    Filtruj
+            <div class="column left-col js-left-col" data-controller="orders-left-col">
+                <header data-orders-left-col-target="header">
+                    {{ 'Filter' | trans }}
                 </header>
-                <div class="col-content" id="filters-content" data-controller="filters">
-                    {{ include('icons/loading.html') }}
+                <div class="col-content" id="filters-content" data-orders-left-col-target="content" {# todo #} data-controller="filters">
+                    {{ include('orders/filters.html.twig') }}
                 </div>
             </div>
         </div>
         <div class="col-lg-7" style=" height: 100%;">
-            <div class="column mid-col js-mid-col">
-                <header>
+            <div class="column mid-col js-mid-col" data-controller="orders-mid-col">
+                <header data-orders-mid-col-target="header">
                     <div class="icon" style="float: left;">
                         {% include 'icons/order.html' %}
                     </div>
-                    Zlecenia
+                    {{ 'Orders' | trans }}
                     <div style="clear: both;"></div>
-                    {% include 'burger.html.twig' with {'flat': true, 'options': [
-                        {'label': "Add order", 'icon': 'add', 'class': 'js-add-order-link'},
-                        {'label': "Search", 'icon': 'search', 'class': 'js-search-link'}
+                    {% include 'burger.html.twig' with {flat: true, options: [
+                        {label: "Add order", icon: 'add', class: 'js-add-order-link'},
+                        {label: "Search", icon: 'search', attributes: {'data-controller': "search"} }
                     ]} %}
                 </header>
-                <div class="col-content">
-                    <div class="table-container js-table-container">
-                        {#                        {% include 'index/orders_table.html.twig' %} #}
-                            {{ include('icons/loading.html') }}
+                <div class="col-content" data-orders-mid-col-target="content">
+                    <div class="table-container" data-orders-mid-col-target="tableWrapper">
+                        {% include 'orders/_table.html.twig' %}
+{#                        {{ include('icons/loading.html') }}#}
                     </div>
-                    <div class="rows-count-container js-rows-count-container">
-                        {#                        {% include 'rows_count.html.twig' %} #}
+                    <div class="rows-count-container" data-orders-mid-col-target="rowsCountWrapper">
+                        {% include 'rows_count.html.twig' %}
                     </div>
                 </div>
             </div>
@@ -54,19 +54,19 @@
         <div class="col-lg-3" style="height: 100%;">
             <div class="column right-col js-right-col">
                 <header>
-                    Szczegóły zlecenia
+                    {{ 'Order details' | trans }}
                     <span class="js-subject-id">
                             {% if details['order'] %}
                                 {{ details['order'].id }}
                             {% endif %}
                     </span>
                     <div class="js-burger">
-                        {#                        {% include 'burger.html.twig' %} #}
+                        {% include 'burger.html.twig' %}
                     </div>
                 </header>
                 <div class="col-content" id="details-content">
                     {% if details['order'] %}
-                        {#                        {% include 'index/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %} #}
+                        {% include 'orders/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %}
                     {% else %}
                         <div class="alert alert-info">{{ "Select order to display details." | trans }}</div>
                     {% endif %}

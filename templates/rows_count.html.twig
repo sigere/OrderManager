@@ -1,12 +1,7 @@
-{% if rowsShown is not defined %}
-    {% set rowsShown = 0 %}
-{% endif %}
-
-{% if rowsFound is not defined %}
-    {% set rowsFound = 0 %}
-{% endif %}
-
+{% set rowsShown = rowsShown | default(0) %}
+{% set rowsFound = rowsFound | default(0) %}
 {% set style = rowsShown < rowsFound ? 'style=color:var(--color-warning);' : '' %}
+
 <div class="rows-count" title="{{ ('rows shown' | trans) ~ ' / ' ~ ('rows found' | trans) }}">
     {% include 'icons/learn.html' %}
     {{ ('Rows' | trans) ~ ': ' }}

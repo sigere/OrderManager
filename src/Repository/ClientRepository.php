@@ -7,6 +7,7 @@ use App\Entity\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -80,5 +81,12 @@ class ClientRepository extends ServiceEntityRepository
         }
 
         return $result;
+    }
+
+    public function getQueryBuilderForOrdersFiltersForm(): QueryBuilder
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.deletedAt is null')
+            ->orderBy('c.alias', 'ASC');
     }
 }

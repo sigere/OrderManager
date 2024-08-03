@@ -1,5 +1,6 @@
 {% if order.deletedAt is not null %}
-    <div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}.</div>
+{#todo warnings from php#}
+{#    <div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}.</div>#}
 {% elseif order.getWarnings is not empty %}
     <div class="warning">
         <ul class="list-group">
@@ -9,14 +10,15 @@
         </ul>
     </div>
 {% elseif order.settledAt is not null %}
-    <div class="alert alert-success">Zlecenie zostało rozliczone.</div>
+    {#todo warnings from php#}
+{#    <div class="alert alert-success">Zlecenie zostało rozliczone.</div>#}
 {% endif %}
 
 {% if order.repertoryEntry is not null %}
     <div class="expandable">
         <div class="trigger">
             <div class="property js-repertory-entry-number" data-entry="{{ order.repertoryEntry.id }}">
-                <div class="name">Numer wpisu</div>
+                <div class="name">{{ 'Entry number' | trans }}</div>
                 <div class="value">
                     {{ order.repertoryEntry.formattedNumber }}
                     {% include 'icons/expand.html' %}
@@ -25,90 +27,72 @@
             <div style="clear:both;"></div>
         </div>
         <div class="body">
-            {% include 'index/entry_summary.html.twig' with {"entry": order.repertoryEntry} %}
+            {% include 'orders/entry_summary.html.twig' with {"entry": order.repertoryEntry} %}
         </div>
     </div>
 {% endif %}
 
-<div class="property">
-    <div class="name">Status</div>
-    <div class="value" state="{{ order.state }}">{{ order.state | trans | capitalize }}</div>
-</div>
-<div style="clear:both;"></div>
+{% set properties = [
+    {
+        name: 'State',
+        value: order.state | trans | capitalize,
+        attr: [{name:'state', value: order.state}]
+    },
+    {
+        name: 'Adoption',
+        value: order.adoption | date('d.m.Y H:i'),
+    },
+    {
+        name: 'Deadline',
+        value: order.deadline | date('d.m.Y H:i'),
+    },
+    {
+        name: 'Client',
+        value: order.client.name,
+    },
+    {
+        name: 'Topic',
+        value: order.topic,
+    },
+    {
+        name: 'Language',
+        value: order.baseLang ~ ' -> ' ~ order.targetLang,
+    },
+    {
+        name: 'Certified',
+        value: order.certified ? "Yes" | trans : "No" | trans,
+    },
+    {
+        name: 'Assignee',
+        value: order.staff.firstName ~ ' ' ~ order.staff.lastName,
+    },
+    {
+        name: 'Additional notes',
+        value: order.info | default('no notes' | trans),
+    },
+    {
+        name: 'Pages',
+        value: order.pages | number_format(2, ".", ""),
+    },
+    {
+        name: 'Price per page',
+        value: order.price | number_format(2, ".", ""),
+    },
+    {
+        name: 'Additional fee',
+        value: order.additionalFee | number_format(2, ".", ""),
+    },
+    {
+        name: 'Netto',
+        value: order.netto | number_format(2, ".", ""),
+    },
+]
+%}
 
-<div class="property">
-    <div class="name">Wprowadzono</div>
-    <div class="value">{{ order.adoption | date('d.m.Y H:i') }}</div>
-</div>
-<div style="clear:both;"></div>
+{% for property in properties %}
+    {% include 'orders/details_property.html.twig' %}
+{% endfor %}
 
-<div class="property">
-    <div class="name">Termin</div>
-    <div class="value">{{ order.deadline | date('d.m.Y H:i') }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Klient</div>
-    <div class="value">{{ order.client.name }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Temat</div>
-    <div class="value">{{ order.topic }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Język</div>
-    <div class="value">{{ order.baseLang }}
-        ->
-        {{ order.targetLang }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Przysięgłe</div>
-    <div class="value">{{ order.certified ? "Tak" : "Nie" }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Wykonawca</div>
-    <div class="value">{{ order.staff }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Notatki</div>
-    <div class="value">{{ order.info|default('brak notatek') }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Liczba stron</div>
-    <div class="value">{{ order.pages | number_format(2, ".", "") }}</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Cena za stronę</div>
-    <div class="value">{{ order.price | number_format(2, ".", "") }} PLN</div>
-</div>
-<div style="clear:both;"></div>
-
-<div class="property">
-    <div class="name">Dodatkowe opłaty</div>
-    <div class="value">{{ order.additionalFee | number_format(2, ".", "") }} PLN</div>
-</div>
-
-
-<div class="property">
-    <div class="name">Netto</div>
-    <div class="value">{{ order.netto | number_format(2, ".", "") }} PLN</div>
-</div>
-<div style="clear:both;"></div>
 
 <div class="logs">
     <table class="table table-dark">
@@ -121,7 +105,7 @@
         {% for l in logs %}
             <tr>
                 <td style="width: min-content;">{{ l.createdAt | date('d-m-Y H:i:s') }}</td>
-                <td style="width: min-content;">{{ l.user }}</td>
+                <td style="width: min-content;">{{ l.user.firstName ~ ' ' ~ l.user.lastName }}</td>
                 <td>{{ l.action }}</td>
             </tr>
         {% endfor %}
