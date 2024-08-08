@@ -1,57 +1,57 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: "RepertoryEntryRepository")]
+#[ORM\Entity(repositoryClass: 'RepertoryEntryRepository')]
 class RepertoryEntry
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id = null;
 
-    #[ORM\OneToOne(targetEntity: "Order", inversedBy: "repertoryEntry", cascade: ["persist", "remove"])]
+    #[ORM\OneToOne(targetEntity: 'Order', inversedBy: 'repertoryEntry', cascade: ['persist', 'remove'])]
     private ?Order $order;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $documentIssuer;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $comments;
 
     #[Assert\PositiveOrZero]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private int $copies;
 
-    #[ORM\Column(type: "integer", nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $number;
 
-    #[ORM\Column(type: "integer", nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $year;
 
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $documentDate;
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTime $documentDate;
 
     #[Assert\PositiveOrZero]
-    #[ORM\Column(type: "float")]
+    #[ORM\Column(type: 'float')]
     private float $copyPrice;
 
-    #[ORM\Column(type: "datetime_immutable", nullable: false)]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    private \DateTime $createdAt;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $documentName;
 
     public function __construct()
     {
         $this->copies = 0;
         $this->copyPrice = 0.0;
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
         $this->order = null;
         $this->documentIssuer = null;
         $this->comments = null;
@@ -59,7 +59,7 @@ class RepertoryEntry
 
     public function getFormattedNumber(): string
     {
-        return $this->number."/".$this->year;
+        return $this->number.'/'.$this->year;
     }
 
     public function getAdditionalFee(): float
@@ -144,12 +144,12 @@ class RepertoryEntry
         return $this;
     }
 
-    public function getDocumentDate(): ?DateTime
+    public function getDocumentDate(): ?\DateTime
     {
         return $this->documentDate;
     }
 
-    public function setDocumentDate(?DateTimeInterface $documentDate): self
+    public function setDocumentDate(?\DateTimeInterface $documentDate): self
     {
         $this->documentDate = $documentDate;
 
@@ -168,7 +168,7 @@ class RepertoryEntry
         return $this;
     }
 
-    public function getCreatedAt(): DateTime|DateTimeInterface
+    public function getCreatedAt(): \DateTime|\DateTimeInterface
     {
         return $this->createdAt;
     }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences;
@@ -19,7 +20,7 @@ class DoctrineUserListener
     private bool $userUpdated = false;
 
     public function __construct(
-      #[AutowireIterator('app.preferences.mapper')] private readonly iterable $mappers,
+        #[AutowireIterator('app.preferences.mapper')] private readonly iterable $mappers,
     ) {
     }
 

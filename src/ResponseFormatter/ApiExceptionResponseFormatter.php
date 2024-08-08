@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\ResponseFormatter;
@@ -29,8 +30,8 @@ class ApiExceptionResponseFormatter
         $controller = $event->getController();
         $controller = is_array($controller) ? $controller[0] : $controller;
         if (
-            $event->getRequestType() === HttpKernelInterface::MAIN_REQUEST &&
-            $controller instanceof ApiControllerInterface
+            HttpKernelInterface::MAIN_REQUEST === $event->getRequestType()
+            && $controller instanceof ApiControllerInterface
         ) {
             $this->apiRequest = true;
         }
@@ -42,7 +43,7 @@ class ApiExceptionResponseFormatter
             $exception = $event->getThrowable();
 
             $error = 'Internal server error';
-            if ($this->env === 'dev') {
+            if ('dev' === $this->env) {
                 $error = [
                     'message' => $exception->getMessage(),
                     'code' => $exception->getCode(),

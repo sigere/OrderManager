@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\DataFixtures;
 
 use App\Entity\Client;
-use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -52,12 +52,12 @@ class ClientFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         foreach (self::CLIENTS as $clientData) {
-            $createdAt = new DateTime();
+            $createdAt = new \DateTime();
             $createdAt->setTimestamp($clientData['createdAt']);
 
             $deletedAt = null;
             if ($clientData['deletedAt']) {
-                $deletedAt = new DateTime();
+                $deletedAt = new \DateTime();
                 $deletedAt->setTimestamp($clientData['deletedAt']);
             }
 
@@ -75,7 +75,7 @@ class ClientFixtures extends Fixture
 
             $manager->persist($client);
 
-            $this->addReference('client_' . strtolower($clientData['alias']), $client);
+            $this->addReference('client_'.strtolower($clientData['alias']), $client);
         }
 
         $manager->flush();

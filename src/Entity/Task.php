@@ -1,49 +1,48 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: "TaskRepository")]
+#[ORM\Entity(repositoryClass: 'TaskRepository')]
 class Task
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $topic;
 
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $info;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $deadline;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deadline;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $deletedAt = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt = null;
 
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: "User")]
+    #[ORM\ManyToOne(targetEntity: 'User')]
     private User $author;
 
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: "User")]
+    #[ORM\ManyToOne(targetEntity: 'User')]
     private User $target;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $doneAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $doneAt;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -75,24 +74,24 @@ class Task
         return $this;
     }
 
-    public function getDeadline(): ?DateTimeInterface
+    public function getDeadline(): ?\DateTimeInterface
     {
         return $this->deadline;
     }
 
-    public function setDeadline(?DateTimeInterface $deadline): self
+    public function setDeadline(?\DateTimeInterface $deadline): self
     {
         $this->deadline = $deadline;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?DateTimeInterface
+    public function getDeletedAt(): ?\DateTimeInterface
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(?DateTimeInterface $deletedAt): self
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 
@@ -123,24 +122,24 @@ class Task
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getDoneAt(): ?DateTime
+    public function getDoneAt(): ?\DateTime
     {
         return $this->doneAt;
     }
 
-    public function setDoneAt(?DateTime $doneAt): self
+    public function setDoneAt(?\DateTime $doneAt): self
     {
         $this->doneAt = $doneAt;
 
@@ -154,7 +153,7 @@ class Task
             return [];
         }
         $warnings = [];
-        $now = new DateTime();
+        $now = new \DateTime();
         $timeToDeadline = $this->deadline->getTimestamp() - $now->getTimestamp();
         if ($timeToDeadline < 0) {
             $warnings[] = 'Minął termin zadania.';

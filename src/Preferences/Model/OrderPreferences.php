@@ -1,15 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Model;
 
 use App\Entity\Client;
 use App\Entity\Staff;
-use DateTime;
-use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class OrderPreferences implements JsonSerializable
+class OrderPreferences implements \JsonSerializable
 {
     public const string NAME = 'orders';
     public const array COLUMNS = [
@@ -35,13 +34,13 @@ class OrderPreferences implements JsonSerializable
     private ?Staff $staff;
 
     #[Assert\When(expression: 'this.getDateTo() !== null', constraints: [
-            new Assert\LessThan(
-                propertyPath: 'dateTo',
-                message: 'The date from must be before the date to'
-            )
-        ],
+        new Assert\LessThan(
+            propertyPath: 'dateTo',
+            message: 'The date from must be before the date to'
+        ),
+    ],
     )]
-    private ?DateTime $dateFrom;
+    private ?\DateTime $dateFrom;
 
     #[Assert\When(
         expression: 'this.getDateFrom() !== null',
@@ -49,10 +48,10 @@ class OrderPreferences implements JsonSerializable
             new Assert\GreaterThan(
                 propertyPath: 'dateFrom',
                 message: 'The date to must be after the date from'
-            )
+            ),
         ],
     )]
-    private ?DateTime $dateTo;
+    private ?\DateTime $dateTo;
 
     private ?array $states;
 
@@ -108,24 +107,24 @@ class OrderPreferences implements JsonSerializable
         return $this;
     }
 
-    public function getDateFrom(): ?DateTime
+    public function getDateFrom(): ?\DateTime
     {
         return $this->dateFrom;
     }
 
-    public function setDateFrom(?DateTime $dateFrom): OrderPreferences
+    public function setDateFrom(?\DateTime $dateFrom): OrderPreferences
     {
         $this->dateFrom = $dateFrom;
 
         return $this;
     }
 
-    public function getDateTo(): ?DateTime
+    public function getDateTo(): ?\DateTime
     {
         return $this->dateTo;
     }
 
-    public function setDateTo(?DateTime $dateTo): OrderPreferences
+    public function setDateTo(?\DateTime $dateTo): OrderPreferences
     {
         $this->dateTo = $dateTo;
 

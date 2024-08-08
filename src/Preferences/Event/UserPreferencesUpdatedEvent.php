@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Event;
@@ -24,5 +25,4 @@ class UserPreferencesUpdatedEvent extends Event
     {
         return $this->preferences;
     }
-
 }

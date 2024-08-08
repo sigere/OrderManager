@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Form;
@@ -52,7 +53,6 @@ class OrderStatesForm extends AbstractType implements DataMapperInterface
         /** @var FormInterface[] $forms */
         $forms = iterator_to_array($forms);
 
-
         foreach (OrderState::cases() as $state) {
             $forms[$state->value]->setData(
                 in_array($state->value, $viewData) ? true : null,
@@ -64,7 +64,7 @@ class OrderStatesForm extends AbstractType implements DataMapperInterface
     {
         $viewData = [];
         foreach ($forms as $form) {
-            if ($form->getData() === true) {
+            if (true === $form->getData()) {
                 $viewData[] = $form->getName();
             }
         }

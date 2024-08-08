@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Service;
@@ -8,14 +9,13 @@ use App\Entity\Staff;
 use App\Entity\User;
 use App\Preferences\Model\DateType;
 use App\Preferences\Model\OrderPreferences;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('app.preferences.mapper')]
 class OrderPreferencesMapper implements MapperInterface
 {
-    private const string DEFAULT_PREFERENCES_PATH = __DIR__ . '/../../Resources/default_orders_preferences.php';
+    private const string DEFAULT_PREFERENCES_PATH = __DIR__.'/../../Resources/default_orders_preferences.php';
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager
@@ -41,8 +41,8 @@ class OrderPreferencesMapper implements MapperInterface
             ->setColumns($array['columns'] ?? [])
             ->setClient($client)
             ->setStaff($staff)
-            ->setDateFrom(isset($array['date_from']) ? new DateTime($array['date_from']['date']) : null)
-            ->setDateTo(isset($array['date_to']) ? new DateTime($array['date_to']['date']) : null)
+            ->setDateFrom(isset($array['date_from']) ? new \DateTime($array['date_from']['date']) : null)
+            ->setDateTo(isset($array['date_to']) ? new \DateTime($array['date_to']['date']) : null)
             ->setStates($array['states'] ?? null)
             ->setDeleted($array['deleted'] ?? null)
             ->setSettled($array['settled'] ?? null);

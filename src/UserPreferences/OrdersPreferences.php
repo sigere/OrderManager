@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\UserPreferences;
@@ -18,8 +19,8 @@ class OrdersPreferences extends AbstractPreferences
         'staff',
     ];
 
-    public const string DATE_TYPE_DEADLINE = "deadline";
-    public const string DATE_TYPE_ADOPTION = "adoption";
+    public const string DATE_TYPE_DEADLINE = 'deadline';
+    public const string DATE_TYPE_ADOPTION = 'adoption';
 
     protected array $columns;
     protected ?Client $client;
@@ -31,10 +32,6 @@ class OrdersPreferences extends AbstractPreferences
     private bool $deleted;
     private bool $settled;
 
-    /**
-     * @param mixed $data
-     * @return void
-     */
     public function applyForm(mixed $data): void
     {
         $this->setDateFrom($data['date-from'] ?? null);
@@ -43,14 +40,14 @@ class OrdersPreferences extends AbstractPreferences
         $this->setClient($data['select-client'] ?? null);
 
         if (isset($data['date-type']) && in_array(
-                $data['date-type'], [self::DATE_TYPE_DEADLINE, self::DATE_TYPE_ADOPTION]
-            )) {
+            $data['date-type'], [self::DATE_TYPE_DEADLINE, self::DATE_TYPE_ADOPTION]
+        )) {
             $this->setDateType($data['date-type']);
         }
 
         $states = [];
         foreach (Order::STATES as $STATE) {
-            if (array_key_exists($STATE, $data) && $data[$STATE] === true) {
+            if (array_key_exists($STATE, $data) && true === $data[$STATE]) {
                 $states[] = $STATE;
             }
         }
@@ -58,7 +55,7 @@ class OrdersPreferences extends AbstractPreferences
 
         $columns = [];
         foreach (self::COLUMNS as $COLUMN) {
-            if (array_key_exists($COLUMN, $data) && $data[$COLUMN] === true) {
+            if (array_key_exists($COLUMN, $data) && true === $data[$COLUMN]) {
                 $columns[] = $COLUMN;
             }
         }
@@ -77,15 +74,15 @@ class OrdersPreferences extends AbstractPreferences
         $this->dateFrom = isset($config['date_from']) ? new \DateTime($config['date_from']['date']) : null;
         $this->dateTo = isset($config['date_to']) ? new \DateTime($config['date_to']['date']) : null;
 
-        $this->dateType = ($config['date_type'] ?? "") == self::DATE_TYPE_ADOPTION ? self::DATE_TYPE_ADOPTION : self::DATE_TYPE_DEADLINE;
+        $this->dateType = ($config['date_type'] ?? '') == self::DATE_TYPE_ADOPTION ? self::DATE_TYPE_ADOPTION : self::DATE_TYPE_DEADLINE;
 
         $this->client = $this->entityManager->getRepository(Client::class)->findOneBy([
-                'id' => ($config['client'] ?? 0),
-            ]);
+            'id' => ($config['client'] ?? 0),
+        ]);
 
         $this->staff = $this->entityManager->getRepository(Staff::class)->findOneBy([
-                'id' => ($config['staff'] ?? 0),
-            ]);
+            'id' => ($config['staff'] ?? 0),
+        ]);
 
         $this->states = $config['states'] ?? [];
         $this->deleted = $config['deleted'];
@@ -109,21 +106,14 @@ class OrdersPreferences extends AbstractPreferences
 
     protected function getArrayKey(): string
     {
-        return "index";
+        return 'index';
     }
 
-    /**
-     * @return array
-     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @param array $columns
-     * @return OrdersPreferences
-     */
     public function setColumns(array $columns): OrdersPreferences
     {
         $this->columns = $columns;
@@ -131,18 +121,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDateType(): string
     {
         return $this->dateType;
     }
 
-    /**
-     * @param string $dateType
-     * @return OrdersPreferences
-     */
     public function setDateType(string $dateType): OrdersPreferences
     {
         $this->dateType = $dateType;
@@ -150,18 +133,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getStates(): array
     {
         return $this->states;
     }
 
-    /**
-     * @param array $states
-     * @return OrdersPreferences
-     */
     public function setStates(array $states): OrdersPreferences
     {
         $this->states = $states;
@@ -169,18 +145,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * @param bool $deleted
-     * @return OrdersPreferences
-     */
     public function setDeleted(bool $deleted): OrdersPreferences
     {
         $this->deleted = $deleted;
@@ -188,18 +157,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getSettled(): bool
     {
         return $this->settled;
     }
 
-    /**
-     * @param bool $settled
-     * @return OrdersPreferences
-     */
     public function setSettled(bool $settled): OrdersPreferences
     {
         $this->settled = $settled;
@@ -207,18 +169,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return Client|null
-     */
     public function getClient(): ?Client
     {
         return $this->client;
     }
 
-    /**
-     * @param Client|null $client
-     * @return OrdersPreferences
-     */
     public function setClient(?Client $client): OrdersPreferences
     {
         $this->client = $client;
@@ -226,18 +181,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return Staff|null
-     */
     public function getStaff(): ?Staff
     {
         return $this->staff;
     }
 
-    /**
-     * @param Staff|null $staff
-     * @return OrdersPreferences
-     */
     public function setStaff(?Staff $staff): OrdersPreferences
     {
         $this->staff = $staff;
@@ -245,18 +193,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getDateFrom(): ?\DateTime
     {
         return $this->dateFrom;
     }
 
-    /**
-     * @param \DateTime|null $dateFrom
-     * @return OrdersPreferences
-     */
     public function setDateFrom(?\DateTime $dateFrom): OrdersPreferences
     {
         $this->dateFrom = $dateFrom;
@@ -264,18 +205,11 @@ class OrdersPreferences extends AbstractPreferences
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getDateTo(): ?\DateTime
     {
         return $this->dateTo;
     }
 
-    /**
-     * @param \DateTime|null $dateTo
-     * @return OrdersPreferences
-     */
     public function setDateTo(?\DateTime $dateTo): OrdersPreferences
     {
         $this->dateTo = $dateTo;

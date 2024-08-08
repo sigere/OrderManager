@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -26,11 +27,9 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param OrderPreferences $preferences
-     * @param int|null $rows
      * @return Order[]
      */
-    public function getByOrdersPreferences(OrderPreferences $preferences, int &$rows = null): array
+    public function getByOrdersPreferences(OrderPreferences $preferences, ?int &$rows = null): array
     {
         $orders = $this->createQueryBuilder('o');
 
@@ -43,20 +42,20 @@ class OrderRepository extends ServiceEntityRepository
             ->select('o', 'e')
             ->leftJoin('o.repertoryEntry', 'e');
 
-        $states = empty($states) ? ["invalid-state"] : $states;
-        $statement = "o.state in (:states)";
-        $orders->setParameter("states", $states);
+        $states = empty($states) ? ['invalid-state'] : $states;
+        $statement = 'o.state in (:states)';
+        $orders->setParameter('states', $states);
 
         if ($preferences->getSettled()) {
-            $statement .= " or o.settledAt is not null";
+            $statement .= ' or o.settledAt is not null';
         } else {
-            $orders = $orders->andWhere("o.settledAt is null");
+            $orders = $orders->andWhere('o.settledAt is null');
         }
 
         if ($preferences->getDeleted()) {
-            $statement .= " or o.deletedAt is not null";
+            $statement .= ' or o.deletedAt is not null';
         } else {
-            $orders = $orders->andWhere("o.deletedAt is null");
+            $orders = $orders->andWhere('o.deletedAt is null');
         }
 
         $orders = $orders->andWhere($statement);
@@ -85,9 +84,6 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Client $client
-     * @param int $year
-     * @param int|null $month
      * @return Order[]
      */
     public function getForInvoicingByClient(Client $client, int $year, ?int $month = null): array
@@ -108,10 +104,9 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $text
-     * @param int $count
      * @param ?int $found
-     *  If not null, will be set to the total number of found orders, omit or pass null to avoid counting
+     *                    If not null, will be set to the total number of found orders, omit or pass null to avoid counting
+     *
      * @return Order[]
      */
     public function searchByText(string $text, int &$count, ?int &$found = null): array
@@ -129,7 +124,7 @@ class OrderRepository extends ServiceEntityRepository
             ->setParameter('text', '%'.$text.'%')
             ->orderBy('o.deadline', 'DESC');
 
-        if ($found !== null) {
+        if (null !== $found) {
             $found = (clone $queryBuilder)
                 ->select('count(o.id)')
                 ->getQuery()
@@ -147,17 +142,16 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param OrdersSearch $ordersSearch
-     * @param int $count
      * @param ?int $found
-     *  If not null, will be set to the total number of found orders, omit or pass null to avoid counting
+     *                    If not null, will be set to the total number of found orders, omit or pass null to avoid counting
+     *
      * @return Order|Order[]
      */
     public function getByOrdersSearch(OrdersSearch $ordersSearch, int &$count, ?int &$found = null): Order|array
     {
         if (!empty($ordersSearch->getId())) {
             $count = 1;
-            $found = $found !== null ? 1 : null;
+            $found = null !== $found ? 1 : null;
 
             return $this->findOneBy(['id' => $ordersSearch->getId()]);
         }

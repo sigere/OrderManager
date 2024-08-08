@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Orders;
@@ -26,14 +27,15 @@ use Twig\Environment;
 class ApiController extends AbstractController implements ApiControllerInterface
 {
     public function __construct(
-       private readonly OrderRepository $orderRepository,
-       private readonly OrderService $orderService,
-       private readonly RouterInterface $router,
-       private readonly Environment $twig,
-       private readonly EntityManagerInterface $entityManager,
-       private readonly CacheInterface $cache,
+        private readonly OrderRepository $orderRepository,
+        private readonly OrderService $orderService,
+        private readonly RouterInterface $router,
+        private readonly Environment $twig,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CacheInterface $cache,
     ) {
     }
+
     #[Route('/table', name: 'api_orders_table', methods: ['GET'])]
     public function tableAction(): Response
     {

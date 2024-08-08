@@ -1,63 +1,62 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-//TODO translations
-#[UniqueEntity(fields: ["alias"], message: 'constraints.client.alias.exists', repositoryMethod: "findByAliasIgnoreCase")]
-#[UniqueEntity(fields: ["nip"], message: "Istnieje już klient o podanym NIPie!")]
+// TODO translations
+#[UniqueEntity(fields: ['alias'], message: 'constraints.client.alias.exists', repositoryMethod: 'findByAliasIgnoreCase')]
+#[UniqueEntity(fields: ['nip'], message: 'Istnieje już klient o podanym NIPie!')]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
-    #[ORM\Column(type: "string", length: 50)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $alias;
 
-    #[ORM\Column(type: "string", length: 15)]
+    #[ORM\Column(type: 'string', length: 15)]
     #[Assert\Regex("/\d{10}/")]
     #[Assert\Length(min: 10, max: 10)]
     private string $nip;
 
-    #[ORM\Column(type: "string", length: 6)]
+    #[ORM\Column(type: 'string', length: 6)]
     private string $postCode;
 
-    #[ORM\Column(type: "string", length: 50)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $city;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $street;
 
-    #[Assert\Country(message: "Wprowadź poprawny kraj.")]
-    #[ORM\Column(type: "string", length: 2)]
+    #[Assert\Country(message: 'Wprowadź poprawny kraj.')]
+    #[ORM\Column(type: 'string', length: 2)]
     private string $country;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $deletedAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt;
 
     #[Assert\Email(message: "Adres email '{{ value }}' nie jest poprawny.")]
-    #[ORM\Column(type: "string", length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $email;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
         $this->deletedAt = null;
     }
 
@@ -155,24 +154,24 @@ class Client
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?DateTime
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(?DateTime $deletedAt): self
+    public function setDeletedAt(?\DateTime $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Form\Constraint;
@@ -10,7 +11,7 @@ use Symfony\Component\Validator\Constraint;
 class OneOfNotEmpty extends Constraint
 {
     /**
-     * @var string[] $fields
+     * @var string[]
      */
     public function __construct(
         private readonly array $fields,

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Form;
@@ -26,10 +27,10 @@ class OrderFiltersForm extends AbstractType
     public const array DEFAULT_OPTIONS = [
         'data_class' => OrderPreferences::class,
         'attr' => [
-            'class' => "filters-form",
+            'class' => 'filters-form',
             'name' => 'order_filters_form',
             'data-method' => self::METHOD,
-            'autocomplete' => "off",
+            'autocomplete' => 'off',
         ],
         'label_attr' => ['style' => 'display:none'],
     ];
@@ -83,8 +84,8 @@ class OrderFiltersForm extends AbstractType
                 'required' => false,
                 'placeholder' => 'All staff',
             ])
-            ->add('dateType', EnumType::class,[
-                'class' => AppDateType::class
+            ->add('dateType', EnumType::class, [
+                'class' => AppDateType::class,
             ])
             ->add('dateFrom', DateType::class, [
                 'label' => 'Date from',

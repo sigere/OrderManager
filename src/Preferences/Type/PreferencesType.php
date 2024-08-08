@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Type;
 
 use App\Preferences\Model\Preferences;
-use Doctrine\DBAL\Types\JsonType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\JsonType;
 
 class PreferencesType extends JsonType
 {
@@ -13,11 +14,12 @@ class PreferencesType extends JsonType
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Preferences
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
         $array = json_decode($value, true);
+
         return new Preferences(
             ['orders' => $array['orders'] ?? null]
         );
@@ -39,5 +41,4 @@ class PreferencesType extends JsonType
     {
         return self::TYPE;
     }
-
 }

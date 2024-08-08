@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\UserPreferences;
@@ -6,7 +7,6 @@ namespace App\UserPreferences;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractPreferences
@@ -14,27 +14,27 @@ abstract class AbstractPreferences
     protected User $user;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct(
         protected EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage,
     ) {
-//        $user = $tokenStorage->getToken()->getUser();
-//        if (!$user instanceof User) {
-//            throw new Exception(sprintf(
-//                'User must be an instance of %s.',
-//                User::class
-//            ));
-//        }
-//
-//        $this->user = $user;
-//
-//        $file = __DIR__ . '/../Resources/default_'.$this->getArrayKey().'_preferences.json';
-//        $config = $this->user->getPreferences()[$this->getArrayKey()] ?? json_decode(
-//            file_get_contents($file), true
-//        );
-//        $this->decode($config);
+        //        $user = $tokenStorage->getToken()->getUser();
+        //        if (!$user instanceof User) {
+        //            throw new Exception(sprintf(
+        //                'User must be an instance of %s.',
+        //                User::class
+        //            ));
+        //        }
+        //
+        //        $this->user = $user;
+        //
+        //        $file = __DIR__ . '/../Resources/default_'.$this->getArrayKey().'_preferences.json';
+        //        $config = $this->user->getPreferences()[$this->getArrayKey()] ?? json_decode(
+        //            file_get_contents($file), true
+        //        );
+        //        $this->decode($config);
     }
 
     abstract protected function getArrayKey(): string;

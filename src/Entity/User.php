@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Preferences\DoctrineUserListener;
 use App\Preferences\Model\Preferences;
 use App\Repository\UserRepository;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\EntityListeners;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -33,27 +32,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private string $firstName;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private string $lastName;
 
-    #[ORM\Column(name: "preferences", type: "preferences", nullable: true)]
+    #[ORM\Column(name: 'preferences', type: 'preferences', nullable: true)]
     private ?Preferences $preferences = null;
 
-    #[ORM\ManyToOne(targetEntity: "Staff")]
+    #[ORM\ManyToOne(targetEntity: 'Staff')]
     private ?Staff $staff;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $deletedAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
         $this->deletedAt = null;
     }
 
@@ -105,19 +104,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): User
+    public function setCreatedAt(\DateTime $createdAt): User
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?DateTime
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
@@ -148,7 +147,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return (string)$this->username;
+        return (string) $this->username;
     }
 
     /**

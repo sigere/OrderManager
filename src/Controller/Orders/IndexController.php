@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Orders;
@@ -63,7 +64,7 @@ class IndexController extends AbstractController
             ],
             'filtersForm' => $form->createView(),
             'preferences' => $user->getPreferences()->getOrdersPreferences(),
-            'options' => [], //todo $options
+            'options' => [], // todo $options
             'rowsFound' => $rowsCount,
             'rowsShown' => min($rowsCount, OrderRepository::LIMIT),
             'endpointData' => $endpointData,

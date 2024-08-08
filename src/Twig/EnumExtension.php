@@ -1,10 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Twig;
 
-use BadMethodCallException;
-use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -28,7 +27,7 @@ class EnumExtension extends AbstractExtension
             public function __construct(private readonly string $enum)
             {
                 if (!enum_exists($this->enum)) {
-                    throw new InvalidArgumentException("$this->enum is not an Enum type and cannot be used in this function");
+                    throw new \InvalidArgumentException("$this->enum is not an Enum type and cannot be used in this function");
                 }
             }
 
@@ -44,7 +43,7 @@ class EnumExtension extends AbstractExtension
                     return $this->enum::$name(...$arguments);
                 }
 
-                throw new BadMethodCallException("Neither \"{$enumFQN}\" nor \"{$enumFQN}::{$name}()\" exist in this runtime.");
+                throw new \BadMethodCallException("Neither \"{$enumFQN}\" nor \"{$enumFQN}::{$name}()\" exist in this runtime.");
             }
         };
     }

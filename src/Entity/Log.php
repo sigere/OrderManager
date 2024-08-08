@@ -1,35 +1,36 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: "LogRepository")]
+#[ORM\Entity(repositoryClass: 'LogRepository')]
 class Log
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: "User")]
+    #[ORM\ManyToOne(targetEntity: 'User')]
     private ?User $user;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private string $action = '';
 
-    #[ORM\ManyToOne(targetEntity: "Order")]
+    #[ORM\ManyToOne(targetEntity: 'Order')]
     private ?Order $order;
 
-    #[ORM\ManyToOne(targetEntity: "Client")]
+    #[ORM\ManyToOne(targetEntity: 'Client')]
     private ?Client $client;
 
-    #[ORM\ManyToOne(targetEntity: "Task")]
+    #[ORM\ManyToOne(targetEntity: 'Task')]
     private ?Task $task;
 
     public function __construct($user, $action, $object = null)
@@ -53,7 +54,7 @@ class Log
             }
         }
 
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -61,7 +62,7 @@ class Log
         return $this->id;
     }
 
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }

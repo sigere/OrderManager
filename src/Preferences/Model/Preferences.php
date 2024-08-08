@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Model;
 
-use JsonSerializable;
-
-class Preferences implements JsonSerializable
+class Preferences implements \JsonSerializable
 {
     private ?OrderPreferences $orderPreferences = null;
 

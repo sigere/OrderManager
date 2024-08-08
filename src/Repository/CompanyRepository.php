@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -22,6 +23,6 @@ class CompanyRepository extends ServiceEntityRepository
 
     public function get(): Company
     {
-        return $this->findOneBy(["id" => "1"]);
+        return $this->findOneBy(['id' => '1']);
     }
 }

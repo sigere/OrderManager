@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Form;
@@ -63,7 +64,7 @@ class OrderColumnsForm extends AbstractType implements DataMapperInterface
     {
         $viewData = [];
         foreach ($forms as $form) {
-            if ($form->getData() === true) {
+            if (true === $form->getData()) {
                 $viewData[] = $form->getName();
             }
         }

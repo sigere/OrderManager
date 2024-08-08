@@ -1,35 +1,35 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: "App\Repository\StaffRepository")]
 class Staff
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private string $firstName;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private string $lastName;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $deletedAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt;
 
     public function __construct()
     {
         $this->deletedAt = null;
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -66,24 +66,24 @@ class Staff
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?DateTime
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(?DateTime $deletedAt): self
+    public function setDeletedAt(?\DateTime $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 

@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
@@ -26,7 +27,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             'lastName' => 'Doe',
             'roles' => ['ROLE_ADMIN'],
             'password' => '67890',
-            'createdAt' => null
+            'createdAt' => null,
         ],
     ];
 
@@ -39,7 +40,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         foreach (self::USERS as $userData) {
             $staff = null;
-            if ($userData['firstName'] === 'John' && $userData['lastName'] === 'Doe') {
+            if ('John' === $userData['firstName'] && 'Doe' === $userData['lastName']) {
                 $staff = $this->getReference(StaffFixtures::JOHN_DOE);
             }
 
@@ -62,7 +63,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 $this->hasher->hashPassword($user, $userData['password'])
             );
 
-            $this->addReference('user_' . $userData['username'], $user);
+            $this->addReference('user_'.$userData['username'], $user);
 
             $manager->persist($user);
         }

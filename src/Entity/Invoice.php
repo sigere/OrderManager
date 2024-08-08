@@ -1,47 +1,47 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: "InvoiceRepository")]
+#[ORM\Entity(repositoryClass: 'InvoiceRepository')]
 class Invoice
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id = null;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private int $ordersAmount;
 
-    #[ORM\Column(type: "float")]
+    #[ORM\Column(type: 'float')]
     private float $netto;
 
-    #[ORM\ManyToMany(targetEntity: "Order")]
+    #[ORM\ManyToMany(targetEntity: 'Order')]
     #[ORM\Column(type: 'string')]
     private ArrayCollection $orders;
 
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: "User")]
+    #[ORM\ManyToOne(targetEntity: 'User')]
     private User $user;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
         $this->ordersAmount = 0;
         $this->netto = 0;
         $this->orders = new ArrayCollection();
     }
 
-    public function getCreatedAt(): DateTimeInterface
+    public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
     }
