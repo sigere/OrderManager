@@ -38,7 +38,8 @@ jobs:
         with:
           node-version: 20.16
           cache: 'npm'
-        run: npm run build
+
+      - run: npm run build
 
       - run: npm ci
 
