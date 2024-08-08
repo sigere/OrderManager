@@ -39,6 +39,8 @@ jobs:
           node-version: 20.16
           cache: 'npm'
 
+      - run: npm install
+
       - run: npm run build
 
       - run: npm ci
