@@ -1,22 +1,10 @@
 name: Main
 on: pull_request
 
-jobs:
-#  unit-tests:
-#    runs-on: ubuntu-latest
-#    steps:
-#      -  uses: shivammathur/setup-php@v2
-#         with:
-#           php-version: '8.3'
-#
-#      - name: Checkout Repository
-#        uses: actions/checkout@v1
-#
-#      - name: Unit
-#        run: |
-#          composer install --no-interaction
-#          php ./bin/phpunit
+env:
+   DATABASE_URL: "sqlite:///%kernel.project_dir%/var/data.db"
 
+jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
     steps:
@@ -27,7 +15,22 @@ jobs:
       -  name: Checkout Repository
          uses: actions/checkout@v1
 
-      - name: Check
+      -  name: Check
+         run: |
+           composer require install
+           ./vendor/bin/php-cs-fixer fix --dry-run --diff
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      -  uses: shivammathur/setup-php@v2
+         with:
+           php-version: '8.3'
+
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+
+      - name: Unit
         run: |
-            composer require --dev friendsofphp/php-cs-fixer
-            ./vendor/bin/php-cs-fixer fix --dry-run --diff
+          composer install --no-interaction
+          php ./bin/phpunit
