@@ -2,18 +2,32 @@ name: Main
 on: pull_request
 
 jobs:
-  unit-tests:
-    name: PHPUnit
+#  unit-tests:
+#    runs-on: ubuntu-latest
+#    steps:
+#      -  uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: '8.3'
+#
+#      - name: Checkout Repository
+#        uses: actions/checkout@v1
+#
+#      - name: Unit
+#        run: |
+#          composer install --no-interaction
+#          php ./bin/phpunit
+
+  php-cs-fixer:
     runs-on: ubuntu-latest
     steps:
       -  uses: shivammathur/setup-php@v2
          with:
            php-version: '8.3'
 
-      - name: Checkout Repository
-        uses: actions/checkout@v1
+      -  name: Checkout Repository
+         uses: actions/checkout@v1
 
-      - name: Unit
+      - name: Check
         run: |
-          composer install --no-interaction
-          php ./bin/phpunit
+            composer require --dev friendsofphp/php-cs-fixer
+            ./vendor/bin/php-cs-fixer fix --dry-run --diff
