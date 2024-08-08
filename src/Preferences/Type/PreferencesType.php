@@ -11,17 +11,24 @@ class PreferencesType extends JsonType
 {
     public const string TYPE = 'preferences';
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): Preferences
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Preferences
     {
+        if ($value === null) {
+            return null;
+        }
+
         $array = json_decode($value, true);
         return new Preferences(
             ['orders' => $array['orders'] ?? null]
         );
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        /** @var Preferences $value */
+        if (!$value instanceof Preferences) {
+            return null;
+        }
+
         return json_encode(
             ['orders' => $value->getOrdersPreferences()],
             JSON_UNESCAPED_UNICODE

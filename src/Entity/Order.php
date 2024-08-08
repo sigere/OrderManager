@@ -40,51 +40,45 @@ class Order
     private Lang $targetLang;
 
     #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $deletedAt;
+    private ?DateTime $deletedAt = null;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: "boolean", nullable: false)]
     private bool $certified;
 
     #[Assert\PositiveOrZero]
     #[ORM\Column(type: "decimal", precision: 10, scale: 2, nullable: true)]
-    private ?string $pages;
+    private ?float $pages;
 
     #[Assert\PositiveOrZero]
     #[ORM\Column(type: "decimal", precision: 10, scale: 2, nullable: true)]
-    private ?string $price;
+    private ?float $price;
 
     #[Assert\PositiveOrZero]
     #[ORM\Column(type: "decimal", precision: 10, scale: 2, nullable: true)]
-    private ?string $additionalFee;
+    private ?float $additionalFee;
 
+    // todo translate
     #[Assert\NotBlank(message: "Temat nie może być pusty")]
     #[ORM\Column(type: "string", length: 255, nullable: false)]
     private string $topic;
 
     #[ORM\Column(type: "string", enumType: OrderState::class)]
-    private OrderState $state;
+    private OrderState $state = OrderState::Accepted;
 
-    #[ORM\Column(type: "text")]
+    #[ORM\Column(type: "text", nullable: false)]
     private string $info;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: "datetime", nullable: false)]
     private DateTime $adoption;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: "datetime", nullable: false)]
     private DateTime $deadline;
 
     #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $settledAt;
+    private ?DateTime $settledAt = null;
 
     #[ORM\OneToOne(targetEntity: "RepertoryEntry", mappedBy: "order", cascade: ["persist", "remove"])]
     private ?RepertoryEntry $repertoryEntry;
-
-    public function __construct()
-    {
-        $this->deletedAt = null;
-        $this->state = OrderState::Accepted;
-        $this->settledAt = null;
-    }
 
     public function getId(): ?int
     {
@@ -151,12 +145,12 @@ class Order
         return $result;
     }
 
-    public function getAdditionalFee(): ?string
+    public function getAdditionalFee(): ?float
     {
         return $this->additionalFee;
     }
 
-    public function setAdditionalFee(?string $additionalFee): self
+    public function setAdditionalFee(?float $additionalFee): self
     {
         $this->additionalFee = $additionalFee;
 
@@ -256,24 +250,24 @@ class Order
         return $this;
     }
 
-    public function getPages(): ?string
+    public function getPages(): ?float
     {
         return $this->pages;
     }
 
-    public function setPages(?string $pages): self
+    public function setPages(?float $pages): self
     {
         $this->pages = $pages;
 
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(?string $price): self
+    public function setPrice(?float $price): self
     {
         $this->price = $price;
 

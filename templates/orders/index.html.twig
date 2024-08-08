@@ -41,13 +41,7 @@
                     ]} %}
                 </header>
                 <div class="col-content" data-orders-mid-col-target="content">
-                    <div class="table-container" data-orders-mid-col-target="tableWrapper">
-                        {% include 'orders/_table.html.twig' %}
-{#                        {{ include('icons/loading.html') }}#}
-                    </div>
-                    <div class="rows-count-container" data-orders-mid-col-target="rowsCountWrapper">
-                        {% include 'rows_count.html.twig' %}
-                    </div>
+                    {% include 'orders/_table.html.twig' %}
                 </div>
             </div>
         </div>

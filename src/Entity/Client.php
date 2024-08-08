@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -48,7 +49,7 @@ class Client
     private DateTime $createdAt;
 
     #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTimeInterface $deletedAt;
+    private ?DateTime $deletedAt;
 
     #[Assert\Email(message: "Adres email '{{ value }}' nie jest poprawny.")]
     #[ORM\Column(type: "string", length: 100, nullable: true)]
@@ -154,17 +155,24 @@ class Client
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    public function getDeletedAt(): ?DateTimeInterface
+    public function setCreatedAt(DateTime $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(DateTimeInterface $deletedAt): self
+    public function setDeletedAt(?DateTime $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 

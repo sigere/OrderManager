@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Preferences\Controller;
@@ -50,12 +51,16 @@ class OrdersController extends AbstractController
                     'success' => true,
                     'message' => $this->translator->trans(
                         id: 'orders.filters.success',
-                        domain: 'apis',
-                        locale: 'pl'
+                        domain: 'apis'
                     ),
                 ],
                 200
             );
+        }
+
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $errors[$error->getOrigin()->getName()] = $error->getMessage();
         }
 
         return new JsonResponse(
@@ -65,6 +70,7 @@ class OrdersController extends AbstractController
                     id: 'orders.filters.fail',
                     domain: 'apis',
                 ),
+                'errors' => $errors,
             ],
             400
         );

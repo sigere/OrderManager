@@ -39,6 +39,7 @@ class Company
     #[ORM\Column(type: "date", nullable: true)]
     private ?DateTimeInterface $paymentTo;
 
+    // todo get this the fuck out of here
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $rep;
 

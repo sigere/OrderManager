@@ -309,6 +309,12 @@ input[type="radio"] {
     color: var(--color-warning);
 }
 
+.search-form .error ul {
+    padding-left: 0;
+    list-style-type: none;
+    margin-bottom: 10px;
+}
+
 .search-form input {
     background-color: var(--color-burger);
     color: white;
@@ -322,6 +328,13 @@ input[type="radio"] {
 .search-form button {
     float: right;
     margin-top: 10px;
+}
+
+.search-form-container .rows-count {
+    margin-top: 55px;
+    font-size: 14px;
+    margin-left: 18px;
+    margin-bottom: 5px;
 }
 
 /* --- colors --- */

@@ -7,6 +7,7 @@ use App\Entity\Client;
 use App\Entity\Staff;
 use DateTime;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class OrderPreferences implements JsonSerializable
 {
@@ -21,13 +22,42 @@ class OrderPreferences implements JsonSerializable
     ];
 
     private ?DateType $dateType;
+
+    #[Assert\All(
+        new Assert\Choice(
+            choices: OrderPreferences::COLUMNS,
+            message: "'{{ value }}' is not a valid column. Use one of {{ choices }}")
+    )]
     private ?array $columns;
+
     private ?Client $client;
+
     private ?Staff $staff;
+
+    #[Assert\When(expression: 'this.getDateTo() !== null', constraints: [
+            new Assert\LessThan(
+                propertyPath: 'dateTo',
+                message: 'The date from must be before the date to'
+            )
+        ],
+    )]
     private ?DateTime $dateFrom;
+
+    #[Assert\When(
+        expression: 'this.getDateFrom() !== null',
+        constraints: [
+            new Assert\GreaterThan(
+                propertyPath: 'dateFrom',
+                message: 'The date to must be after the date from'
+            )
+        ],
+    )]
     private ?DateTime $dateTo;
+
     private ?array $states;
+
     private ?bool $deleted;
+
     private ?bool $settled;
 
     public function getDateType(): ?DateType

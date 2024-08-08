@@ -51,7 +51,7 @@ class ApiController extends AbstractController implements ApiControllerInterface
             'data-method' => 'GET',
         ];
 
-        $renderedTable = $this->twig->render('_table.html.twig', [
+        $renderedTable = $this->twig->render('orders/_table.html.twig', [
             'orders' => $orders,
             'preferences' => $user->getPreferences()->getOrdersPreferences(),
             'endpointData' => $endpointData,

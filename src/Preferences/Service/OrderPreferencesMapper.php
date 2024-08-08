@@ -37,12 +37,12 @@ class OrderPreferencesMapper implements MapperInterface
 
         $result = new OrderPreferences();
         $result
-            ->setDateType(DateType::from($array['dateType'] ?? null))
+            ->setDateType(DateType::tryFrom($array['date_type'] ?? '') ?? null)
             ->setColumns($array['columns'] ?? [])
             ->setClient($client)
             ->setStaff($staff)
-            ->setDateFrom(isset($array['dateFrom']) ? new DateTime($array['dateFrom']['date']) : null)
-            ->setDateTo(isset($array['dateTo']) ? new DateTime($array['dateTo']['date']) : null)
+            ->setDateFrom(isset($array['date_from']) ? new DateTime($array['date_from']['date']) : null)
+            ->setDateTo(isset($array['date_to']) ? new DateTime($array['date_to']['date']) : null)
             ->setStates($array['states'] ?? null)
             ->setDeleted($array['deleted'] ?? null)
             ->setSettled($array['settled'] ?? null);

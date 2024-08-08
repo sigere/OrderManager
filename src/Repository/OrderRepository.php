@@ -108,13 +108,18 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $text
+     * @param int $count
+     * @param ?int $found
+     *  If not null, will be set to the total number of found orders, omit or pass null to avoid counting
      * @return Order[]
      */
-    public function searchByText(string $text): array
+    public function searchByText(string $text, int &$count, ?int &$found = null): array
     {
         $queryBuilder = $this->createQueryBuilder('o');
 
-        return $queryBuilder->select('o, c')
+        $queryBuilder = $queryBuilder
+            ->select('o, c')
             ->innerJoin('o.client', 'c')
             ->andWhere(
                 $queryBuilder->expr()->orX(
@@ -122,21 +127,41 @@ class OrderRepository extends ServiceEntityRepository
                 )
             )
             ->setParameter('text', '%'.$text.'%')
-            ->orderBy('o.deadline', 'DESC')
+            ->orderBy('o.deadline', 'DESC');
+
+        if ($found !== null) {
+            $found = (clone $queryBuilder)
+                ->select('count(o.id)')
+                ->getQuery()
+                ->getSingleScalarResult();
+        }
+
+        $result = $queryBuilder
             ->setMaxResults(self::LIMIT)
             ->getQuery()
             ->getResult();
+
+        $count = count($result);
+
+        return $result;
     }
 
     /**
+     * @param OrdersSearch $ordersSearch
+     * @param int $count
+     * @param ?int $found
+     *  If not null, will be set to the total number of found orders, omit or pass null to avoid counting
      * @return Order|Order[]
      */
-    public function getByOrdersSearch(OrdersSearch $ordersSearch): Order|array
+    public function getByOrdersSearch(OrdersSearch $ordersSearch, int &$count, ?int &$found = null): Order|array
     {
         if (!empty($ordersSearch->getId())) {
+            $count = 1;
+            $found = $found !== null ? 1 : null;
+
             return $this->findOneBy(['id' => $ordersSearch->getId()]);
         }
 
-        return $this->searchByText($ordersSearch->getPhrase());
+        return $this->searchByText($ordersSearch->getPhrase(), $count, $found);
     }
 }

@@ -17,9 +17,8 @@ export default class extends Controller {
     reload() {
         const $tableWrapper = $(this.tableWrapperTarget);
         const $rowsCountWrapper = $(this.rowsCountWrapperTarget);
-        const $table = $($tableWrapper.children('table')[0]);
+        const $table = $($tableWrapper.find('table')[0]);
         const url = $table.data("url");
-
         let method = $table.data("method");
         method = (method === undefined) ? 'GET' : method;
 
@@ -34,6 +33,7 @@ export default class extends Controller {
                 });
             },
             error: function (jqXHR) {
+                console.error(jqXHR);
                 // self.controller.popupManager.display(jqXHR.responseText);
             }
         });

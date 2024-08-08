@@ -21,7 +21,12 @@ class OrdersSearchForm extends AbstractType
         $builder->add('phrase', TextType::class, [
             'required' => false,
         ]);
-        $builder->add('submit', SubmitType::class, ['label' => 'Search']);
+        $builder->add('submit', SubmitType::class, [
+            'label' => 'Search',
+            'attr' => [
+                'class' => 'btn btn-primary',
+            ],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -22,8 +22,6 @@ services:
       environment:
          MYSQL_ROOT_PASSWORD: root
          MYSQL_DATABASE: order_manager
-         MYSQL_USER: order_manager
-         MYSQL_PASSWORD: 12345
       ports:
          - '4306:3306'
       networks:

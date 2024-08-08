@@ -39,13 +39,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string", length: 100)]
     private string $lastName;
 
-    #[ORM\Column(name: "preferences", type: "preferences")]
+    #[ORM\Column(name: "preferences", type: "preferences", nullable: true)]
     private ?Preferences $preferences = null;
 
-//    private ?Preferences $preferences = null;
-
     #[ORM\ManyToOne(targetEntity: "Staff")]
-    private Staff $staff;
+    private ?Staff $staff;
 
     #[ORM\Column(type: "datetime")]
     private DateTime $createdAt;
@@ -87,14 +85,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->preferences;
     }
-//
-//    /**
-//     * @internal
-//     */
-//    public function get_preferences(): array
-//    {
-//        return $this->_preferences;
-//    }
 
     public function setPreferences(?Preferences $preferences): User
     {
@@ -108,7 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->staff;
     }
 
-    public function setStaff($staff): self
+    public function setStaff(?Staff $staff): self
     {
         $this->staff = $staff;
 

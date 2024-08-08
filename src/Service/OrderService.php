@@ -8,11 +8,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
-class OrderService
+readonly class OrderService
 {
     public function __construct(
-        private readonly Environment $twig,
-        private readonly RouterInterface $router,
+        private Environment $twig,
+        private RouterInterface $router,
     ) {
     }
 
@@ -27,6 +27,8 @@ class OrderService
                     'data-method' => 'POST',
                 ],
                 'orders' => $orders,
+                'rowsFound' => count($orders),
+                'rowsShown' => count($orders),
                 'cache' => [
                     'search-form' => ['key' => '', 'tags' => [], 'ttl' => new \DateInterval('P1D')],
                 ],

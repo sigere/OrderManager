@@ -1,4 +1,6 @@
 framework:
+    set_content_language_from_locale: true
+    set_locale_from_accept_language: true
     default_locale: pl
     translator:
         default_path: '%kernel.project_dir%/translations'
