@@ -1,0 +1,15 @@
+name: Analysis
+on: pull_request
+
+jobs:
+  build:
+    name: Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+
+      - name: PHP CS Fixer
+        run: |
+            composer require --dev friendsofphp/php-cs-fixer
+            ./vendor/bin/php-cs-fixer fix --dry-run --diff
