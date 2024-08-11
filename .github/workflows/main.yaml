@@ -25,6 +25,12 @@ jobs:
           php-version: '8.3'
       - uses: actions/checkout@v1
       - run: composer install --no-interaction
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.16
+          cache: 'npm'
+      - run: npm install
+      - run: npm run build
       - run: |
           ./bin/console doctrine:database:create
           ./bin/console doctrine:schema:create
