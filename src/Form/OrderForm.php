@@ -104,7 +104,6 @@ class OrderForm extends AbstractType
                 'label' => 'Notes',
                 'empty_data' => '',
             ]);
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

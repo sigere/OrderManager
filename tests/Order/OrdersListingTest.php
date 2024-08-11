@@ -2,10 +2,8 @@
 
 namespace App\Tests\Order;
 
-use App\Entity\Client;
 use App\Entity\Order;
 use App\Entity\Staff;
-use App\Entity\User;
 use App\Preferences\Model\OrderPreferences;
 use App\Tests\AppWebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
