@@ -72,6 +72,8 @@ class Client
 
     public function setAlias(string $alias): self
     {
+        $this->alias = $alias;
+
         return $this;
     }
 
