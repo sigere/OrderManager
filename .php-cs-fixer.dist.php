@@ -8,7 +8,9 @@ $finder = (new PhpCsFixer\Finder())
 return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
+        'no_whitespace_in_blank_line' => false,
     ])
     ->setFinder($finder)
     ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+    ->setCacheFile('./var/cache/php-cs-fixer.cache')
 ;

@@ -15,18 +15,9 @@ if ($_SERVER['APP_DEBUG']) {
 
 (new Filesystem())->remove(__DIR__.'/../var/cache/test');
 
-$commands = [
-    'doctrine:database:drop --force',
-    'doctrine:database:create',
-    'doctrine:schema:create',
-    'doctrine:fixtures:load',
-];
-
-foreach ($commands as $command) {
-    passthru(sprintf(
-        'APP_ENV=%s php "%s/../bin/console" %s --no-interaction',
-        $_ENV['APP_ENV'],
-        __DIR__,
-        $command
-    ));
-}
+passthru(sprintf(
+    'APP_ENV=%s php "%s/../bin/console" %s --no-interaction',
+    $_ENV['APP_ENV'],
+    __DIR__,
+    'doctrine:fixtures:load'
+));

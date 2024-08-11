@@ -1,3 +1,3 @@
-import 'bootstrap';
-import './bootstrap.js';
-import './styles/login.css';
+import 'bootstrap'
+import './bootstrap.js'
+import './styles/login.css'

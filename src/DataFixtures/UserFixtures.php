@@ -14,7 +14,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 {
     private const array USERS = [
         [
-            'username' => 'tester1',
+            'username' => 'tester_1',
             'firstName' => 'John',
             'lastName' => 'Doe',
             'roles' => ['ROLE_USER'],
@@ -22,7 +22,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             'createdAt' => 1672531199,
         ],
         [
-            'username' => 'tester2',
+            'username' => 'tester_2',
             'firstName' => 'Jane',
             'lastName' => 'Doe',
             'roles' => ['ROLE_ADMIN'],

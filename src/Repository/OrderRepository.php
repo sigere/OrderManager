@@ -29,7 +29,7 @@ class OrderRepository extends ServiceEntityRepository
     /**
      * @return Order[]
      */
-    public function getByOrdersPreferences(OrderPreferences $preferences, ?int &$rows = null): array
+    public function getByOrderPreferences(OrderPreferences $preferences, ?int &$rows = null): array
     {
         $orders = $this->createQueryBuilder('o');
 

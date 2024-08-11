@@ -4,16 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Log;
 use App\Entity\Order;
-use App\Form\OrderForm;
 use App\Form\DeleteEntityFrom;
 use App\Form\IndexFiltersForm;
+use App\Form\OrderForm;
 use App\Repository\LogRepository;
 use App\Repository\OrderRepository;
 use App\Service\OptionsProvider\OrderOptionsProvider;
 use App\Service\OptionsProviderFactory;
 use App\Service\ResponseFormatter;
 use App\Service\UserPreferences\IndexPreferences;
-use Datetime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,14 +51,14 @@ class IndexController extends AbstractController
             'orders' => $orders,
             'details' => [
                 'order' => $order,
-                'logs' => $logs
+                'logs' => $logs,
             ],
             'filtersForm' => $form->createView(),
             'preferences' => $this->preferences,
             'options' => $options,
             'rowsFound' => $rowsCount,
             'rowsShown' => min($rowsCount, $this->orderRepository::LIMIT),
-            'dataSourceUrl' => '/order'
+            'dataSourceUrl' => '/order',
         ]);
     }
 
@@ -77,45 +76,45 @@ class IndexController extends AbstractController
                 return $this->render('index/search_form.html.twig', [
                     'entity' => 'order',
                     'dataUrl' => '/search',
-                    'errors' => ['Order not found.']
+                    'errors' => ['Order not found.'],
                 ]);
             }
 
             return new Response(
-                $this->formatter->success("Znaleziono zlecenie."),
+                $this->formatter->success('Znaleziono zlecenie.'),
                 200,
-                ['Set-Current-Subject' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/'.$order->getId()]
             );
         } elseif ($text) {
             $orders = $this->orderRepository->searchByText($text);
 
             $count = count($orders);
             $errors = [];
-            if ($count == 0) {
+            if (0 == $count) {
                 return $this->render('index/search_form.html.twig', [
                     'entity' => 'order',
                     'dataUrl' => '/search',
-                    'errors' => ['Order not found.']
+                    'errors' => ['Order not found.'],
                 ]);
             } elseif ($count > 30) {
                 $errors = [
-                    "Found over 30 results.",
-                    "Shown are only last 30 ordered by deadline."
+                    'Found over 30 results.',
+                    'Shown are only last 30 ordered by deadline.',
                 ];
             }
 
-            return $this->render("index/search_form.html.twig", [
+            return $this->render('index/search_form.html.twig', [
                 'entity' => 'order',
                 'dataUrl' => '/search',
                 'errors' => $errors,
                 'text' => $text,
-                'orders' => $orders
+                'orders' => $orders,
             ]);
-        } elseif ($id !== null || $text !== null) {
+        } elseif (null !== $id || null !== $text) {
             return $this->render('index/search_form.html.twig', [
                 'entity' => 'order',
                 'dataUrl' => '/search',
-                'errors' => ['You need to fill at least one field.']
+                'errors' => ['You need to fill at least one field.'],
             ]);
         }
 
@@ -158,7 +157,7 @@ class IndexController extends AbstractController
         $result['table'] = $this->renderView('index/orders_table.html.twig', [
             'orders' => $orders,
             'preferences' => $this->preferences,
-            'dataSourceUrl' => '/order'
+            'dataSourceUrl' => '/order',
         ]);
 
         $result['rowsCount'] = $this->renderView('rows_count.html.twig', [
@@ -189,7 +188,7 @@ class IndexController extends AbstractController
         ]);
 
         $result['burger'] = $this->renderView('burger.html.twig', [
-            'options' => $options
+            'options' => $options,
         ]);
 
         return new JsonResponse($result);
@@ -214,7 +213,7 @@ class IndexController extends AbstractController
             return new Response(
                 $this->formatter->success('Dodano zlecenie'),
                 201,
-                ['Set-Current-Subject' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/'.$order->getId()]
             );
         }
 
@@ -233,18 +232,18 @@ class IndexController extends AbstractController
             $this->optionsProviderFactory->getOptions($order)
         )) {
             return new Response(
-                $this->formatter->error("To zlecenie nie może być edytowane."),
+                $this->formatter->error('To zlecenie nie może być edytowane.'),
                 403
             );
         }
 
         $attr = array_merge(OrderForm::DEFAULT_OPTIONS['attr'] ?? [], [
-            'data-url' => '/order/' . $order->getId(),
-            'data-method' => 'PUT'
+            'data-url' => '/order/'.$order->getId(),
+            'data-method' => 'PUT',
         ]);
         $options = array_merge(OrderForm::DEFAULT_OPTIONS, [
             'attr' => $attr,
-            'method' => 'PUT'
+            'method' => 'PUT',
         ]);
 
         $form = $this->createForm(OrderForm::class, $order, $options);
@@ -259,13 +258,13 @@ class IndexController extends AbstractController
             return new Response(
                 $this->formatter->success('Zaktualizowano zlecenie.'),
                 202,
-                ['Set-Current-Subject' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/'.$order->getId()]
             );
         }
 
         return $this->render('index/order_form.html.twig', [
             'orderForm' => $form->createView(),
-            'update' => true
+            'update' => true,
         ]);
     }
 
@@ -282,14 +281,14 @@ class IndexController extends AbstractController
         }
 
         $attr = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS['attr'] ?? [], [
-            'data-url' => '/order/' . $order->getId(),
+            'data-url' => '/order/'.$order->getId(),
         ]);
         $options = array_merge(DeleteEntityFrom::DEFAULT_OPTIONS, ['attr' => $attr]);
         $form = $this->createForm(DeleteEntityFrom::class, null, $options);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $order->setDeletedAt(new Datetime());
+            $order->setDeletedAt(new \Datetime());
             $this->entityManager->persist($order);
             $this->entityManager->persist(new Log($this->getUser(), 'Usunięto zlecenie', $order));
             $this->entityManager->flush();
@@ -297,12 +296,12 @@ class IndexController extends AbstractController
             return new Response(
                 $this->formatter->success('Zlecenie usunięte'),
                 200,
-                ['Set-Current-Subject' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/'.$order->getId()]
             );
         }
 
         return $this->render('delete_entity_form.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -323,8 +322,8 @@ class IndexController extends AbstractController
             'attr' => [
                 'method' => null,
                 'data-method' => 'POST',
-                'data-url' => '/order/' . $order->getId() . '/restore'
-            ]
+                'data-url' => '/order/'.$order->getId().'/restore',
+            ],
         ];
         $form = $this->createForm(DeleteEntityFrom::class, null, $options);
         $form->handleRequest($request);
@@ -338,13 +337,13 @@ class IndexController extends AbstractController
             return new Response(
                 $this->formatter->success('Zlecenie przywrócone'),
                 200,
-                ['Set-Current-Subject' => 'order/' . $order->getId()]
+                ['Set-Current-Subject' => 'order/'.$order->getId()]
             );
         }
 
         return $this->render('delete_entity_form.html.twig', [
             'form' => $form->createView(),
-            'restore' => true
+            'restore' => true,
         ]);
     }
 }

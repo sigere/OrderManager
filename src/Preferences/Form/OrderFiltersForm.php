@@ -74,13 +74,13 @@ class OrderFiltersForm extends AbstractType
         $builder
             ->add('client', EntityType::class, [
                 'class' => Client::class,
-                'query_builder' => $this->clientRepository->getQueryBuilderForOrdersFiltersForm(),
+                'query_builder' => $this->clientRepository->getQueryBuilderForOrderFiltersForm(),
                 'required' => false,
                 'placeholder' => 'All clients',
             ])
             ->add('staff', EntityType::class, [
                 'class' => Staff::class,
-                'query_builder' => $this->staffRepository->getQueryBuilderForOrdersFiltersForm(),
+                'query_builder' => $this->staffRepository->getQueryBuilderForOrderFiltersForm(),
                 'required' => false,
                 'placeholder' => 'All staff',
             ])

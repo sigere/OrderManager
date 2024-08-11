@@ -22,7 +22,14 @@ class StaffRepository extends ServiceEntityRepository
         parent::__construct($registry, Staff::class);
     }
 
-    public function getQueryBuilderForOrdersFiltersForm(): QueryBuilder
+    public function getQueryBuilderForOrderFiltersForm(): QueryBuilder
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.deletedAt is null')
+            ->orderBy('s.lastName', 'ASC');
+    }
+
+    public function getQueryBuilderForOrderForm(): QueryBuilder
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.deletedAt is null')

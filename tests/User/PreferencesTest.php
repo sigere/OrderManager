@@ -14,8 +14,8 @@ class PreferencesTest extends WebTestCase
 {
     public function testUserHasDefaultPreferencesInitially(): void
     {
-        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => 'tester1']);
+        $entityManager = $this->getContainer()->get(EntityManagerInterface::class);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => 'tester_1']);
 
         $this->assertInstanceOf(User::class, $user);
 
@@ -51,7 +51,7 @@ class PreferencesTest extends WebTestCase
         $user = $client->getContainer()
             ->get(EntityManagerInterface::class)
             ->getRepository(User::class)
-            ->findOneBy(['username' => 'tester1']);
+            ->findOneBy(['username' => 'tester_1']);
 
         $client->loginUser($user);
         $crawler = $client->request('GET', '/orders');
@@ -72,7 +72,7 @@ class PreferencesTest extends WebTestCase
         $client = static::createClient(['HTTP_ACCEPT_LANGUAGE' => 'en']);
         $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
         $userRepository = $entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['username' => 'tester1']);
+        $user = $userRepository->findOneBy(['username' => 'tester_1']);
 
         $client->loginUser($user);
         $client->request('GET', '/orders');
@@ -93,7 +93,7 @@ class PreferencesTest extends WebTestCase
         // $container (whole kernel as well probably) changed after submitting form
         $entityManager = $client->getContainer()->get(EntityManagerInterface::class);
         $userRepository = $entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['username' => 'tester1']);
+        $user = $userRepository->findOneBy(['username' => 'tester_1']);
         $orderPreferences = $user->getPreferences()->getOrdersPreferences();
 
         $this->assertNotNull($orderPreferences->getDateFrom());

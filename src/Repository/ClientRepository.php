@@ -84,7 +84,14 @@ class ClientRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function getQueryBuilderForOrdersFiltersForm(): QueryBuilder
+    public function getQueryBuilderForOrderFiltersForm(): QueryBuilder
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.deletedAt is null')
+            ->orderBy('c.alias', 'ASC');
+    }
+
+    public function getQueryBuilderForOrderForm(): QueryBuilder
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.deletedAt is null')

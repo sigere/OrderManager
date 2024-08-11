@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Orders;
+namespace App\Controller\Order;
 
 use App\Controller\ApiControllerInterface;
 use App\Entity\Enum\OrderState;
 use App\Entity\Order;
 use App\Entity\User;
 use App\Form\Model\OrdersSearch;
+use App\Form\OrderForm;
 use App\Form\OrdersSearchForm;
 use App\Repository\OrderRepository;
 use App\Service\OrderService;
@@ -20,10 +21,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Environment;
 
-#[Route('/api/orders', condition: 'request.isXmlHttpRequest()', format: 'json')]
+#[Route('/api/order', condition: 'request.isXmlHttpRequest()', format: 'json')]
 class ApiController extends AbstractController implements ApiControllerInterface
 {
     public function __construct(
@@ -32,23 +32,23 @@ class ApiController extends AbstractController implements ApiControllerInterface
         private readonly RouterInterface $router,
         private readonly Environment $twig,
         private readonly EntityManagerInterface $entityManager,
-        private readonly CacheInterface $cache,
+        // private readonly CacheInterface $cache,
     ) {
     }
 
-    #[Route('/table', name: 'api_orders_table', methods: ['GET'])]
+    #[Route('/table', name: 'api_order_table', methods: ['GET'])]
     public function tableAction(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
 
-        $orders = $this->orderRepository->getByOrdersPreferences(
+        $orders = $this->orderRepository->getByOrderPreferences(
             $user->getPreferences()->getOrdersPreferences(), $rowsCount
         );
 
         $endpointData = [
             'data-url' => $this->router->generate(
-                name: 'api_orders_table', referenceType: UrlGeneratorInterface::ABSOLUTE_URL
+                name: 'api_order_table', referenceType: UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'data-method' => 'GET',
         ];
@@ -73,7 +73,7 @@ class ApiController extends AbstractController implements ApiControllerInterface
         ]);
     }
 
-    #[Route('/{id}/state', name: 'api_orders_state_put', methods: ['PUT'])]
+    #[Route('/{id}/state', name: 'api_order_state_put', methods: ['PUT'])]
     public function orderStatePutAction(Order $order, Request $request): Response
     {
         /** @var User $user */
@@ -96,7 +96,7 @@ class ApiController extends AbstractController implements ApiControllerInterface
         ]);
     }
 
-    #[Route('/search', name: 'api_orders_search_get', methods: ['GET'])]
+    #[Route('/search', name: 'api_order_search_get', methods: ['GET'])]
     public function searchGetAction(): Response
     {
         $form = $this->createForm(OrdersSearchForm::class);
@@ -109,24 +109,61 @@ class ApiController extends AbstractController implements ApiControllerInterface
         ]);
     }
 
-    #[Route('/search', name: 'api_orders_search_post', methods: ['POST'])]
+    #[Route('/search', name: 'api_order_search_post', methods: ['POST'])]
     public function searchPostAction(Request $request): Response
     {
         $form = $this->createForm(OrdersSearchForm::class);
         $form->handleRequest($request);
 
         $orders = [];
+        $found = 0;
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var OrdersSearch $ordersSearch */
             $ordersSearch = $form->getData();
-            $orders = $this->orderRepository->getByOrdersSearch($ordersSearch);
+            $orders = $this->orderRepository->getByOrdersSearch($ordersSearch, $found);
             $orders = is_array($orders) ? $orders : [$orders];
         }
 
         return new JsonResponse([
             'success' => true,
             'data' => [
-                'renderedSearch' => $this->orderService->renderSearchForm($form, $orders),
+                'renderedSearch' => $this->orderService->renderSearchForm($form, $orders, $found),
+            ],
+        ]);
+    }
+
+    #[Route('', name: 'api_order_post', methods: ['POST'])]
+    public function postAction(Request $request): Response
+    {
+        $form = $this->createForm(OrderForm::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                return new JsonResponse([
+                    'success' => false,
+                    'data' => [
+                        'renderedForm' => '',
+                    ],
+                ]);
+            }
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => [
+                    'renderedForm' => '',
+                ],
+            ]);
+        }
+
+        $renderedForm = $this->twig->render('orders/order_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+
+        return new JsonResponse([
+            'success' => true,
+            'data' => [
+                'renderedForm' => $renderedForm,
             ],
         ]);
     }

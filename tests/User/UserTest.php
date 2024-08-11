@@ -26,7 +26,7 @@ class UserTest extends WebTestCase
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $user = $entityManager
             ->getRepository(User::class)
-            ->findOneBy(['username' => 'tester1']);
+            ->findOneBy(['username' => 'tester_1']);
 
         $this->assertNotNull($user);
     }
@@ -37,7 +37,7 @@ class UserTest extends WebTestCase
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $user = $entityManager
             ->getRepository(User::class)
-            ->findOneBy(['username' => 'tester1']);
+            ->findOneBy(['username' => 'tester_1']);
 
         $client->loginUser($user);
         $client->request('GET', '/orders');

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Orders;
+namespace App\Controller\Order;
 
 use App\Entity\User;
 use App\Preferences\Form\OrderFiltersForm;
@@ -30,7 +30,7 @@ class IndexController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $orders = $this->orderRepository->getByOrdersPreferences(
+        $orders = $this->orderRepository->getByOrderPreferences(
             $user->getPreferences()->getOrdersPreferences(), $rowsCount
         );
 
@@ -49,7 +49,7 @@ class IndexController extends AbstractController
 
         $endpointData = [
             'data-url' => $this->router->generate(
-                name: 'api_orders_table', referenceType: UrlGeneratorInterface::ABSOLUTE_URL
+                name: 'api_order_table', referenceType: UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'data-method' => 'GET',
         ];
