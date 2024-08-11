@@ -38,6 +38,9 @@ abstract class AppWebTestCase extends WebTestCase
 
     protected function getAppClient(string $alias): Client
     {
-        return $this->entityManager->getRepository(Client::class)->findOneBy(['alias' => $alias]);
+        var_dump($this->entityManager->getRepository(Client::class)->findAll());
+        return $this->entityManager
+            ->getRepository(Client::class)
+            ->findOneBy(['alias' => $alias]);
     }
 }
