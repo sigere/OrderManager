@@ -1,0 +1,80 @@
+constraints:
+   client:
+      alias.exists: 'Istnieje już klient o podanym aliasie!'
+
+Execute: Wykonaj
+Orders: 'Zlecenia'
+Filter: 'Filtruj'
+Order details: 'Szczegóły zlecenia'
+Select order to display details.: Wybierz zlecenie, aby wyświetlić jego szczegóły.
+Order Manager: 'Menedżer Zleceń'
+logout: 'wyloguj'
+Add order: 'Dodaj zlecenie'
+Search: 'Wyszukaj'
+password: 'hasło'
+login: 'login'
+Log in: 'Zaloguj'
+Order Manager for Kadamaxo: 'Menedżer Zleceń dla Kadamaxo'
+
+Accepted: 'Przyjęte'
+Done: 'Wykonane'
+Sent: 'Wysłane'
+Deleted: 'Usunięte'
+Settled: 'Rozliczone'
+Adoption: 'Data dodania'
+Client: 'Klient'
+Topic: 'Temat'
+Lang: 'Język'
+Deadline: 'Termin'
+Staff: 'Wykonawca'
+All clients: 'Wszyscy klienci'
+All staff: 'Wszyscy pracownicy'
+Date from: 'Data od'
+Date to: 'Data do'
+
+Rows: 'wiersze'
+rows shown: 'wyświetlane wiersze'
+rows found: 'znalezione wiersze'
+
+Entry number: 'Numer wpisu'
+State: 'Status'
+Language: 'Język'
+Certified: 'Przysięgłe'
+Yes: 'Tak'
+No: 'Nie'
+Assignee: 'messages'
+no notes: 'brak notatek'
+Additional notes: 'notatki'
+done: wykonane
+accepted: przyjęte
+sent: wysłane
+Pages: strony
+Price per page: Cena za stronę
+Additional fee: Dodatkowa opłata
+Netto: Netto
+setteld: 'rozliczone'
+deleted: 'usunięte'
+No results - check filters: 'Brak wyników - sprawdź filtry'
+update order\'s state: 'Zaktualizuj status zlecenia'
+update order's state: 'Zaktualizuj status zlecenia'
+adoption: 'data przyjęcia'
+client: 'klient'
+topic: 'temat'
+language: 'język'
+deadline: 'termin'
+staff: 'wykonawca'
+change status: 'zmień status'
+Id is exactly: 'id to dokładnie'
+Title or notes include: 'tytuł lub notatki zawierają'
+id: 'id'
+Order filters form: 'Formularz filtrów zleceń'
+States: 'Statusy'
+Columns: 'Kolumny'
+Date type: 'Typ daty'
+Today: 'Dzisiaj'
+This week: 'Ten tydzień'
+Last week: 'Ostatni tydzień'
+This month: 'Ten miesiąc'
+Last month: 'Ostatni miesiąc'
+The date from must be before the date to: 'Data od musi być przed datą do'
+The date to must be after the date from: 'Data do musi być po dacie od'

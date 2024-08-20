@@ -1,64 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use App\Repository\InvoiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=InvoiceRepository::class)
- */
+#[ORM\Entity(repositoryClass: 'InvoiceRepository')]
 class Invoice
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private int $id;
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private \DateTimeInterface $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private int $ordersAmount;
 
-    /**
-     * @ORM\Column(type="float")
-     */
+    #[ORM\Column(type: 'float')]
     private float $netto;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Order::class)
-     */
-    private $orders;
+    #[ORM\ManyToMany(targetEntity: 'Order')]
+    #[ORM\Column(type: 'string')]
+    private ArrayCollection $orders;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: 'User')]
     private User $user;
 
-
-    public function __construct(User $user)
+    public function __construct()
     {
-        $this->user = $user;
         $this->createdAt = new \DateTime();
         $this->ordersAmount = 0;
         $this->netto = 0;
         $this->orders = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getCreatedAt(): \DateTimeInterface
@@ -66,14 +46,14 @@ class Invoice
         return $this->createdAt;
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     public function getOrdersAmount(): ?int
     {
         return $this->ordersAmount;
-    }
-
-    public function getNetto(): ?float
-    {
-        return $this->netto;
     }
 
     public function getOrders(): ArrayCollection|array|Collection
@@ -93,8 +73,20 @@ class Invoice
         return $this;
     }
 
+    public function getNetto(): ?float
+    {
+        return $this->netto;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
+    }
+
+    public function setUser(User $user): Invoice
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

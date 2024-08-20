@@ -1,0 +1,12 @@
+{% form_theme filtersForm 'form_div_layout_override.html.twig' %}
+{{ form_start(filtersForm, {'attr': {'data-filters-target': 'form'}}) }}
+{{ form_row(filtersForm) }}
+<div class="filters-form date-helpers" data-filters-target="dateHelpers">
+    <button class="filters-form helper" data-interval="today">{{ 'Today' | trans }}</button>
+    <button class="filters-form helper" data-interval="this_week">{{ 'This week' | trans }}</button>
+    <button class="filters-form helper" data-interval="last_week">{{ 'Last week' | trans }}</button>
+    <button class="filters-form helper" data-interval="this_month">{{ 'This month' | trans }}</button>
+    <button class="filters-form helper" data-interval="last_month">{{ 'Last month' | trans }}</button>
+</div>
+<button type="submit" class="btn btn-primary">{{ 'Execute' | trans }}</button>
+{{ form_end(filtersForm) }}

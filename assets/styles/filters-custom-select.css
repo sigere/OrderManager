@@ -1,0 +1,109 @@
+.filters-form .select-styled:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-color: white transparent transparent transparent;
+    position: absolute;
+    top: 13px;
+    right: 5px;
+}
+
+.filters-form .select-styled:active:after, .select-styled.active:after {
+    top: 5px;
+    border-color: transparent transparent white transparent;
+}
+
+.filters-form .select-options {
+    max-height: 600%;
+    overflow-y: scroll;
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 999;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: var(--color-header);
+    width: 150px;
+    box-shadow: 0 0 10px black;
+}
+
+.filters-form .select-options::-webkit-scrollbar {
+    width: 14px;
+    border-radius: 10px;
+}
+
+.filters-form .select-options::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #AAAAAA;
+}
+
+.filters-form .select-options li {
+    margin: 0;
+    padding: 10px 0;
+    text-indent: 15px;
+    -moz-transition: all 0.15s ease-in;
+    -o-transition: all 0.15s ease-in;
+    -webkit-transition: all 0.15s ease-in;
+    transition: all 0.15s ease-in;
+    overflow: hidden;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.filters-form .select-options li:hover, .select-options li.is-selected {
+    background: linear-gradient(90deg, rgb(73, 81, 88) 0%, var(--color-header) 70%, var(--color-header) 100%);
+}
+
+.filters-form .select-options li[rel="hide"] {
+    display: none;
+}
+
+.filters-form .select {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    font-size: 12px;
+    width: 150px;
+    height: 32px;
+    margin-top: 5px;
+}
+
+.filters-form .select-styled {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -moz-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    padding-left: 10px;
+    padding-top: 7px;
+    padding-right: 19px;
+    overflow: hidden;
+    border: 1px solid var(--color-property-label);
+    border-radius: 6px;
+    line-height: 19px;
+}
+
+.filters-form .hidden, .filters-form select.form-select {
+    display: none;
+    visibility: hidden;
+    padding-right: 10px;
+}
+
+.filters-form .select-styled:active, .select-styled.active {
+    border: 1px solid var(--color-order-manager);
+    color: var(--color-order-manager);
+}
+
+.filters-form .select ~ label {
+    display: none;
+}

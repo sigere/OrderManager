@@ -1,0 +1,17 @@
+@import '~bootstrap';
+@import "@fontsource/rubik/300.css";
+@import "@fontsource/rubik/400.css";
+@import "@fontsource/rubik/700.css";
+
+@import './base.css';
+@import './content.css';
+@import './entity_table.css';
+@import './orders.css';
+@import './burger.css';
+@import './entity_form.css';
+@import './icons.css';
+
+html, body {
+    height: 100%;
+    font-family: "Rubik", sans-serif;
+}

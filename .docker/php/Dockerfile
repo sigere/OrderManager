@@ -1,7 +1,16 @@
-FROM php:8.0-fpm
+FROM php:8.3-fpm
 
-RUN apt update \
-    && apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip \
+RUN usermod -u 1000 www-data
+
+RUN curl -sS https://getcomposer.org/installer | php -- \
+    --install-dir=/usr/local/bin --filename=composer --version=2.7.7
+
+RUN curl -sS https://get.symfony.com/cli/installer | bash &&  \
+    mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+
+RUN apt update
+
+RUN apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip \
     && docker-php-ext-install intl opcache pdo pdo_mysql \
     && pecl install apcu \
     && docker-php-ext-enable apcu \
@@ -10,9 +19,5 @@ RUN apt update \
 
 WORKDIR /var/www/OrderManager
 
-RUN usermod -u 1000 www-data
+RUN chown www-data:www-data /var/www -R
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony

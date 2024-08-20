@@ -1,0 +1,21 @@
+.reload-placeholder,
+.entity-table select + label {
+    display: none;
+}
+
+.reload-placeholder svg {
+    height: 18px;
+    width: auto;
+}
+
+.entity-table [data-state="accepted"] {
+    background-color: var(--color-state-accepted);
+}
+
+.entity-table [data-state="done"] {
+    background-color: var(--color-state-done);
+}
+
+.entity-table [data-state="sent"] {
+    background-color: var(--color-state-sent);
+}

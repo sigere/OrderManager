@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Client;
 use App\Entity\Order;
-use App\Service\UserPreferences\IndexPreferences;
+use App\Form\Model\OrdersSearch;
+use App\Preferences\Model\OrderPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,7 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OrderRepository extends ServiceEntityRepository
 {
-    public const LIMIT = 100;
+    public const int LIMIT = 100;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -24,11 +27,9 @@ class OrderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IndexPreferences $preferences
-     * @param int|null $rows
      * @return Order[]
      */
-    public function getByIndexPreferences(IndexPreferences $preferences, int &$rows = null): array
+    public function getByOrderPreferences(OrderPreferences $preferences, ?int &$rows = null): array
     {
         $orders = $this->createQueryBuilder('o');
 
@@ -37,66 +38,52 @@ class OrderRepository extends ServiceEntityRepository
             return [];
         }
 
-        $states = empty($states) ? ["invalid-state"] : $states;
-        $statement = "o.state in (:states)";
-        $orders->setParameter("states", $states);
+        $orders
+            ->select('o', 'e')
+            ->leftJoin('o.repertoryEntry', 'e');
+
+        $states = empty($states) ? ['invalid-state'] : $states;
+        $statement = 'o.state in (:states)';
+        $orders->setParameter('states', $states);
 
         if ($preferences->getSettled()) {
-            $statement .= " or o.settledAt is not null";
+            $statement .= ' or o.settledAt is not null';
         } else {
-            $orders = $orders
-                ->andWhere("o.settledAt is null");
+            $orders = $orders->andWhere('o.settledAt is null');
         }
 
         if ($preferences->getDeleted()) {
-            $statement .= " or o.deletedAt is not null";
+            $statement .= ' or o.deletedAt is not null';
         } else {
-            $orders = $orders
-                ->andWhere("o.deletedAt is null");
+            $orders = $orders->andWhere('o.deletedAt is null');
         }
 
-        $orders = $orders
-            ->andWhere($statement);
+        $orders = $orders->andWhere($statement);
 
         if ($staff = $preferences->getStaff()) {
-            $orders = $orders
-                ->andWhere('o.staff = :staff')
-                ->setParameter('staff', $staff);
+            $orders = $orders->andWhere('o.staff = :staff')->setParameter('staff', $staff);
         }
 
         if ($client = $preferences->getClient()) {
-            $orders = $orders
-                ->andWhere('o.client = :client')
-                ->setParameter('client', $client);
+            $orders = $orders->andWhere('o.client = :client')->setParameter('client', $client);
         }
 
         $dateType = $preferences->getDateType();
         if ($dateFrom = $preferences->getDateFrom()) {
-            $orders
-                ->andWhere('o.' . $dateType . ' >= :dateFrom')
-                ->setParameter('dateFrom', $dateFrom);
+            $orders->andWhere('o.'.$dateType->value.' >= :dateFrom')->setParameter('dateFrom', $dateFrom);
         }
 
         if ($dateTo = $preferences->getDateTo()) {
             $dateTo->setTime(23, 59);
-            $orders
-                ->andWhere('o.' . $dateType . ' <= :dateTo')
-                ->setParameter('dateTo', $dateTo);
+            $orders->andWhere('o.'.$dateType->value.' <= :dateTo')->setParameter('dateTo', $dateTo);
         }
 
         $rows = (clone $orders)->select('count(o.id)')->getQuery()->getSingleScalarResult();
 
-        return $orders
-            ->setMaxResults(self::LIMIT)
-            ->orderBy('o.deadline', 'ASC')
-            ->getQuery()
-            ->getResult();
+        return $orders->setMaxResults(self::LIMIT)->orderBy('o.deadline', 'ASC')->getQuery()->getResult();
     }
 
     /**
-     * @param Client $client
-     * @param int $year
-     * @param int|null $month
      * @return Order[]
      */
     public function getForInvoicingByClient(Client $client, int $year, ?int $month = null): array
@@ -110,35 +97,67 @@ class OrderRepository extends ServiceEntityRepository
             ->setParameter('year', $year);
 
         if ($month) {
-            $orders = $orders
-                ->andWhere('month(o.deadline) = :month')
-                ->setParameter('month', $month);
+            $orders = $orders->andWhere('month(o.deadline) = :month')->setParameter('month', $month);
         }
 
-        return $orders
-            ->orderBy('o.deadline', 'ASC')
-            ->getQuery()
-            ->getResult();
+        return $orders->orderBy('o.deadline', 'ASC')->getQuery()->getResult();
     }
 
     /**
-     * @param string $text
+     * @param ?int $found
+     *                    If not null, will be set to the total number of found orders, omit or pass null to avoid counting
+     *
      * @return Order[]
      */
-    public function searchByText(string $text): array
+    public function searchByText(string $text, int &$count, ?int &$found = null): array
     {
         $queryBuilder = $this->createQueryBuilder('o');
-        return $queryBuilder
+
+        $queryBuilder = $queryBuilder
             ->select('o, c')
             ->innerJoin('o.client', 'c')
-            ->andWhere($queryBuilder->expr()->orX(
-                'o.topic LIKE :text',
-                'o.info LIKE :text'
-            ))
-            ->setParameter('text', '%' . $text . '%')
-            ->orderBy('o.deadline', 'DESC')
-            ->setMaxResults(31)
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    'o.topic LIKE :text', 'o.info LIKE :text'
+                )
+            )
+            ->setParameter('text', '%'.$text.'%')
+            ->orderBy('o.deadline', 'DESC');
+
+        if (null !== $found) {
+            $found = (clone $queryBuilder)
+                ->select('count(o.id)')
+                ->getQuery()
+                ->getSingleScalarResult();
+        }
+
+        $result = $queryBuilder
+            ->setMaxResults(self::LIMIT)
             ->getQuery()
             ->getResult();
+
+        $count = count($result);
+
+        return $result;
+    }
+
+    /**
+     * @param ?int $found
+     *                    If not null, will be set to the total number of found orders, omit or pass null to avoid counting
+     *
+     * @return Order[]
+     */
+    public function getByOrdersSearch(OrdersSearch $ordersSearch, int &$count, ?int &$found = null): array
+    {
+        if (!empty($ordersSearch->getId())) {
+            $order = $this->findOneBy(['id' => $ordersSearch->getId()]);
+
+            $count = $order ? 1 : 0;
+            $found = null !== $found ? $count : null;
+            
+            return $order ? [$order] : [];
+        }
+
+        return $this->searchByText($ordersSearch->getPhrase(), $count, $found);
     }
 }

@@ -2,150 +2,97 @@
 
 namespace App\Entity;
 
+use App\Preferences\DoctrineUserListener;
+use App\Preferences\Model\Preferences;
 use App\Repository\UserRepository;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\EntityListeners;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- */
-class User implements UserInterface
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+#[EntityListeners([DoctrineUserListener::class])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $username = null;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @var list<string> The user roles
      */
-    private $username;
+    #[ORM\Column]
+    private array $roles = [];
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    #[ORM\Column]
+    private ?string $password = null;
 
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    private $password;
+    #[ORM\Column(type: 'string', length: 100)]
+    private string $firstName;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $firstName;
+    #[ORM\Column(type: 'string', length: 100)]
+    private string $lastName;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $lastName;
+    #[ORM\Column(name: 'preferences', type: 'preferences', nullable: true)]
+    private ?Preferences $preferences = null;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $preferences = [];
+    #[ORM\ManyToOne(targetEntity: 'Staff')]
+    private ?Staff $staff;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Staff::class)
-     */
-    private $staff;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $deletedAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
         $this->deletedAt = null;
     }
 
-    public function getId(): int
+    public function getFirstName(): string
     {
-        return $this->id;
+        return $this->firstName;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUsername(): string
+    public function setFirstName($firstName): self
     {
-        return (string) $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
+    public function getLastName(): string
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->lastName;
     }
 
-    public function setRoles(array $roles): self
+    public function setLastName($lastName): self
     {
-        $this->roles = $roles;
+        $this->lastName = $lastName;
 
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getPassword(): string
+    public function getPreferences(): ?Preferences
     {
-        return (string) $this->password;
+        return $this->preferences;
     }
 
-    public function setPassword(string $password): self
+    public function setPreferences(?Preferences $preferences): User
     {
-        $this->password = $password;
+        $this->preferences = $preferences;
 
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
-    {
-        // not needed when using the "bcrypt" algorithm in security.yaml
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
-    public function getStaff(): ?Staff
+    public function getStaff(): Staff
     {
         return $this->staff;
     }
@@ -157,75 +104,88 @@ class User implements UserInterface
         return $this;
     }
 
-    public function __toString(): string
-    {
-        return $this->getFirstName() . ' ' . $this->getLastName();
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): self
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?DateTimeInterface
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): User
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?DateTimeInterface
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(?DateTimeInterface $deletedAt): self
+    public function setDeletedAt(null $deletedAt): User
     {
         $this->deletedAt = $deletedAt;
 
         return $this;
     }
 
-    public function isColumnVisible(string $column): bool
+    public function getId(): ?int
     {
-        $this->preferences['orders_table']['langs'] = true;
-
-        return true == $this->getPreferences()['orders_table'][$column];
-        //co jesli nie istenieje taki index $column w tablicy? powineinem sprawdzić isset(...)?
+        return $this->id;
     }
 
-    public function getPreferences(): array
+    public function getUsername(): ?string
     {
-        return $this->preferences;
+        return $this->username;
     }
 
-    public function setPreferences(array $preferences): self
+    public function setUsername(string $username): static
     {
-        $this->preferences = $preferences;
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
 
         return $this;
     }

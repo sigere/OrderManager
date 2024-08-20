@@ -1,0 +1,12 @@
+<div class="property">
+    <div class="name">{{ property.name | trans }}</div>
+    <div
+            class="value"
+            {% for a in property.attr | default([]) %}
+                {{ a.name ~ '="' ~ a.value ~ '"' }}
+            {%  endfor %}
+    >
+        {{ property.value }}
+    </div>
+</div>
+<div style="clear:both;"></div>

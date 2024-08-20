@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests;
+
+use App\Entity\Client;
+use App\Entity\Staff;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+abstract class AppWebTestCase extends WebTestCase
+{
+    protected KernelBrowser $client;
+    protected EntityManagerInterface $entityManager;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+        $this->entityManager = $this->getContainer()->get(EntityManagerInterface::class);
+    }
+
+    protected function getUser(?string $username = 'tester_1'): User
+    {
+        return $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['username' => $username]);
+    }
+
+    protected function getStaff(string $firstName, string $lastName): Staff
+    {
+        return $this->entityManager
+            ->getRepository(Staff::class)
+            ->findOneBy(['firstName' => $firstName, 'lastName' => $lastName]);
+    }
+
+    protected function getAppClient(string $alias): Client
+    {
+        return $this->entityManager
+            ->getRepository(Client::class)
+            ->findOneBy(['alias' => $alias]);
+    }
+
+    protected function getCrawlerOnJSONResponse(?string $fieldName): Crawler
+    {
+        $crawler = $this->client->getCrawler();
+        $response = $this->client->getResponse();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertInstanceOf(JsonResponse::class, $response);
+
+        $array = json_decode($response->getContent(), true);
+        $this->assertIsArray($array);
+        $this->assertArrayHasKey('data', $array);
+        $this->assertArrayHasKey($fieldName, $array['data']);
+
+        $crawler = new Crawler(null, $crawler->getUri());
+        $crawler->addContent($array['data'][$fieldName]);
+
+        return $crawler;
+    }
+}

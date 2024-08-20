@@ -1,31 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\LangRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=LangRepository::class)
- */
+#[ORM\Entity(repositoryClass: LangRepository::class)]
 class Lang
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 50)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=2)
-     */
-    private $short;
+    #[ORM\Column(type: 'string', length: 2)]
+    private string $short;
 
     public function getId(): ?int
     {

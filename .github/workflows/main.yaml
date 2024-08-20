@@ -1,0 +1,48 @@
+name: Main
+on: pull_request
+
+env:
+  DATABASE_URL: "sqlite:///%kernel.project_dir%/var/data.db"
+  APP_ENV: test
+
+jobs:
+  php-cs-fixer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - uses: actions/checkout@v1
+      - run: |
+          composer install
+          ./vendor/bin/php-cs-fixer fix --dry-run --diff
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - uses: actions/checkout@v1
+      - run: composer install --no-interaction
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.16
+          cache: 'npm'
+      - run: npm install
+      - run: npm run build
+      - run: |
+          ./bin/console doctrine:database:create
+          ./bin/console doctrine:schema:create
+      - run: ./vendor/bin/phpunit
+
+#  standard-js:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: 20.16
+#          cache: 'npm'
+#      - run: npm install
+#      - run: npm run build
+#      - run: npm ci

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Order;
 use App\Entity\RepertoryEntry;
-use App\Service\UserPreferences\RepertoryPreferences;
+use App\UserPreferences\RepertoryPreferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -27,46 +29,34 @@ class RepertoryEntryRepository extends ServiceEntityRepository
 
     public function getByRepertoryPreferences(RepertoryPreferences $preferences): array
     {
-        $entries = $this
-            ->createQueryBuilder("e")
-            ->innerJoin("e.order", "o");
+        $entries = $this->createQueryBuilder('e')->innerJoin('e.order', 'o');
 
         if ($staff = $preferences->getStaff()) {
-            $entries
-                ->andWhere("o.staff = :staff")
-                ->setParameter("staff", $staff);
+            $entries->andWhere('o.staff = :staff')->setParameter('staff', $staff);
         }
 
         if ($year = $preferences->getYear()) {
-            $entries
-                ->andWhere("e.year = :year")
-                ->setParameter("year", $year);
+            $entries->andWhere('e.year = :year')->setParameter('year', $year);
         }
 
         if ($month = $preferences->getMonth()) {
-            $entries
-                ->andWhere("month(e.createdAt) = :month")
-                ->setParameter("month", $month);
+            $entries->andWhere('month(e.createdAt) = :month')->setParameter('month', $month);
         }
 
-        return $entries
-            ->setMaxResults(self::LIMIT)
-            ->addOrderBy("e.year", "DESC")
-            ->addOrderBy("e.number", "DESC")
+        return $entries->setMaxResults(self::LIMIT)
+            ->addOrderBy('e.year', 'DESC')
+            ->addOrderBy('e.number', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * @param RepertoryEntry $entry
-     * @param Order $order
-     * @return void
      * @throws \Exception
      */
     public function configureEntry(RepertoryEntry $entry, Order $order): void
     {
-        if ($entry->getOrder() != null) {
-            throw new \Exception("Entry already configured!");
+        if (null != $entry->getOrder()) {
+            throw new \Exception('Entry already configured!');
         }
 
         $order->setRepertoryEntry($entry);
@@ -75,10 +65,6 @@ class RepertoryEntryRepository extends ServiceEntityRepository
         $entry->setNumber($this->getNumber($year));
     }
 
-    /**
-     * @param int $year
-     * @return int
-     */
     public function getNumber(int $year): int
     {
         $last = $this->createQueryBuilder('r')
@@ -95,24 +81,20 @@ class RepertoryEntryRepository extends ServiceEntityRepository
 
         /** @var RepertoryEntry $entry */
         $entry = $last[0];
+
         return $entry->getNumber() + 1;
     }
 
-    /**
-     * @return array
-     */
     public function getYearsUsed(): array
     {
         try {
-            $first = $this
-                ->createQueryBuilder('e')
+            $first = $this->createQueryBuilder('e')
                 ->orderBy('e.year', 'ASC')
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getSingleResult();
 
-            $last = $this
-                ->createQueryBuilder('e')
+            $last = $this->createQueryBuilder('e')
                 ->orderBy('e.year', 'DESC')
                 ->setMaxResults(1)
                 ->getQuery()

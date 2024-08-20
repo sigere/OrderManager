@@ -1,96 +1,80 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=ClientRepository::class)
- * @UniqueEntity(
- *     fields={"nip"},
- *     message="Istnieje już klient o podanym NIPie!"
- * )
- * @UniqueEntity(
- *     fields={"alias"},
- *     message="Istnieje już klient o podanym aliasie!",
- *     repositoryMethod="findByAliasIgnoreCase"
- * )
- */
+// TODO translations
+#[UniqueEntity(fields: ['alias'], message: 'constraints.client.alias.exists', repositoryMethod: 'findByAliasIgnoreCase')]
+#[UniqueEntity(fields: ['nip'], message: 'Istnieje już klient o podanym NIPie!')]
+#[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $alias;
+    #[ORM\Column(type: 'string', length: 50)]
+    private string $alias;
 
-    /**
-     * @ORM\Column(type="string", length=15)
-     * @Assert\Regex("/\d{10}/")
-     * @Assert\Length(min=10,max=10)
-     */
-    private $nip;
+    #[ORM\Column(type: 'string', length: 15)]
+    #[Assert\Regex("/\d{10}/")]
+    #[Assert\Length(min: 10, max: 10)]
+    private string $nip;
 
-    /**
-     * @ORM\Column(type="string", length=6)
-     */
-    private $postCode;
+    #[ORM\Column(type: 'string', length: 6)]
+    private string $postCode;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $city;
+    #[ORM\Column(type: 'string', length: 50)]
+    private string $city;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $street;
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $street;
 
-    /**
-     * @ORM\Column(type="string", length=2)
-     * @Assert\Country(
-     *     message = "Wprowadź poprawny kraj."
-     * )
-     */
-    private $country;
+    #[Assert\Country(message: 'Wprowadź poprawny kraj.')]
+    #[ORM\Column(type: 'string', length: 2)]
+    private string $country;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $deletedAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     * @Assert\Email(
-     *     message = "Adres email '{{ value }}' nie jest poprawny.")
-     */
-    private $email;
+    #[Assert\Email(message: "Adres email '{{ value }}' nie jest poprawny.")]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $email;
 
     public function __construct()
     {
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
         $this->deletedAt = null;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getAlias();
+    }
+
+    public function getAlias(): ?string
+    {
+        return $this->alias;
+    }
+
+    public function setAlias(string $alias): self
+    {
+        $this->alias = $alias;
+
+        return $this;
     }
 
     public function getId(): ?int
@@ -170,34 +154,24 @@ class Client
         return $this;
     }
 
-    public function __toString(): string
-    {
-        return $this->getAlias();
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    public function setAlias(string $alias): self
-    {
-        $this->alias = strtoupper($alias);
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?DateTimeInterface
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function getDeletedAt(): ?DateTimeInterface
+    public function setCreatedAt(\DateTime $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(DateTimeInterface $deletedAt): self
+    public function setDeletedAt(?\DateTime $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
 

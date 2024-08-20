@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Staff;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,5 +20,19 @@ class StaffRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Staff::class);
+    }
+
+    public function getQueryBuilderForOrderFiltersForm(): QueryBuilder
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.deletedAt is null')
+            ->orderBy('s.lastName', 'ASC');
+    }
+
+    public function getQueryBuilderForOrderForm(): QueryBuilder
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.deletedAt is null')
+            ->orderBy('s.lastName', 'ASC');
     }
 }

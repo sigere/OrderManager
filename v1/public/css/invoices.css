@@ -1,0 +1,131 @@
+/* --------left-column-------------- */
+.left-col h6 {
+    font-size: 15px;
+    margin-top: 25px;
+    margin-bottom: 2px;
+    color: var(--color-property-label)
+}
+
+.left-col h6:first-child {
+    margin-top: 15px;
+}
+
+.left-col .table {
+    font-size: 13px;
+}
+
+.left-col .col-content {
+    overflow: scroll;
+}
+
+.left-col table thead th {
+    position: sticky;
+    top: 0;
+}
+
+.left-col .table-container {
+    height: auto;
+    opacity: 1;
+    transition: all 0.3s;
+    /* border: 1px solid red; */
+}
+
+.left-col .table-container.hidden {
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.left-col .table-container::-webkit-scrollbar {
+    display: none; /* chrome, safari, opera*/
+}
+
+.left-col .clickable-row {
+    cursor: pointer;
+}
+
+.container h6 {
+    font-size: 12px;
+}
+
+.left-col .form-month {
+    margin-left: auto;
+    margin-right: auto;
+    width: 313px;
+}
+
+.left-col .form-month form div:first-child {
+    margin-right: 10px;
+}
+
+.left-col .form-month select[name="invoice_month_form[year]"] {
+    margin-left: 15px;
+}
+
+.left-col .alert.alert-info {
+    margin-bottom: 0;
+    padding-left: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.mid-col table tr {
+    /*cursor: pointer;*/
+}
+
+.mid-col table svg {
+    width: 12px;
+}
+
+.mid-col table .edit-order {
+    cursor: pointer;
+    color: white;
+}
+
+.mid-col table tr:last-child {
+    white-space: nowrap;
+}
+
+.right-col h6 {
+    margin-top: 15px;
+}
+
+.right-col .value svg {
+    height: 13px;
+}
+
+.right-col .dates {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+.right-col .dates div {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.right-col .buttons {
+    width: fit-content;
+    margin: 30px auto 30px;
+    display: flex;
+    align-content: center;
+}
+
+.right-col .buttons div {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.right-col .hidden {
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.right-col .alert.alert-info {
+    padding-top: 2px;
+    padding-left: 11px;
+    /*margin-bottom: 0;*/
+}

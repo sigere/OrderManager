@@ -1,49 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use App\Repository\LogRepository;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=LogRepository::class)
- */
+#[ORM\Entity(repositoryClass: 'LogRepository')]
 class Log
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $action = '';
-    /**
-     * @ORM\ManyToOne(targetEntity=Order::class)
-     */
-    private $order;
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    #[ORM\Id]
+    private ?int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Client::class)
-     */
-    private $client;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Task::class)
-     */
-    private $task;
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: 'User')]
+    private ?User $user;
+
+    #[ORM\Column(type: 'string', length: 100)]
+    private string $action = '';
+
+    #[ORM\ManyToOne(targetEntity: 'Order')]
+    private ?Order $order;
+
+    #[ORM\ManyToOne(targetEntity: 'Client')]
+    private ?Client $client;
+
+    #[ORM\ManyToOne(targetEntity: 'Task')]
+    private ?Task $task;
 
     public function __construct($user, $action, $object = null)
     {
@@ -66,7 +54,7 @@ class Log
             }
         }
 
-        $this->createdAt = new DateTime();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -74,7 +62,7 @@ class Log
         return $this->id;
     }
 
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }

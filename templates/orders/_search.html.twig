@@ -1,0 +1,49 @@
+<div class="search-form-container" data-controller="search-popup">
+{#    {% cache 'orders_search_form' tags('dupa') %}#}
+        <div class="search-form">
+            {{ form_start(form, {attr: {'data-search-popup-target': 'form'}}) }}
+            <div class="error">
+                {{ form_errors(form) }}
+            </div>
+            {{ form_end(form) }}
+        </div>
+{#    {% endcache %}#}
+    {% if orders is defined and orders is not empty%}
+        {% include 'rows_count.html.twig' %}
+        <div>
+            <table class="table table-dark entity-table">
+                <thead>
+                <tr>
+                    <th class="entity-table icon-col"></th>
+                    <th class="entity-table icon-col"></th>
+                    <th>{{ 'id' | trans | capitalize }}</th>
+                    <th>{{ 'client' | trans | capitalize }}</th>
+                    <th>{{ 'topic' | trans | capitalize }}</th>
+                    <th>{{ 'deadline' | trans | capitalize }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                <tr data-subject-id="{{ order.id }}" data-subject-type="order">
+                    <td class="entity-table icon-col clickable-row" style="white-space: nowrap;"
+                        title="{{ order.warnings | join(" ") }}">
+                        {% if order.getWarnings is not empty %}
+                            {% include 'icons/notice.html' %}
+                        {% endif %}
+                    </td>
+                    <td class="entity-table icon-col clickable-row" style="white-space: nowrap;">
+                        {% if order.repertoryEntry is not null %}
+                            {% include 'icons/repertory_entry.html' %}
+                        {% endif %}
+                    </td>
+                    <td class="clickable-row">{{ order.id }}</td>
+                    <td class="clickable-row">{{ order.client }}</td>
+                    <td class="clickable-row">{{ order.topic | u.truncate(50, '...') }}</td>
+                    <td class="clickable-row">{{ order.deadline | date('d.m.Y') }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
