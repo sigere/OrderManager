@@ -5,32 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Order;
 
 use App\Entity\Order;
-use App\Entity\Staff;
 use App\Tests\AppWebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class FormTest extends AppWebTestCase
 {
-    public function testSomething(): void
-    {
-        $entityManager = $this->getContainer()->get(EntityManagerInterface::class);
-        $uow = $entityManager->getUnitOfWork();
-
-        /** @var Staff $staff */
-        $staff = $entityManager->getRepository(Staff::class)->findOneBy(['firstName' => 'John']);
-
-        $staff->setLastName('Dupa');
-
-        $entityManager->persist($staff);
-        $uow->computeChangeSets();
-        $uow->computeChangeSet();
-        dump($uow->getEntityChangeSet($staff));
-        $entityManager->flush();
-    }
-
     public function testOrderIsCreated(): void
     {
         $user = $this->getUser();
