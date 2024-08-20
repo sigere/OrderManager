@@ -3,13 +3,16 @@ import $ from 'jquery'
 import { executeAfter } from '../app'
 
 export default class extends Controller {
-   static targets = []
+   static targets = [
+      'form'
+   ]
 
    popupController
 
    connect () {
       const self = this
-      $(this.element).on('click', this.onButtonClicked.bind(this))
+      $(this.formTarget).on('submit', this.onSubmit.bind(this))
+
       $(document).ready(() => {
          self.popupController = self.application.getControllerForElementAndIdentifier(
             document.querySelector('[data-controller=\'popup\']'),
@@ -18,16 +21,19 @@ export default class extends Controller {
       })
    };
 
-   onButtonClicked (event) {
-      this.popupController.open()
+   onSubmit (event) {
+      event.preventDefault()
+      this.popupController.default()
 
       const self = this
+      const $form = $(this.formTarget)
       $.ajax({
-         url: '/api/order/search',
-         method: 'GET',
-         success: (data) => {
-            executeAfter(() => {
-               self.popupController.display(data.data.renderedSearch)
+         url: '/api/order',
+         method: 'POST',
+         data: $form.serialize(),
+         success: function (data) {
+            executeAfter(function () {
+               self.popupController.display(data.message)
             })
          },
          error: function (jqXHR) {
@@ -35,5 +41,5 @@ export default class extends Controller {
             // self.controller.popupManager.display(jqXHR.responseText);
          }
       })
-   };
+   }
 }

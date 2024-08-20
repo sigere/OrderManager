@@ -8,11 +8,9 @@ use App\Controller\ApiControllerInterface;
 use App\Entity\Enum\OrderState;
 use App\Entity\Order;
 use App\Entity\User;
-use App\Form\Model\OrdersSearch;
 use App\Form\OrderForm;
-use App\Form\OrdersSearchForm;
 use App\Repository\OrderRepository;
-use App\Service\OrderService;
+use App\Service\FormErrorsFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,18 +19,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
+#[IsGranted('ROLE_ORDER_READ')]
 #[Route('/api/order', condition: 'request.isXmlHttpRequest()', format: 'json')]
 class ApiController extends AbstractController implements ApiControllerInterface
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly OrderService $orderService,
         private readonly RouterInterface $router,
         private readonly Environment $twig,
         private readonly EntityManagerInterface $entityManager,
-        // private readonly CacheInterface $cache,
+        private readonly TranslatorInterface $translator,
+        private readonly FormErrorsFormatter $formErrorsFormatter,
     ) {
     }
 
@@ -73,6 +74,7 @@ class ApiController extends AbstractController implements ApiControllerInterface
         ]);
     }
 
+    #[IsGranted('ROLE_ORDER_UPDATE')]
     #[Route('/{id}/state', name: 'api_order_state_put', methods: ['PUT'])]
     public function orderStatePutAction(Order $order, Request $request): Response
     {
@@ -96,74 +98,73 @@ class ApiController extends AbstractController implements ApiControllerInterface
         ]);
     }
 
-    #[Route('/search', name: 'api_order_search_get', methods: ['GET'])]
-    public function searchGetAction(): Response
-    {
-        $form = $this->createForm(OrdersSearchForm::class);
-
-        return new JsonResponse([
-            'success' => true,
-            'data' => [
-                'renderedSearch' => $this->orderService->renderSearchForm($form),
-            ],
-        ]);
-    }
-
-    #[Route('/search', name: 'api_order_search_post', methods: ['POST'])]
-    public function searchPostAction(Request $request): Response
-    {
-        $form = $this->createForm(OrdersSearchForm::class);
-        $form->handleRequest($request);
-
-        $orders = [];
-        $found = 0;
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var OrdersSearch $ordersSearch */
-            $ordersSearch = $form->getData();
-            $orders = $this->orderRepository->getByOrdersSearch($ordersSearch, $found);
-            $orders = is_array($orders) ? $orders : [$orders];
-        }
-
-        return new JsonResponse([
-            'success' => true,
-            'data' => [
-                'renderedSearch' => $this->orderService->renderSearchForm($form, $orders, $found),
-            ],
-        ]);
-    }
-
+    #[IsGranted('ROLE_ORDER_CREATE')]
     #[Route('', name: 'api_order_post', methods: ['POST'])]
     public function postAction(Request $request): Response
     {
         $form = $this->createForm(OrderForm::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            if (!$form->isValid()) {
-                return new JsonResponse([
-                    'success' => false,
-                    'data' => [
-                        'renderedForm' => '',
-                    ],
-                ]);
-            }
+        if (!$form->isSubmitted()) {
+            $renderedForm = $this->twig->render('orders/_form.html.twig', [
+                'form' => $form->createView(),
+            ]);
 
             return new JsonResponse([
                 'success' => true,
                 'data' => [
-                    'renderedForm' => '',
+                    'renderedForm' => $renderedForm,
                 ],
             ]);
         }
 
-        $renderedForm = $this->twig->render('orders/order_form.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        if (!$form->isValid()) {
+            $renderedForm = $this->twig->render('orders/_form.html.twig', [
+                'form' => $form->createView(),
+            ]);
+
+            return new JsonResponse([
+                'success' => false,
+                'errors' => $this->formErrorsFormatter->toJsonResponseData($form->getErrors(true)),
+                'data' => [
+                    'renderedForm' => $renderedForm,
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        /** @var Order $order */
+        $order = $form->getData();
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $order->setAuthor($user);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => $this->translator->trans('order.create.success', [], 'apis'),
+        ], Response::HTTP_CREATED);
+    }
+
+    #[Route('/details/{id}', name: 'api_order_details_get', methods: ['GET'])]
+    public function detailsAction(?Order $order, int $id): Response
+    {
+        if (!$order) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $this->translator->trans('order.details.not_found', ['id' => $id], 'apis'),
+            ], Response::HTTP_NOT_FOUND);
+        }
 
         return new JsonResponse([
             'success' => true,
             'data' => [
-                'renderedForm' => $renderedForm,
+                'id' => $order->getId(),
+                'renderedDetails' => $this->twig->render('orders/_details.html.twig', [
+                    'order' => $order,
+                    'logs' => [],
+                ]),
             ],
         ]);
     }

@@ -1,0 +1,3 @@
+order:
+  topic:
+    not_blank: 'Temat nie może być pusty'

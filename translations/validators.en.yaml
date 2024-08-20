@@ -1,0 +1,3 @@
+order:
+  topic:
+    not_blank: 'Topic cannot be blank'

@@ -15,6 +15,12 @@ export function executeAfter (executable, stamp) {
   )
 }
 
+export function setQueryStringParameter (key, value) {
+   const url = new URL(window.location.href)
+   url.searchParams.set(key, value)
+   window.history.pushState({}, '', url)
+}
+
 $.tablesorter.defaults.dateFormat = 'ddmmyyyy'
 
 const sidebar = $('#sidebar')

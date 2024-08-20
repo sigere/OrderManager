@@ -10,6 +10,8 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class AppWebTestCase extends WebTestCase
 {
@@ -41,5 +43,24 @@ abstract class AppWebTestCase extends WebTestCase
         return $this->entityManager
             ->getRepository(Client::class)
             ->findOneBy(['alias' => $alias]);
+    }
+
+    protected function getCrawlerOnJSONResponse(?string $fieldName): Crawler
+    {
+        $crawler = $this->client->getCrawler();
+        $response = $this->client->getResponse();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertInstanceOf(JsonResponse::class, $response);
+
+        $array = json_decode($response->getContent(), true);
+        $this->assertIsArray($array);
+        $this->assertArrayHasKey('data', $array);
+        $this->assertArrayHasKey($fieldName, $array['data']);
+
+        $crawler = new Crawler(null, $crawler->getUri());
+        $crawler->addContent($array['data'][$fieldName]);
+
+        return $crawler;
     }
 }

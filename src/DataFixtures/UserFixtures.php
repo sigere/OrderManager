@@ -14,6 +14,14 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 {
     private const array USERS = [
         [
+            'username' => 'admin',
+            'firstName' => 'admin',
+            'lastName' => 'admin',
+            'roles' => ['ROLE_USER', 'ROLE_ADMIN'],
+            'password' => 'admin',
+            'createdAt' => 1,
+        ],
+        [
             'username' => 'tester_1',
             'firstName' => 'John',
             'lastName' => 'Doe',

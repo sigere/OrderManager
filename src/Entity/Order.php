@@ -58,8 +58,7 @@ class Order
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
     private ?float $additionalFee;
 
-    // todo translate
-    #[Assert\NotBlank(message: 'Temat nie może być pusty')]
+    #[Assert\NotBlank(message: 'order.topic.not_blank')]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private string $topic;
 

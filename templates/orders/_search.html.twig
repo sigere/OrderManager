@@ -9,7 +9,7 @@
         </div>
 {#    {% endcache %}#}
     {% if orders is defined and orders is not empty%}
-        {% include 'rows_count.html.twig' with {rowsShown: orders|length, rowsFound: orders|length} %}
+        {% include 'rows_count.html.twig' %}
         <div>
             <table class="table table-dark entity-table">
                 <thead>

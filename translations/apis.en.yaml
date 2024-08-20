@@ -1,4 +1,0 @@
-orders:
-   filters:
-      success: 'Filters applied successfully'
-      fail: 'Invalid data'

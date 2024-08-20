@@ -23,44 +23,44 @@
                     {{ 'Filter' | trans }}
                 </header>
                 <div class="col-content" id="filters-content" data-orders-left-col-target="content" {# todo #} data-controller="filters">
-                    {{ include('orders/filters.html.twig') }}
+                    {{ include('orders/_filters.html.twig') }}
                 </div>
             </div>
         </div>
         <div class="col-lg-7" style=" height: 100%;">
-            <div class="column mid-col js-mid-col" data-controller="orders-mid-col">
-                <header data-orders-mid-col-target="header">
+            <div class="column mid-col js-mid-col" data-controller="order-mid-col">
+                <header data-order-mid-col-target="header">
                     <div class="icon" style="float: left;">
                         {% include 'icons/order.html' %}
                     </div>
                     {{ 'Orders' | trans }}
                     <div style="clear: both;"></div>
-                    {% include 'burger.html.twig' with {flat: true, options: [
-                        {label: "Add order", icon: 'add', class: 'js-add-order-link'},
-                        {label: "Search", icon: 'search', attributes: {'data-controller': "search"} }
+                    {% include '_burger.html.twig' with {flat: true, options: [
+                        {label: 'Add order', icon: 'add', attributes: {'data-controller': 'order-create'}},
+                        {label: 'Search', icon: 'search', attributes: {'data-controller': 'search'}},
                     ]} %}
                 </header>
-                <div class="col-content" data-orders-mid-col-target="content">
+                <div class="col-content" data-order-mid-col-target="content">
                     {% include 'orders/_table.html.twig' %}
                 </div>
             </div>
         </div>
         <div class="col-lg-3" style="height: 100%;">
-            <div class="column right-col js-right-col">
-                <header>
+            <div class="column right-col js-right-col" data-controller="order-right-col">
+                <header data-order-right-col-target="header">
                     {{ 'Order details' | trans }}
-                    <span class="js-subject-id">
+                    <span data-order-right-col-target="id">
                             {% if details['order'] %}
                                 {{ details['order'].id }}
                             {% endif %}
                     </span>
                     <div class="js-burger">
-                        {% include 'burger.html.twig' %}
+                        {% include '_burger.html.twig' %}
                     </div>
                 </header>
-                <div class="col-content" id="details-content">
+                <div class="col-content" data-order-right-col-target="details">
                     {% if details['order'] %}
-                        {% include 'orders/details.html.twig' with {'order': details['order'], 'logs': details['logs']} %}
+                        {% include 'orders/_details.html.twig' with {'order': details['order'], 'logs': details['logs']} %}
                     {% else %}
                         <div class="alert alert-info">{{ "Select order to display details." | trans }}</div>
                     {% endif %}

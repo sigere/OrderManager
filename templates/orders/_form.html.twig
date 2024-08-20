@@ -1,10 +1,10 @@
-<div class="entity-form-container">
+<div class="entity-form-container" data-controller="order-create-popup">
     {% if update is defined and update == true %}
         <h4>Zaktualizuj zlecenie</h4>
     {% else %}
         <h4>Dodaj nowe zlecenie</h4>
     {% endif %}
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'data-order-create-popup-target': 'form'}}) }}
     {% for row in form %}
         {% if not loop.last %}
             <div class="entity-form-row">

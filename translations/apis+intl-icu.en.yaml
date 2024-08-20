@@ -1,0 +1,8 @@
+order:
+  filters:
+    success: 'Filters applied successfully ✅'
+    fail: 'Invalid data'
+  create:
+    success: 'Order created successfully ✅'
+  details:
+    not_found: 'Order #{id} not found'

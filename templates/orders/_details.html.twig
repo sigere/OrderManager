@@ -1,18 +1,18 @@
-{% if order.deletedAt is not null %}
+{#{% if order.deletedAt is not null %}#}
 {#todo warnings from php#}
 {#    <div class="alert alert-danger">Zlecenie zostało usunięte {{ order.deletedAt|date("d-m-Y H:i") }}.</div>#}
-{% elseif order.getWarnings is not empty %}
-    <div class="warning">
-        <ul class="list-group">
-            {% for w in order.getWarnings %}
-                <li>{{ w }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% elseif order.settledAt is not null %}
+{#{% elseif order.getWarnings is not empty %}#}
+{#    <div class="warning">#}
+{#        <ul class="list-group">#}
+{#            {% for w in order.getWarnings %}#}
+{#                <li>{{ w }}</li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+{#    </div>#}
+{#{% elseif order.settledAt is not null %}#}
     {#todo warnings from php#}
 {#    <div class="alert alert-success">Zlecenie zostało rozliczone.</div>#}
-{% endif %}
+{#{% endif %}#}
 
 {% if order.repertoryEntry is not null %}
     <div class="expandable">
@@ -35,8 +35,8 @@
 {% set properties = [
     {
         name: 'State',
-        value: order.state | trans | capitalize,
-        attr: [{name:'state', value: order.state}]
+        value: order.state.value | trans | capitalize,
+        attr: [{name:'state', value: order.state.value}]
     },
     {
         name: 'Adoption',

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\LangRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: 'LangRepository')]
+#[ORM\Entity(repositoryClass: LangRepository::class)]
 class Lang
 {
     #[ORM\Column(type: 'integer')]

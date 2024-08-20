@@ -7,6 +7,7 @@ namespace App\Preferences\Controller;
 use App\Entity\User;
 use App\Preferences\Event\UserPreferencesUpdatedEvent;
 use App\Preferences\Form\OrderFiltersForm;
+use App\Service\FormErrorsFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,6 +23,7 @@ class OrdersController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $em,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly FormErrorsFormatter $errorsFormatter,
     ) {
     }
 
@@ -50,7 +52,7 @@ class OrdersController extends AbstractController
                 [
                     'success' => true,
                     'message' => $this->translator->trans(
-                        id: 'orders.filters.success',
+                        id: 'order.filters.success',
                         domain: 'apis'
                     ),
                 ],
@@ -58,21 +60,16 @@ class OrdersController extends AbstractController
             );
         }
 
-        $errors = [];
-        foreach ($form->getErrors(true) as $error) {
-            $errors[$error->getOrigin()->getName()] = $error->getMessage();
-        }
-
         return new JsonResponse(
             [
                 'success' => false,
                 'message' => $this->translator->trans(
-                    id: 'orders.filters.fail',
+                    id: 'order.filters.fail',
                     domain: 'apis',
                 ),
-                'errors' => $errors,
+                'errors' => $this->errorsFormatter->toJsonResponseData($form->getErrors(true)),
             ],
-            400
+            Response::HTTP_BAD_REQUEST
         );
     }
 }

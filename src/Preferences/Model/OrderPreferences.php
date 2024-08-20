@@ -45,7 +45,7 @@ class OrderPreferences implements \JsonSerializable
     #[Assert\When(
         expression: 'this.getDateFrom() !== null',
         constraints: [
-            new Assert\GreaterThan(
+            new Assert\GreaterThanOrEqual(
                 propertyPath: 'dateFrom',
                 message: 'The date to must be after the date from'
             ),

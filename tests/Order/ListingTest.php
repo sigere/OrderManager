@@ -4,11 +4,12 @@ namespace App\Tests\Order;
 
 use App\Entity\Order;
 use App\Entity\Staff;
+use App\Preferences\Model\DateType;
 use App\Preferences\Model\OrderPreferences;
 use App\Tests\AppWebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
-class OrdersListingTest extends AppWebTestCase
+class ListingTest extends AppWebTestCase
 {
     public function testUserSeesOrders(): void
     {
@@ -49,16 +50,13 @@ class OrdersListingTest extends AppWebTestCase
         $this->entityManager->flush();
 
         $crawler = $this->client->request('GET', '/orders');
-        // dump($crawler->filter('div.mid-col .col-content')->text());
+        $html = $crawler->filter('div.mid-col .col-content')->text();
+        preg_match_all('/\b\w*#\w*\b/', $html, $matches);
+
         $this->assertResponseIsSuccessful();
         $this->assertOrdersCountInHTML($crawler, count($expectedText));
 
-        foreach ($expectedText as $text) {
-            $this->assertStringContainsString(
-                $text,
-                $crawler->filter('div.mid-col .col-content')->text()
-            );
-        }
+        $this->assertEqualsCanonicalizing($expectedText, $matches[0]);
     }
 
     /**
@@ -81,10 +79,29 @@ class OrdersListingTest extends AppWebTestCase
             ],
             'Jane Smith\'s with deleted' => [
                 function (OrderPreferences $preferences, self $self) {
-                    $preferences->setStaff($self->getStaff('Jane', 'Smith'));
-                    $preferences->setDeleted(true);
+                    $preferences
+                        ->setStaff($self->getStaff('Jane', 'Smith'))
+                        ->setDeleted(true);
                 },
                 ['Order#B', 'Order#D', 'Order#F', 'Order#H', 'Order#J'],
+            ],
+            'With deadline between 11.01.2024 and 01.02.2024' => [
+                function (OrderPreferences $preferences, self $self) {
+                    $preferences
+                        ->setDateType(DateType::Deadline)
+                        ->setDateFrom(new \DateTime('2024-01-11'))
+                        ->setDateTo(new \DateTime('2024-02-01'));
+                },
+                ['Order#C', 'Order#E'],
+            ],
+            'With adoption between 02.01.2024 and 11.01.2024' => [
+                function (OrderPreferences $preferences, self $self) {
+                    $preferences
+                        ->setDateType(DateType::Adoption)
+                        ->setDateFrom(new \DateTime('2024-01-02'))
+                        ->setDateTo(new \DateTime('2024-01-11'));
+                },
+                ['Order#I', 'Order#J'],
             ],
         ];
     }

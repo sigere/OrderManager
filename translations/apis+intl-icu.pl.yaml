@@ -1,0 +1,8 @@
+order:
+  filters:
+    success: 'Pomyślnie zastosowano filtry ✅'
+    fail: 'Niepoprawne dane'
+  create:
+    success: 'Zlecenie utworzone pomyślnie ✅'
+  details:
+    not_found: 'Zlecenie #{id} nie zostało znalezione'

@@ -145,15 +145,17 @@ class OrderRepository extends ServiceEntityRepository
      * @param ?int $found
      *                    If not null, will be set to the total number of found orders, omit or pass null to avoid counting
      *
-     * @return Order|Order[]
+     * @return Order[]
      */
-    public function getByOrdersSearch(OrdersSearch $ordersSearch, int &$count, ?int &$found = null): Order|array
+    public function getByOrdersSearch(OrdersSearch $ordersSearch, int &$count, ?int &$found = null): array
     {
         if (!empty($ordersSearch->getId())) {
-            $count = 1;
-            $found = null !== $found ? 1 : null;
+            $order = $this->findOneBy(['id' => $ordersSearch->getId()]);
 
-            return $this->findOneBy(['id' => $ordersSearch->getId()]);
+            $count = $order ? 1 : 0;
+            $found = null !== $found ? $count : null;
+            
+            return $order ? [$order] : [];
         }
 
         return $this->searchByText($ordersSearch->getPhrase(), $count, $found);

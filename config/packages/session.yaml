@@ -1,0 +1,19 @@
+services:
+  Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+    arguments:
+      - '@Redis'
+  # Session storage has it's onw database (0)
+  #      -  { 'prefix': 'om_session_' }
+
+  Redis:
+    class: Redis
+    calls:
+      - connect:
+          - 'redis'
+          - '6379'
+          - '0'
+
+framework:
+  session:
+    handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
+    gc_maxlifetime: 14400

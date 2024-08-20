@@ -1,5 +1,5 @@
 {% form_theme filtersForm 'form_div_layout_override.html.twig' %}
-{{ form_start(filtersForm, {'attr': {'data-action': 'filters#submit'}}) }}
+{{ form_start(filtersForm, {'attr': {'data-filters-target': 'form'}}) }}
 {{ form_row(filtersForm) }}
 <div class="filters-form date-helpers" data-filters-target="dateHelpers">
     <button class="filters-form helper" data-interval="today">{{ 'Today' | trans }}</button>
