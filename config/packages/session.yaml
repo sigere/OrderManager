@@ -22,5 +22,5 @@ framework:
 when@test:
     framework:
         session:
-            handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler
+            handler_id: null
             save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
